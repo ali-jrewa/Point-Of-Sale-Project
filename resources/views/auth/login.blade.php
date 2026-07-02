@@ -3,7 +3,7 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>POS - Login Page</title>
+    <title>POS | Login Page</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="title" content="Login Page">
     <meta name="author" content="Ali Jriwah">
@@ -28,16 +28,26 @@
         <div class="card">
             <div class="card-body login-card-body">
                 <p class="login-box-msg">Sign in to start your session</p>
-                <form action="" method="post">
-                    <div class="mb-3 input-group"> <input type="email" class="form-control" placeholder="Email">
+                @include('_message')
+                <form action="{{ url('/login') }}" method="post">
+                    {{ csrf_field() }}
+                    <div class="mb-3 input-group"> <input type="email" name="email" value="{{ old('email')}}" class="form-control @error('email') is-invalid @enderror" placeholder="Email" required>
                         <div class="input-group-text"> <span class="bi bi-envelope"></span> </div>
+                        @error('email')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
-                    <div class="mb-3 input-group"> <input type="password" class="form-control" placeholder="Password">
+                    <div class="mb-3 input-group"> <input type="password" name="password"  class="form-control @error('password') is-invalid @enderror" placeholder="Password" required>
                         <div class="input-group-text"> <span class="bi bi-lock-fill"></span> </div>
-                    </div> <!--begin::Row-->
+                         @error('password')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
                     <div class="row">
                         <div class="col-8">
-                            <div class="form-check"> <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"> <label class="form-check-label" for="flexCheckDefault">
+                            <div class="form-check">
+                                 <input class="form-check-input" type="checkbox" name="remember_me" value="" id="flexCheckDefault">
+                                 <label class="form-check-label" for="flexCheckDefault">
                                     Remember Me
                                 </label> </div>
                         </div>
@@ -51,7 +61,7 @@
         </div>
     </div>
 
-        <script src="{{ asset('dist/js/adminlte.js') }}"></script>
+        <script src="{{ asset('dist/js/adminlte.min.js') }}"></script>
 
     </body>
 
