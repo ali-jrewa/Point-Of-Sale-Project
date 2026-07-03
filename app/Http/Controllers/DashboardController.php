@@ -10,12 +10,11 @@ class DashboardController extends Controller
     {
         if(Auth::user()->role->name === "admin"){
 
-            echo "admin";
+            return view('dashboard.admin_list');
 
         }else if (Auth::user()->role->name === "user"){
 
-            echo "user"; die();
-
+            return view('dashboard.user_list');
             }
 
     }

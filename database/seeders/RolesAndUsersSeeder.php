@@ -41,7 +41,7 @@ class RolesAndUsersSeeder extends Seeder
             'name'     => 'Ali',
             'email'    => 'ali@ali.com',
             'password' => Hash::make('123123'),
-            'status'   => 'active',
+            'is_active'   => 'true',
         ]);
 
         User::create([
@@ -49,7 +49,7 @@ class RolesAndUsersSeeder extends Seeder
             'name'     => 'John Cashier',
             'email'    => 'cashier@pos.com',
             'password' => Hash::make('password123'),
-            'status'   => 'active',
+            'is_active'   => 'true',
         ]);
 
         User::create([
@@ -57,7 +57,7 @@ class RolesAndUsersSeeder extends Seeder
             'name'     => 'Banned Employee',
             'email'    => 'banned@pos.com',
             'password' => Hash::make('password123'),
-            'status'   => 'in_active', // Test user for your status checks
+            'is_active'   => 'false',
         ]);
     }
 }
