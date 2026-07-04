@@ -18,16 +18,16 @@ class Category extends Model
     protected $fillable = [
         'name',
         'slug',
-        'code',
+        'sku',
         'description',
-        'is_active',
+        'status',
     ];
 
     /**
      * The attributes that should be cast.
      */
     protected $casts = [
-        'is_active' => CategoryStatus::class,
+        'status' => CategoryStatus::class,
     ];
 
     /**
