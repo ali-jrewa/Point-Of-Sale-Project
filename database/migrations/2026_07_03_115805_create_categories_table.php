@@ -16,7 +16,6 @@ return new class extends Migration
            $table->id();
             $table->string('name')->unique();
             $table->string('slug')->unique();
-            $table->string('sku')->nullable()->unique();
             $table->text('description')->nullable();
             $table->string('status')->default(CategoryStatus::Active->value);
             $table->timestamps();
