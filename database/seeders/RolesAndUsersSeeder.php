@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserStatus;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
@@ -41,7 +42,7 @@ class RolesAndUsersSeeder extends Seeder
             'name'     => 'Ali',
             'email'    => 'ali@ali.com',
             'password' => Hash::make('123123'),
-            'is_active'   => 'true',
+            'status'   => UserStatus::Active,
         ]);
 
         User::create([
@@ -49,7 +50,7 @@ class RolesAndUsersSeeder extends Seeder
             'name'     => 'John Cashier',
             'email'    => 'cashier@pos.com',
             'password' => Hash::make('password123'),
-            'is_active'   => 'true',
+            'status'   => UserStatus::Inactive,
         ]);
 
         User::create([
@@ -57,7 +58,7 @@ class RolesAndUsersSeeder extends Seeder
             'name'     => 'Banned Employee',
             'email'    => 'banned@pos.com',
             'password' => Hash::make('password123'),
-            'is_active'   => 'false',
+            'status'   => UserStatus::Inactive,
         ]);
     }
 }

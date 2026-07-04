@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CategoryStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -26,7 +27,7 @@ class Category extends Model
      * The attributes that should be cast.
      */
     protected $casts = [
-        'is_active' => 'boolean',
+        'is_active' => CategoryStatus::class,
     ];
 
     /**

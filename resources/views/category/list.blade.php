@@ -13,7 +13,7 @@
                             <ol class="breadcrumb float-sm-end">
                                 <li class="breadcrumb-item"><a href="#">Home</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">
-                                    Category
+                                    Category List
                                 </li>
                             </ol>
                         </div>
@@ -45,9 +45,8 @@
                                             <tr>
                                                 <th>ID</th>
                                                 <th>Name</th>
-                                                <th>Slug</th>
-                                                <th>Code</th>
-                                                <th>Is Active</th>
+                                                <th>SKU</th>
+                                                <th>Status</th>
                                                 <th>Created At</th>
                                                 <th>Updated At</th>
                                                 <th>Actions</th>
@@ -85,12 +84,15 @@
                         <textarea class="form-control" id="description" name="description"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="code" class="form-label">Code</label>
-                        <input type="text" class="form-control" id="code" name="code">
+                        <label for="sku" class="form-label">SKU</label>
+                        <input type="text" class="form-control" id="sku" name="sku">
                     </div>
                     <div class="mb-3">
-                        <label for="is_active" class="form-label">Is Active</label>
-                        <input type="checkbox" class="form-check-input" id="is_active" name="is_active" value="1">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-control" id="status" name="status">
+                            <option value="{{ App\Enums\CategoryStatus::Active->value }}">Active</option>
+                            <option value="{{ App\Enums\CategoryStatus::Inactive->value }}">Inactive</option>
+                        </select>
                     </div>
                     <button type="submit" class="btn btn-primary">Save</button>
                 </form>
@@ -143,22 +145,20 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Code</label>
+                        <label>SKU</label>
                         <input
                             type="text"
-                            id="edit_code"
-                            name="code"
+                            id="edit_sku"
+                            name="sku"
                             class="form-control">
                     </div>
 
                     <div class="mb-3">
-                        <input
-                            type="checkbox"
-                            id="edit_is_active"
-                            name="is_active"
-                            value="1">
-
-                        <label>Is Active</label>
+                        <label>Status</label>
+                        <select class="form-control" id="edit_status" name="status">
+                            <option value="{{ App\Enums\CategoryStatus::Active->value }}">Active</option>
+                            <option value="{{ App\Enums\CategoryStatus::Inactive->value }}">Inactive</option>
+                        </select>
                     </div>
 
                     <button class="btn btn-primary">
@@ -200,9 +200,8 @@
                             <tr>
                                 <td>${index + 1}</td>    
                                 <td>${category.name}</td> 
-                                <td>${category.slug}</td>
-                                <td>${category.code}</td>
-                                <td class="${category.is_active ? 'text-success' : 'text-danger'}">${category.is_active ? 'Yes' : 'No'}</td>
+                                <td>${category.sku}</td>
+                                <td class="${category.status === 'active' ? 'text-success' : 'text-danger'}">${category.status === 'active' ? 'Active' : 'Inactive'}</td>
                                 <td>${created_at}</td>
                                 <td>${updated_at}</td>
                                 <td>
@@ -242,14 +241,10 @@
 
                 $("#edit_description").val(response.description);
 
-                $("#edit_slug").val(response.slug);
+                $("#edit_sku").val(response.sku);
 
-                $("#edit_code").val(response.code);
 
-                $("#edit_is_active").prop(
-                    "checked",
-                    response.is_active
-                );
+                $("#edit_status").val(response.status);
 
                 $("#editCategoryForm")
                     .attr("data-id", categoryId);

@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CreateCategoryRequest;
-use App\Http\Requests\UpdateCategoryRequest;
+use App\Http\Requests\Category\StoreCategoryRequest;
+use App\Http\Requests\Category\UpdateCategoryRequest;
 use App\Models\Category;
-use Illuminate\Http\Request;
+use App\Services\CategoryService;
 
 class CategoryController extends Controller
 {
+    public function __construct(protected CategoryService $categoryService) {}
+
 
     public function index()
     {
@@ -21,9 +23,9 @@ class CategoryController extends Controller
         return response()->json($categories);
     }
 
-    public function store(CreateCategoryRequest $request)
+    public function store(StoreCategoryRequest $request)
     {
-        $category = Category::create($request->validated());
+        $category = $this->categoryService->store($request->validated());
 
 
         return response()->json(['success' => 'Category created successfully.'], 201);
@@ -38,7 +40,7 @@ class CategoryController extends Controller
 
     public function update(UpdateCategoryRequest $request, Category $category)
     {
-    $category->update($request->validated());
+    $category = $this->categoryService->update($category, $request->validated());
 
     return response()->json([
         'success' => 'Category updated successfully.'
@@ -54,12 +56,12 @@ class CategoryController extends Controller
     }
 
     public function destroy(Category $category)
-{
-    $category->delete();
+    {
+        $this->categoryService->delete($category);
 
-    return response()->json([
-        'success' => 'Category deleted successfully.'
-    ]);
-}
+        return response()->json([
+            'success' => 'Category deleted successfully.'
+        ]);
     }
+}
 

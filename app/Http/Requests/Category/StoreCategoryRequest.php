@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Category;
 
+use App\Enums\CategoryStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class CreateCategoryRequest extends FormRequest
+class StoreCategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,7 +27,10 @@ class CreateCategoryRequest extends FormRequest
             'name' => 'required|string|max:255|unique:categories,name',
             'code' => 'nullable|string|max:255|unique:categories,code',
             'description' => 'nullable|string',
-            'is_active' => 'required|boolean',
+            'status' => [
+                'required',
+                Rule::in(CategoryStatus::values())
+            ]
         ];
     }
 
@@ -35,7 +40,7 @@ class CreateCategoryRequest extends FormRequest
             'name.required' => 'The category name is required.',
             'name.unique' => 'The category name must be unique.',
             'code.unique' => 'The category code must be unique.',
-            'is_active.required' => 'The active status is required.',
+            'status.in' => 'The selected category status is invalid.',
         ];
     }
 }

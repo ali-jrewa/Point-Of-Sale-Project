@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Category;
 
+use App\Enums\CategoryStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateCategoryRequest extends FormRequest
 {
@@ -12,13 +14,6 @@ class UpdateCategoryRequest extends FormRequest
     public function authorize(): bool
     {
         return true;
-    }
-
-    protected function prepareForValidation()
-    {
-        $this->merge([
-            'is_active' => $this->boolean('is_active'),
-        ]);
     }
 
     /**
@@ -39,7 +34,10 @@ class UpdateCategoryRequest extends FormRequest
 
             'code' => 'nullable|string|max:50',
 
-            'is_active' => 'nullable|boolean',
+            'status' => [
+                'required',
+                Rule::in(CategoryStatus::values())
+            ],
         ];
     }
 
@@ -60,7 +58,7 @@ class UpdateCategoryRequest extends FormRequest
             'code.string' => 'The category code must be valid text.',
             'code.max' => 'The category code may not be greater than 50 characters.',
 
-            'is_active.boolean' => 'The active status is invalid.',
+            'status.in' => 'The selected category status is invalid.',
         ];
     }
 
@@ -71,7 +69,7 @@ class UpdateCategoryRequest extends FormRequest
             'description' => 'description',
             'slug' => 'slug',
             'code' => 'category code',
-            'is_active' => 'active status',
+            'status' => 'category status',
         ];
     }
 }

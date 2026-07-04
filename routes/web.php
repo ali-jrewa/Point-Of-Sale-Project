@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -26,6 +27,10 @@ Route::middleware('auth')->group(function () {
         // category routes
         Route::get('/category/data', [CategoryController::class, 'getCategories'])->name('category.data');
         Route::resource('/category', CategoryController::class);
+
+        // product routes
+        Route::get('/product/data', [ProductController::class, 'getProducts'])->name('product.data');
+        Route::resource('/product', ProductController::class);
 
     });
     Route::middleware('role:user')->group(function () {
