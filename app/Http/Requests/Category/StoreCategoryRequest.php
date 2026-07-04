@@ -25,7 +25,7 @@ class StoreCategoryRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255|unique:categories,name',
-            'code' => 'nullable|string|max:255|unique:categories,code',
+            'sku' => 'nullable|string|max:255|unique:categories,sku',
             'description' => 'nullable|string',
             'status' => [
                 'required',
@@ -39,7 +39,7 @@ class StoreCategoryRequest extends FormRequest
         return [
             'name.required' => 'The category name is required.',
             'name.unique' => 'The category name must be unique.',
-            'code.unique' => 'The category code must be unique.',
+            'sku.unique' => 'The category SKU must be unique.',
             'status.in' => 'The selected category status is invalid.',
         ];
     }

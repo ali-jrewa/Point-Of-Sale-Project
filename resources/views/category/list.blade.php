@@ -241,8 +241,9 @@
 
                 $("#edit_description").val(response.description);
 
-                $("#edit_sku").val(response.sku);
+                $("#edit_slug").val(response.slug);
 
+                $("#edit_sku").val(response.sku);
 
                 $("#edit_status").val(response.status);
 

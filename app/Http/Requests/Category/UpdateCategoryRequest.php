@@ -31,8 +31,7 @@ class UpdateCategoryRequest extends FormRequest
             'description' => 'nullable|string',
 
             'slug' => 'required|string|max:255|unique:categories,slug,' . $category->id,
-
-            'code' => 'nullable|string|max:50',
+            'sku' => 'required|string|max:255|unique:categories,sku,' . $category->id,
 
             'status' => [
                 'required',
@@ -55,8 +54,10 @@ class UpdateCategoryRequest extends FormRequest
             'slug.max' => 'The slug may not be greater than 255 characters.',
             'slug.unique' => 'This slug is already being used by another category.',
 
-            'code.string' => 'The category code must be valid text.',
-            'code.max' => 'The category code may not be greater than 50 characters.',
+            'sku.string' => 'The category SKU must be valid text.',
+            'sku.max' => 'The category SKU may not be greater than 255 characters.',
+            'sku.unique' => 'This SKU is already being used by another category.',
+            'sku.required' => 'The category SKU is required.',
 
             'status.in' => 'The selected category status is invalid.',
         ];
@@ -68,7 +69,7 @@ class UpdateCategoryRequest extends FormRequest
             'name' => 'category name',
             'description' => 'description',
             'slug' => 'slug',
-            'code' => 'category code',
+            'sku' => 'SKU',
             'status' => 'category status',
         ];
     }
