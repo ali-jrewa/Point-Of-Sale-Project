@@ -2,8 +2,16 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ExpenseCategoryController;
+use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\SaleController;
+use App\Http\Controllers\SupplierController;
+use App\Models\ExpenseCategory;
+use App\Models\Sale;
 use Illuminate\Support\Facades\Route;
 
 
@@ -31,6 +39,31 @@ Route::middleware('auth')->group(function () {
         // product routes
         Route::get('/product/data', [ProductController::class, 'getProducts'])->name('product.data');
         Route::resource('/product', ProductController::class);
+
+        // customer routes
+        Route::get('/customer/data', [CustomerController::class, 'getCustomers'])->name('customer.data');
+        Route::resource('/customer', CustomerController::class);
+
+        // supplier routes
+        Route::get('/supplier/data', [SupplierController::class, 'getSuppliers'])->name('supplier.data');
+        Route::resource('/supplier', SupplierController::class);
+
+        // expenses category routes
+        Route::get('/expense-category/data', [ExpenseCategoryController::class, 'getExpenseCategories'])->name('expense-category.data');
+        Route::resource('/expense-category', ExpenseCategoryController::class);
+
+        // expenses routes
+        Route::get('/expense/data', [ExpenseController::class, 'getExpenses'])->name('expense.data');
+        Route::resource('/expense', ExpenseController::class);
+
+        // purchase routes
+        Route::get('/purchase/data', [PurchaseController::class, 'getPurchases'])->name('purchase.data');
+        Route::resource('/purchase', PurchaseController::class);
+
+        // sale routes
+        Route::get('/sale/data', [SaleController::class, 'getSales'])->name('sale.data');
+        Route::resource('/sale', SaleController::class);
+
 
     });
     Route::middleware('role:user')->group(function () {

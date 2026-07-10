@@ -12,9 +12,12 @@ class Payment extends Model
 
     protected $fillable = [
         'sale_id',
+        'user_id',
+        'payment_code',
         'method',
         'amount',
         'reference',
+        'notes',
         'paid_at',
     ];
 
@@ -33,5 +36,10 @@ class Payment extends Model
     public function sale()
     {
         return $this->belongsTo(Sale::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

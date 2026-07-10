@@ -26,8 +26,13 @@ class UpdateProductRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'stock_quantity' => 'required|integer|min:0',
+            'cost_price' => 'required|numeric|min:0',
+            'retail_price' => 'required|numeric|min:0',
+            'status' => ['required', Rule::in(ProductStatus::values())],
+            'category_id' => 'required|exists:categories,id',
+            'sku' => 'nullable|string|max:100|unique:products,sku,' . $this->route('product')->id,
+            'barcode' => 'nullable|string|max:100|unique:products,barcode,' . $this->route('product')->id,
+            'low_stock_threshold' => 'required|integer|min:0',
         ];
     }
 

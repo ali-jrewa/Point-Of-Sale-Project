@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\PaymentStatus;
 use App\Enums\SaleStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -14,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
+            $table->string('sale_code')->unique();
 
             $table->foreignId('customer_id')
                 ->nullable()
@@ -24,7 +26,7 @@ return new class extends Migration
                 ->constrained()
                 ->restrictOnDelete();
 
-            $table->string('invoice_number')->unique();
+            $table->string('invoice_number')->nullable()->unique();
 
             $table->decimal('subtotal',12,2);
 
@@ -34,14 +36,28 @@ return new class extends Migration
 
             $table->decimal('total',12,2);
 
-            $table->string('status')->default(SaleStatus::Pending->value);
+            $table->decimal('paid_amount', 12, 2)->default(0);
+
+            $table->decimal('due_amount', 12, 2)->default(0);
+
+            $table->string('sale_status')->default(SaleStatus::Pending->value);
+
+            $table->string('payment_status')->default(PaymentStatus::UnPaid->value);
 
             $table->text('notes')->nullable();
+
+
 
             $table->timestamp('sold_at');
 
             $table->timestamps();
             $table->softDeletes();
+
+            $table->index('sale_status');
+            $table->index('payment_status');
+            $table->index('sold_at');
+            $table->index('invoice_number');
+            $table->index('sale_code');
         });
     }
 

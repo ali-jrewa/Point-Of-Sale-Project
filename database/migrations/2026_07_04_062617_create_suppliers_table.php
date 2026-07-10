@@ -15,13 +15,14 @@ return new class extends Migration
         Schema::create('suppliers', function (Blueprint $table) {
             $table->id();
 
-            $table->string('name');
+            $table->string('first_name');
+            $table->string('last_name');
 
-            $table->string('company')->nullable();
+            $table->string('company_name')->nullable();
 
-            $table->string('phone')->nullable();
+            $table->string('phone')->unique();
 
-            $table->string('email')->nullable();
+            $table->string('email')->nullable()->unique();
 
             $table->text('address')->nullable();
 
@@ -29,11 +30,24 @@ return new class extends Migration
 
           $table->string('status')->default(SupplierStatus::Active->value);
 
+          $table->foreignId('created_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+
+            $table->foreignId('updated_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index('name');
-            $table->index('company');
+            $table->index('first_name');
+            $table->index('last_name');
+            $table->index('phone');
+            $table->index('email');
+            $table->index('company_name');
         });
     }
 

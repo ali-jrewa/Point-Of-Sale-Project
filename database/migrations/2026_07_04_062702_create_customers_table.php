@@ -15,23 +15,49 @@ return new class extends Migration
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
 
-            $table->string('name');
+            $table->string('customer_code')->unique();
 
-            $table->string('phone')->nullable()->unique();
+            $table->string('first_name');
+            $table->string('last_name');
+
+            $table->string('company_name')->nullable();
 
             $table->string('email')->nullable()->unique();
+            $table->string('phone')->unique();
+
+
+            $table->date('date_of_birth')->nullable();
 
             $table->text('address')->nullable();
 
-            // Loyalty Program
-            $table->integer('loyalty_points')->default(0);
+            $table->decimal('credit_limit',12,2)
+            ->default(0);
 
-            $table->string('status')->default(CustomerStatus::Active->value);
+            $table->integer('reward_points')
+            ->default(0)->nullable();
+
+            $table->string('status')->default(CustomerStatus::Inactive->value);;
+
+            $table->text('notes')->nullable();
+
+            $table->foreignId('created_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+
+            $table->foreignId('updated_by')
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
 
             $table->timestamps();
+
             $table->softDeletes();
 
-            $table->index('name');
+            $table->index('first_name');
+            $table->index('last_name');
+            $table->index('email');
+            $table->index('phone');
         });
     }
 

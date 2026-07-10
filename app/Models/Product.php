@@ -22,7 +22,7 @@ class Product extends Model
         'barcode',
         'stock_quantity',
         'low_stock_threshold',
-        'is_active',
+        'status',
     ];
 
     protected $casts = [
@@ -30,7 +30,7 @@ class Product extends Model
         'retail_price' => 'decimal:2',
         'stock_quantity' => 'integer',
         'low_stock_threshold' => 'integer',
-        'is_active' => ProductStatus::class,
+        'status' => ProductStatus::class,
     ];
 
 

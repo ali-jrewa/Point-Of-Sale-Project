@@ -25,6 +25,19 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-12">
+                            <div class="mb-3 row">
+
+                                    <div class="col-md-6">
+                                        <h4 class="mt-3 card-title btn">Search Product</h4>
+                                        <input
+                                            type="text"
+                                            id="search"
+                                            class="form-control"
+                                            placeholder="Search by category, name, barcode or status">
+
+                                    </div>
+
+                                </div>
                             <div class="mb-4 card">
                                 <div class="card-header">
                                     <h3 class="card-title">Product List</h3>
@@ -211,23 +224,39 @@
 </div>
 
  <!-- Flash message content will be inserted here -->
-<div class="flash-message alert alert-success" style="display: none; position: fixed; top: 20px; right: 20px; z-index: 9999; background-color: #d4edda; color: #155724; padding: 10px 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+<div class="flash-message alert alert-success" id="flash" style="display: none; position: fixed; top: 20px; right: 20px; z-index: 9999; background-color: #d4edda; color: #155724; padding: 10px 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dayjs/dayjs.min.js"></script>
 <script type="text/javascript">
 
     $(document).ready(function() {
-        fetchProducts();
+       fetchProducts($("#search").val());
 
 
-        function fetchProducts() {
+        function fetchProducts(search = '') {
             $.ajax({
                 url: "{{ route('admin.product.data') }}",
                 method: 'GET',
+                 data: {
+                        search: search
+                    },
                 success: function(response) {
 
                     let tableBody = '';
+
+                    if (!response.length) {
+
+                        $('#product-table tbody').html(`
+                            <tr>
+                                <td colspan="10" class="py-4 text-center text-muted">
+                                    No products found.
+                                </td>
+                            </tr>
+                        `);
+                        return;
+                    }
+
                     $.each(response, function(index,product) {
 
                         let created_at = product.created_at ? dayjs(product.created_at).format('YYYY-MM-DD HH:mm:ss') : 'N/A';
@@ -236,12 +265,24 @@
                         tableBody += `
                             <tr>
                                 <td>${index + 1}</td>    
-                                <td>${product.category.name}</td> 
+                                <td>${product.category.name ?? 'N/A'}</td> 
                                 <td>${product.name}</td> 
                                 <td>${product.sku}</td>
                                 <td>${product.retail_price}</td>
                                 <td>${product.stock}</td>
-                                <td class="${product.status=== 'active' ? 'text-success' : 'text-danger'}">${product.status ? 'Active' : 'Inactive'}</td>
+                                <td class="
+                                    ${product.status === 'active' ? 'text-success': product.status === 'inactive'
+                                                ? 'text-warning'
+                                                : 'text-danger'
+                                    }">
+                                    ${
+                                        product.status === 'active'
+                                            ? 'Active'
+                                            : product.status === 'inactive'
+                                                ? 'Inactive'
+                                                : 'Archived'
+                                    }
+                                </td>
                                 <td>${created_at}</td>
                                 <td>${updated_at}</td>
                                 <td>
@@ -264,6 +305,22 @@
             });
         }
 
+        // serach
+        let timer;
+
+        $("#search").on("keyup", function () {
+
+            clearTimeout(timer);
+
+            let value = $(this).val();
+
+            timer = setTimeout(function () {
+
+                fetchProducts(value);
+
+            }, 300);
+
+        });
         // edit
         function handleEdit(){
 
@@ -277,7 +334,7 @@
                 url: url,
                 success:function(response){
 
-                $("#edit_category_id").val(response.category.name);
+                $("#edit_category_id").val(response.category.id);
 
                 $("#edit_name").val(response.name);
 
@@ -331,13 +388,21 @@
 
                 success:function(response){
 
+                    $("#flash")
+                    .removeClass('alert-success alert-warning') // Clear previous alert classes
+                    .addClass('alert-danger')
+                    .css({
+                        'background-color': '#f8d7da', // Bootstrap light danger red background
+                        'color': '#721c24'             // Bootstrap dark danger text color
+                    });
+
                     $(".flash-message")
                         .text(response.success)
                         .fadeIn()
                         .delay(3000)
                         .fadeOut();
 
-                    fetchProducts();
+                    fetchProducts($("#search").val());
 
                 },
 
@@ -366,7 +431,7 @@
 
                     $('.flash-message').text(response.success).fadeIn().delay(3000).fadeOut();
 
-                    fetchProducts();
+                   fetchProducts($("#search").val());
                 },
                 error: function(xhr, status, error) {
                     let errors = xhr.responseJSON.errors;
@@ -402,7 +467,15 @@
 
                     $("#editProductModal").modal("hide");
 
-                    fetchProducts();
+                   fetchProducts($("#search").val());
+
+                    $("#flash")
+                    .removeClass('alert-success')
+                    .addClass('alert-warning')
+                    .css({
+                        'background-color': '#fff3cd', // Bootstrap light warning yellow background
+                        'color': '#856404'             // Bootstrap dark warning text color
+                    });
 
                     $(".flash-message")
                         .text(response.success)
@@ -412,7 +485,13 @@
 
                 },
 
-                error:function(xhr){
+                error:function(xhr,error){
+                    let errors = xhr.responseJSON.errors;
+                    let erroeMessage = '';
+                    $.each(errors, function(key, value) {
+                        erroeMessage += value[0] + '\n';
+                    });
+                    alert('Error adding product category:\n' + erroeMessage);
 
                     console.log(xhr.responseText);
 

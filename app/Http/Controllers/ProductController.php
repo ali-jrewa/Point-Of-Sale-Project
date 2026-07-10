@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Http\Requests\Product\UpdateProductRequest;
 use App\Models\Category;
 use App\Services\ProductService;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
@@ -21,16 +22,17 @@ class ProductController extends Controller
         return view('product.list', compact('categories'));
     }
 
-    public function getProducts(){
-        $products = Product::all();
+
+    public function getProducts(Request $request){
+          $products = $this->productService
+            ->search($request->search);
 
         return response()->json($products);
     }
 
     public function store(StoreProductRequest $request)
     {
-        $this->productService
-            ->store($request->validated());
+        $this->productService->store($request->validated());
 
         return response()->json([
             'success' => 'Product created successfully.'
@@ -38,16 +40,15 @@ class ProductController extends Controller
     }
 
     public function edit(Product $product)
-{
-    return response()->json($product);
-}
+    {
+        $product->load('category');
+
+        return response()->json($product);
+    }
 
     public function update(UpdateProductRequest $request,Product $product)
     {
-        $this->productService->update(
-            $product,
-            $request->validated()
-        );
+        $this->productService->update($product,$request->validated());
 
         return response()->json([
             'success' => 'Product updated successfully.'

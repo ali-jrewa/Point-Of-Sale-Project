@@ -22,7 +22,7 @@ return new class extends Migration
                 ->constrained()
                 ->restrictOnDelete();
 
-            $table->integer('quantity');
+            $table->unsignedInteger('quantity');
 
             $table->decimal('unit_cost', 12, 2);
 

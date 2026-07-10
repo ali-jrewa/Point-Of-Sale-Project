@@ -25,22 +25,21 @@ class CategoryController extends Controller
 
     public function store(StoreCategoryRequest $request)
     {
-        $category = $this->categoryService->store($request->validated());
+        $this->categoryService->store($request->validated());
 
 
         return response()->json(['success' => 'Category created successfully.'], 201);
     }
 
-    public function edit(string $id)
+    public function edit(Category $category)
     {
-        $category = Category::findOrFail($id);
 
         return response()->json($category);
     }
 
     public function update(UpdateCategoryRequest $request, Category $category)
     {
-    $category = $this->categoryService->update($category, $request->validated());
+    $this->categoryService->update($category, $request->validated());
 
     return response()->json([
         'success' => 'Category updated successfully.'

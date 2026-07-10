@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\PaymentStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,9 +16,12 @@ return new class extends Migration
         Schema::create('purchases', function (Blueprint $table) {
             $table->id();
 
+            $table->string('purchase_code')->unique();
+
             $table->foreignId('supplier_id')
+                ->nullable()
                 ->constrained()
-                ->restrictOnDelete();
+                ->nullOnDelete();
 
             $table->foreignId('user_id')
                 ->constrained()
@@ -38,17 +42,19 @@ return new class extends Migration
             $table->decimal('total', 12, 2);
 
             // Purchase Status
-            $table->string('status')->default(PurchaseStatus::Pending->value);
+            $table->string('purchase_status')->default(PurchaseStatus::Pending->value);
+            $table->string('payment_status')->default(PaymentStatus::UnPaid->value);
 
             $table->text('notes')->nullable();
 
-            $table->timestamp('purchased_at');
+            $table->date('purchased_at');
 
             $table->timestamps();
             $table->softDeletes();
 
             $table->index('invoice_number');
-            $table->index('status');
+            $table->index('purchase_status');
+            $table->index('payment_status');
         });
     }
 

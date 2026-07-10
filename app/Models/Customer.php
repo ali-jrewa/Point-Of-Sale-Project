@@ -13,22 +13,39 @@ class Customer extends Model
 
     protected $fillable = [
 
-        'name',
+        'customer_code',
 
-        'phone',
+        'first_name',
+
+        'last_name',
+
+        'company_name',
 
         'email',
 
+        'phone',
+
+        'date_of_birth',
+
         'address',
 
-        'loyalty_points',
+        'credit_limit',
 
-        'is_active',
+        'status',
+
+        'notes',
+
+        'created_by',
+
+        'updated_by',
     ];
+
 
     protected $casts = [
 
-        'is_active' => CustomerStatus::class,
+        'status' => CustomerStatus::class,
+
+         'date_of_birth'=>'date',
     ];
 
     /*
@@ -41,4 +58,12 @@ class Customer extends Model
     {
         return $this->hasMany(Sale::class);
     }
+    public function creator()
+    {
+        return $this->belongsTo(User::class,'created_by');
+    }
+    public function updater()
+    {
+        return $this->belongsTo(User::class,'updated_by');
+}
 }

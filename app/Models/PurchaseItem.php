@@ -9,7 +9,7 @@ class PurchaseItem extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
+     protected $fillable = [
         'purchase_id',
         'product_id',
         'quantity',
@@ -19,11 +19,12 @@ class PurchaseItem extends Model
         'subtotal',
     ];
 
-    protected $casts = [
-        'unit_cost' => 'decimal:2',
-        'discount' => 'decimal:2',
-        'tax' => 'decimal:2',
-        'subtotal' => 'decimal:2',
+     protected $casts = [
+        'quantity'   => 'integer',
+        'unit_cost'  => 'decimal:2',
+        'discount'   => 'decimal:2',
+        'tax'        => 'decimal:2',
+        'subtotal'   => 'decimal:2',
     ];
 
     /*

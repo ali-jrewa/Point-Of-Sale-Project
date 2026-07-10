@@ -45,7 +45,6 @@
                                             <tr>
                                                 <th>ID</th>
                                                 <th>Name</th>
-                                                <th>SKU</th>
                                                 <th>Status</th>
                                                 <th>Created At</th>
                                                 <th>Updated At</th>
@@ -82,10 +81,6 @@
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
                         <textarea class="form-control" id="description" name="description"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="sku" class="form-label">SKU</label>
-                        <input type="text" class="form-control" id="sku" name="sku">
                     </div>
                     <div class="mb-3">
                         <label for="status" class="form-label">Status</label>
@@ -145,15 +140,6 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>SKU</label>
-                        <input
-                            type="text"
-                            id="edit_sku"
-                            name="sku"
-                            class="form-control">
-                    </div>
-
-                    <div class="mb-3">
                         <label>Status</label>
                         <select class="form-control" id="edit_status" name="status">
                             <option value="{{ App\Enums\CategoryStatus::Active->value }}">Active</option>
@@ -174,7 +160,7 @@
 </div>
 
  <!-- Flash message content will be inserted here -->
-<div class="flash-message alert alert-success" style="display: none; position: fixed; top: 20px; right: 20px; z-index: 9999; background-color: #d4edda; color: #155724; padding: 10px 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+<div class="flash-message alert alert-success" id="flash" style="display: none; position: fixed; top: 20px; right: 20px; z-index: 9999; background-color: #d4edda; color: #155724; padding: 10px 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dayjs/dayjs.min.js"></script>
@@ -200,7 +186,6 @@
                             <tr>
                                 <td>${index + 1}</td>    
                                 <td>${category.name}</td> 
-                                <td>${category.sku}</td>
                                 <td class="${category.status === 'active' ? 'text-success' : 'text-danger'}">${category.status === 'active' ? 'Active' : 'Inactive'}</td>
                                 <td>${created_at}</td>
                                 <td>${updated_at}</td>
@@ -243,8 +228,6 @@
 
                 $("#edit_slug").val(response.slug);
 
-                $("#edit_sku").val(response.sku);
-
                 $("#edit_status").val(response.status);
 
                 $("#editCategoryForm")
@@ -282,6 +265,14 @@
                 },
 
                 success:function(response){
+
+                    $("#flash")
+                    .removeClass('alert-success alert-warning') // Clear previous alert classes
+                    .addClass('alert-danger')
+                    .css({
+                        'background-color': '#f8d7da', // Bootstrap light danger red background
+                        'color': '#721c24'             // Bootstrap dark danger text color
+                    });
 
                     $(".flash-message")
                         .text(response.success)
@@ -355,6 +346,14 @@
                     $("#editCategoryModal").modal("hide");
 
                     fetchCategories();
+
+                    $("#flash")
+                    .removeClass('alert-success')
+                    .addClass('alert-warning')
+                    .css({
+                        'background-color': '#fff3cd', // Bootstrap light warning yellow background
+                        'color': '#856404'             // Bootstrap dark warning text color
+                    });
 
                     $(".flash-message")
                         .text(response.success)

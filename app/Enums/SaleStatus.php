@@ -11,4 +11,8 @@ enum SaleStatus: string
     case Cancelled = 'cancelled';
 
     case Refunded = 'refunded';
+    public static function values(): array
+    {
+        return array_column(self::cases(),'value');
+    }
 }

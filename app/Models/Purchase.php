@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\PaymentStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,7 +12,9 @@ class Purchase extends Model
 {
     use HasFactory, SoftDeletes;
 
+
     protected $fillable = [
+        'purchase_code',
         'supplier_id',
         'user_id',
         'invoice_number',
@@ -19,7 +22,8 @@ class Purchase extends Model
         'discount',
         'tax',
         'total',
-        'status',
+        'purchase_status',
+        'payment_status',
         'notes',
         'purchased_at',
     ];
@@ -29,8 +33,15 @@ class Purchase extends Model
         'discount' => 'decimal:2',
         'tax' => 'decimal:2',
         'total' => 'decimal:2',
+
+        'purchase_status' => PurchaseStatus::class,
+
+        'payment_status' => PaymentStatus::class,
+
         'purchased_at' => 'datetime',
-        'status' => PurchaseStatus::class,
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     /*
@@ -41,7 +52,7 @@ class Purchase extends Model
 
     public function supplier()
     {
-        return $this->belongsTo(Supplier::class);
+        return $this->belongsTo(Supplier::class)->withTrashed();
     }
 
     public function user()

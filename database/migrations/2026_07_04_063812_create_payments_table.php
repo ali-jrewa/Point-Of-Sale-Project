@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\PaymentMethod;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,15 +19,27 @@ return new class extends Migration
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->string('method');
+            $table->foreignId('user_id')
+            ->constrained()
+            ->restrictOnDelete();
+
+            $table->string('payment_code')->unique();
+
+            $table->string('method')->default(PaymentMethod::Cash->value);
 
             $table->decimal('amount',12,2);
 
             $table->string('reference')->nullable();
 
+            $table->text('notes')->nullable();
+
             $table->timestamp('paid_at');
 
             $table->timestamps();
+
+
+            $table->index('paid_at');
+            $table->index('method');
         });
     }
 

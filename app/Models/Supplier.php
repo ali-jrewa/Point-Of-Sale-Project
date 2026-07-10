@@ -13,9 +13,11 @@ class Supplier extends Model
 
     protected $fillable = [
 
-        'name',
+        'first_name',
 
-        'company',
+        'last_name',
+
+        'company_name',
 
         'phone',
 
@@ -25,12 +27,16 @@ class Supplier extends Model
 
         'tax_number',
 
-        'is_active',
+        'status',
+
+        'created_by',
+
+        'updated_by',
     ];
 
     protected $casts = [
 
-        'is_active' => SupplierStatus::class,
+        'status' => SupplierStatus::class,
     ];
 
     /*

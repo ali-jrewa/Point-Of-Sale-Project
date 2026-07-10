@@ -62,4 +62,14 @@ class User extends Authenticatable
 
         return $this->role->permissions()->where('name', $permissionName)->exists();
     }
+
+    public function sales()
+    {
+        return $this->hasMany(Sale::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
 }
