@@ -36,6 +36,7 @@ return new class extends Migration
             $table->timestamp('paid_at');
 
             $table->timestamps();
+            $table->softDeletes();
 
 
             $table->index('paid_at');

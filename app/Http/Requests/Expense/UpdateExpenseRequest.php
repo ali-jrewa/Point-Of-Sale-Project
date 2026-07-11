@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Expense;
 
 use App\Enums\ExpenseStatus;
-use App\Enums\PaymentMethodStatus;
+use App\Enums\PaymentMethod;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -55,7 +55,7 @@ class UpdateExpenseRequest extends FormRequest
 
             'payment_method' => [
                 'required',
-                Rule::in(PaymentMethodStatus::values())
+                Rule::in(PaymentMethod::values())
             ],
 
             'vendor_name' => [

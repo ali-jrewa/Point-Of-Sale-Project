@@ -3,379 +3,865 @@
 namespace App\Services;
 
 use App\Enums\PaymentStatus;
-use App\Models\Payment;
+use App\Enums\SaleStatus;
 use App\Models\Product;
-use App\Models\Purchase;
 use App\Models\Sale;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
-class  SaleService
+
+class SaleService
 {
 
-    public function search(?string $search,?string $purchaseDate,int $perPage = 10)
-        {
-        return Purchase::with(['supplier','user'])
 
-        ->when($search, function ($query) use ($search) {
+    public function __construct(private PaymentService $paymentService){}
 
-            $query->where(function ($q) use ($search) {
 
-                $q->where('purchase_code','like',"%{$search}%")
-                ->orWhere('invoice_number','like',"%{$search}%")
-                ->orWhere('purchase_status','like',"%{$search}%")
-                ->orWhere('payment_status','like',"%{$search}%")
-                ->orWhereHas('supplier',function($supplier) use ($search){
+    /*
+    |--------------------------------------------------------------------------
+    | Create Sale
+    |--------------------------------------------------------------------------
+    */
 
-                    $supplier->withTrashed()->where(function($q) use($search){
-
-                        $q->where('first_name','like',"%{$search}%")
-                        ->orWhere('last_name','like',"%{$search}%");
-
-                    });
-
-                });
-
-            });
-
-        })
-
-        ->when($purchaseDate,function($query) use($purchaseDate){
-
-            $query->whereDate(
-                'purchased_at',
-                $purchaseDate
-            );
-
-        })
-
-        ->latest()
-        ->paginate($perPage);
-    }
-
-    public function show(int $id): Purchase
+    public function store(array $data): Sale
     {
-        return Purchase::with([
-            'supplier',
-            'user',
-            'items.product'
-        ])->findOrFail($id);
-    }
 
-   public function store(array $data): Sale
-    {
+
         return DB::transaction(function () use ($data) {
 
-        $subtotal = 0;
 
-        foreach ($data['items'] as &$item) {
-
-            $item['discount'] = $item['discount'] ?? 0;
-            $item['tax'] = $item['tax'] ?? 0;
-
-            $item['subtotal'] =
-                ($item['quantity'] * $item['unit_price'])
-                - $item['discount']
-                + $item['tax'];
-
-            $subtotal += $item['subtotal'];
-            }
-
-            $discount = $data['discount'] ?? 0;
-
-            $tax = $data['tax'] ?? 0;
-
-            $grandTotal = $subtotal - $discount + $tax;
-
-            $sale = Sale::create([
-
-                'sale_code' => $this->generateSaleCode(),
-
-                'customer_id' => $data['customer_id'],
-
-                'user_id' => Auth::id(),
-
-                'invoice_number' => $data['invoice_number'] ?? null,
-
-                'subtotal' => $subtotal,
-
-                'discount' => $discount,
-
-                'tax' => $tax,
-
-                'total' => $grandTotal,
-
-                'paid_amount' => 0,
-
-                'due_amount' => $grandTotal,
-
-                'sale_status' => $data['sale_status'],
-
-                'payment_status' => PaymentStatus::UnPaid,
-
-                'notes' => $data['notes'] ?? null,
-
-                'sold_at' => $data['sold_at'],
-
-            ]);
-
-            foreach ($data['items'] as $item) {
-
-                SaleItem::create([
-
-                    'sale_id' => $sale->id,
-
-                    'product_id' => $item['product_id'],
-
-                    'quantity' => $item['quantity'],
-
-                    'unit_price' => $item['unit_price'],
-
-                    'discount' => $item['discount'],
-
-                    'tax' => $item['tax'],
-
-                    'subtotal' => $item['subtotal'],
-
-                ]);
-
-                Product::where('id', $item['product_id'])
-                    ->decrement('stock_quantity', $item['quantity']);
-            }
-
-            if (
-                isset($data['payment']['amount'])
-                && $data['payment']['amount'] > 0
-            ) {
-
-                Payment::create([
-
-                    'sale_id' => $sale->id,
-
-                    'user_id' => Auth::id(),
-
-                    'payment_code' => $this->generatePaymentCode(),
-
-                    'method' => $data['payment']['method'],
-
-                    'amount' => $data['payment']['amount'],
-
-                    'reference' => $data['payment']['reference'] ?? null,
-
-                    'notes' => $data['payment']['notes'] ?? null,
-
-                    'paid_at' => now(),
-
-                ]);
-            }
-
-            $this->updatePaymentSummary($sale);
-
-            return $sale->fresh([
-                'customer',
-                'items.product',
-                'payments',
-            ]);
-        });
-    }
-    protected function updatePaymentSummary(Sale $sale): void
-    {
-        $paidAmount = $sale->payments()->sum('amount');
-
-        $dueAmount = max(
-            0,
-            $sale->total - $paidAmount
-        );
-
-        if ($paidAmount <= 0) {
-
-            $status = PaymentStatus::UnPaid;
-
-        } elseif ($paidAmount < $sale->total) {
-
-            $status = PaymentStatus::Partial;
-
-        } else {
-
-            $status = PaymentStatus::Paid;
-        }
-
-        $sale->update([
-
-            'paid_amount' => $paidAmount,
-
-            'due_amount' => $dueAmount,
-
-            'payment_status' => $status,
-
-        ]);
-    }
-
-    protected function generateSaleCode(): string
-    {
-        do {
-
-            $code = 'SAL-' . strtoupper(Str::random(8));
-
-        } while (Sale::where('sale_code', $code)->exists());
-
-        return $code;
-    }
-
-    protected function generatePaymentCode(): string
-    {
-        do {
-
-            $code = 'PAY-' . strtoupper(Str::random(8));
-
-        } while (Payment::where('payment_code', $code)->exists());
-
-        return $code;
-    }
-
-    public function update(Purchase $purchase, array $data): Purchase
-    {
-        return DB::transaction(function () use ($purchase, $data) {
 
             /*
-            |----------------------------------------------------
-            | Restore Old Stock
-            |----------------------------------------------------
+            |--------------------------------------------------------------------------
+            | Calculate Sale Items
+            |--------------------------------------------------------------------------
             */
 
-            foreach ($purchase->items as $oldItem) {
-
-                $product = Product::findOrFail($oldItem['product_id']);
-
-                $product->decrement('stock_quantity', $oldItem['quantity']);
-            }
-
-            /*
-            |----------------------------------------------------
-            | Delete Old Purchase Items
-            |----------------------------------------------------
-            */
-
-            $purchase->items()->delete();
-
-            /*
-            |----------------------------------------------------
-            | Recalculate Totals
-            |----------------------------------------------------
-            */
 
             $subtotal = 0;
 
-            foreach ($data['items'] as $item) {
 
-                $subtotal +=
-                    ($item['quantity'] * $item['unit_cost'])
-                    - ($item['discount'] ?? 0)
-                    + ($item['tax'] ?? 0);
+
+            foreach($data['items'] as &$item)
+            {
+
+
+                $lineSubtotal =
+                    ($item['quantity'] * $item['unit_price'])
+                    -
+                    ($item['discount'] ?? 0)
+                    +
+                    ($item['tax'] ?? 0);
+
+
+
+                $item['subtotal'] =
+                    $lineSubtotal;
+
+
+
+                $subtotal += $lineSubtotal;
+
+
             }
 
-            $discount = $data['discount'] ?? 0;
 
-            $tax = $data['tax'] ?? 0;
 
-            $total = ($subtotal - $discount) + $tax;
+
+            $discount =
+                $data['discount'] ?? 0;
+
+
+
+            $tax =
+                $data['tax'] ?? 0;
+
+
+
+
+            $total =
+                $subtotal
+                -
+                $discount
+                +
+                $tax;
+
+
+
+
+
 
             /*
-            |----------------------------------------------------
-            | Update Purchase
-            |----------------------------------------------------
+            |--------------------------------------------------------------------------
+            | Create Sale
+            |--------------------------------------------------------------------------
             */
 
-            $purchase->update([
 
-                'supplier_id' => $data['supplier_id'],
+            $sale = Sale::create([
 
-                'invoice_number' => $data['invoice_number'] ?? null,
 
-                'subtotal' => $subtotal,
+                'sale_code'=>
+                    $this->generateSaleCode(),
 
-                'discount' => $discount,
 
-                'tax' => $tax,
 
-                'total' => $total,
+                'customer_id'=>
+                    $data['customer_id'] ?? null,
 
-                'purchase_status' => $data['purchase_status'],
 
-                'payment_status' => $data['payment_status'],
 
-                'notes' => $data['notes'] ?? null,
+                'user_id'=>
+                    Auth::id(),
 
-                'purchased_at' => $data['purchased_at'],
+
+
+                'invoice_number'=>
+                    $data['invoice_number'] ?? null,
+
+
+
+                'subtotal'=>
+                    $subtotal,
+
+
+
+                'discount'=>
+                    $discount,
+
+
+
+                'tax'=>
+                    $tax,
+
+
+
+                'total'=>
+                    $total,
+
+
+
+                'paid_amount'=>0,
+
+
+
+                'due_amount'=>
+                    $total,
+
+
+
+                'sale_status'=>
+                    $data['sale_status']
+                    ??
+                    SaleStatus::Completed,
+
+
+
+                'payment_status'=>
+                    PaymentStatus::UnPaid,
+
+
+
+                'notes'=>
+                    $data['notes'] ?? null,
+
+
+
+                'sold_at'=>
+                    $data['sold_at'],
+
+
 
             ]);
 
+
+
+
+
+
+
+
             /*
-            |----------------------------------------------------
-            | Create New Purchase Items
-            |----------------------------------------------------
+            |--------------------------------------------------------------------------
+            | Create Sale Items + Reduce Stock
+            |--------------------------------------------------------------------------
             */
 
-            foreach ($data['items'] as $item) {
 
-                $lineSubtotal =
-                    ($item['quantity'] * $item['unit_cost'])
-                    - ($item['discount'] ?? 0)
-                    + ($item['tax'] ?? 0);
+            foreach($data['items'] as $item)
+            {
 
-                $purchase->items()->create([
 
-                    'product_id' => $item['product_id'],
 
-                    'quantity' => $item['quantity'],
+                $product = Product::lockForUpdate()->findOrFail($item['product_id']);
 
-                    'unit_cost' => $item['unit_cost'],
 
-                    'discount' => $item['discount'] ?? 0,
 
-                    'tax' => $item['tax'] ?? 0,
 
-                    'subtotal' => $lineSubtotal,
+                if(
+                    $product->stock_quantity
+                    <
+                    $item['quantity']
+                )
+                {
+
+
+                    throw ValidationException::withMessages([
+
+                        'items'=>
+                        "Not enough stock for {$product->name}"
+
+                    ]);
+
+
+                }
+
+
+
+
+
+
+                $sale->items()->create([
+
+
+                    'product_id'=>
+                        $product->id,
+
+
+
+                    'quantity'=>
+                        $item['quantity'],
+
+
+
+                    'unit_price'=>
+                        $item['unit_price'],
+
+
+
+                    'discount'=>
+                        $item['discount'] ?? 0,
+
+
+
+                    'tax'=>
+                        $item['tax'] ?? 0,
+
+
+
+                    'subtotal'=>
+                        $item['subtotal'],
+
+
 
                 ]);
 
-                $product = Product::findOrFail($item['product_id']);
 
-                $product->increment('stock_quantity', $item['quantity']);
+
+
+
+
+                $product->decrement(
+
+                    'stock_quantity',
+
+                    $item['quantity']
+
+                );
+
+
+
             }
 
-            return $purchase;
-        });
-    }
 
-     public function delete(Purchase $purchase): void
-    {
-        DB::transaction(function () use ($purchase) {
 
-            foreach ($purchase->items as $item) {
 
-                $product = Product::findOrFail($item['product_id']);
 
-                $product->decrement('stock_quantity', $item['quantity']);
+
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Create First Payment
+            |--------------------------------------------------------------------------
+            */
+
+
+            if(
+                isset($data['payment'])
+            )
+            {
+
+
+                $this->paymentService->store(
+
+                    $sale,
+
+                    $data['payment']
+
+                );
+
+
             }
 
-            $purchase->items()->delete();
 
-            $purchase->delete();
+
+
+            return $sale->fresh([
+
+                'items',
+
+                'payments'
+
+            ]);
+
+
+
         });
+
+
+
     }
 
 
 
-    protected function generatePurchaseCode(Purchase $purchase): string
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Update Sale
+    |--------------------------------------------------------------------------
+    */
+
+    public function update(
+        Sale $sale,
+        array $data
+    ): Sale
     {
-        return 'PUR-' . str_pad(
-            $purchase->id,
-            6,
-            '0',
-            STR_PAD_LEFT
+
+
+
+        return DB::transaction(function () use ($sale,$data) {
+
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Restore Old Stock
+            |--------------------------------------------------------------------------
+            */
+
+
+            foreach($sale->items as $item)
+            {
+
+
+                Product::where(
+                    'id',
+                    $item->product_id
+                )
+                ->increment(
+                    'stock_quantity',
+                    $item->quantity
+                );
+
+
+            }
+
+
+
+            $sale->items()->delete();
+
+
+
+
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Recalculate
+            |--------------------------------------------------------------------------
+            */
+
+
+            $subtotal = 0;
+
+
+
+            foreach($data['items'] as &$item)
+            {
+
+
+                $lineSubtotal =
+                    ($item['quantity']
+                    *
+                    $item['unit_price'])
+                    -
+                    ($item['discount'] ?? 0)
+                    +
+                    ($item['tax'] ?? 0);
+
+
+
+                $item['subtotal'] =
+                    $lineSubtotal;
+
+
+
+                $subtotal += $lineSubtotal;
+
+
+            }
+
+
+
+            $discount =
+                $data['discount'] ?? 0;
+
+
+
+            $tax =
+                $data['tax'] ?? 0;
+
+
+
+
+            $total =
+                $subtotal
+                -
+                $discount
+                +
+                $tax;
+
+
+        if($sale->paid_amount > $total)
+{
+    throw ValidationException::withMessages([
+        'total' =>
+        'You cannot reduce the sale total below the amount already paid.'
+    ]);
+}
+
+
+
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Update Sale
+            |--------------------------------------------------------------------------
+            */
+
+
+            $sale->update([
+
+
+                'customer_id'=>
+                    $data['customer_id'] ?? null,
+
+
+
+                'invoice_number'=>
+                    $data['invoice_number'] ?? null,
+
+
+
+                'subtotal'=>
+                    $subtotal,
+
+
+
+                'discount'=>
+                    $discount,
+
+
+
+                'tax'=>
+                    $tax,
+
+
+
+                'total'=>
+                    $total,
+
+
+
+                'sale_status'=>
+                    $data['sale_status']
+                    ??
+                    SaleStatus::Completed,
+
+
+
+                'notes'=>
+                    $data['notes'] ?? null,
+
+
+
+                'sold_at'=>
+                    $data['sold_at'],
+
+
+
+            ]);
+
+
+
+
+
+
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Create New Items + Reduce Stock
+            |--------------------------------------------------------------------------
+            */
+
+
+            foreach($data['items'] as $item)
+            {
+
+
+
+                $product =
+                    Product::findOrFail(
+                        $item['product_id']
+                    );
+
+
+
+                if(
+                    $product->stock_quantity
+                    <
+                    $item['quantity']
+                )
+                {
+
+                    throw ValidationException::withMessages([
+
+                        'items'=>
+                        "Not enough stock for {$product->name}"
+
+                    ]);
+
+                }
+
+
+
+
+
+                $sale->items()->create([
+
+
+                    'product_id'=>
+                        $product->id,
+
+
+                    'quantity'=>
+                        $item['quantity'],
+
+
+                    'unit_price'=>
+                        $item['unit_price'],
+
+
+                    'discount'=>
+                        $item['discount'] ?? 0,
+
+
+                    'tax'=>
+                        $item['tax'] ?? 0,
+
+
+                    'subtotal'=>
+                        $item['subtotal'],
+
+
+
+                ]);
+
+
+
+
+
+                $product->decrement(
+
+                    'stock_quantity',
+
+                    $item['quantity']
+
+                );
+
+
+            }
+
+
+
+
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Recalculate Existing Payments
+            |--------------------------------------------------------------------------
+            */
+
+
+            $this->paymentService
+                ->updateSalePayment($sale);
+
+
+
+
+            return $sale->fresh([
+
+                'items',
+
+                'payments'
+
+            ]);
+
+
+
+        });
+
+
+    }
+
+
+
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Delete Sale
+    |--------------------------------------------------------------------------
+    */
+
+
+    public function destroy(Sale $sale): void
+    {
+
+
+        DB::transaction(function() use($sale){
+
+
+
+            foreach($sale->items as $item)
+            {
+
+
+                Product::where(
+                    'id',
+                    $item->product_id
+                )
+                ->increment(
+                    'stock_quantity',
+                    $item->quantity
+                );
+
+
+            }
+
+            $sale->payments()->delete();
+
+            $sale->delete();
+
+
+
+        });
+
+
+    }
+
+
+
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Get Sales
+    |--------------------------------------------------------------------------
+    */
+
+
+    public function getSales(
+    ?string $search = null,
+    ?string $saleDate = null
+)
+{
+    return Sale::with([
+        'customer',
+        'user'
+    ])
+
+    ->when($search, function ($query) use ($search) {
+
+        $query->where(function ($query) use ($search) {
+
+            $query->where(
+                    'sale_code',
+                    'like',
+                    "%{$search}%"
+                )
+                ->orWhere(
+                    'invoice_number',
+                    'like',
+                    "%{$search}%"
+                )
+                ->orWhere(
+                    'sale_status',
+                    'like',
+                    "%{$search}%"
+                )
+                ->orWhere(
+                    'payment_status',
+                    'like',
+                    "%{$search}%"
+                )
+                ->orWhereHas('customer', function ($customer) use ($search) {
+
+                    $customer->where(
+                            'first_name',
+                            'like',
+                            "%{$search}%"
+                        )
+                        ->orWhere(
+                            'last_name',
+                            'like',
+                            "%{$search}%"
+                        );
+
+                });
+
+        });
+
+    })
+
+    ->when($saleDate, function ($query) use ($saleDate) {
+
+        $query->whereDate(
+            'sold_at',
+            $saleDate
         );
+
+    })
+
+    ->latest()
+    ->paginate(10);
+}
+
+
+
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Show
+    |--------------------------------------------------------------------------
+    */
+
+
+    public function show(int $id): Sale
+    {
+        return Sale::with([
+            'customer',
+            'user',
+            'items.product',
+            'payments.user',
+            'refunds.items.product',
+        ])
+        ->findOrFail($id);
     }
+
+
+
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Edit
+    |--------------------------------------------------------------------------
+    */
+
+
+    public function edit(int $id): Sale
+    {
+
+
+        return Sale::with([
+
+            'customer',
+
+            'items.product',
+
+            'payments.user'
+
+        ])
+        ->findOrFail($id);
+
+
+    }
+
+
+
+
+
+
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Generate Sale Code
+    |--------------------------------------------------------------------------
+    */
+
+
+    private function generateSaleCode(): string
+    {
+
+
+        do {
+
+
+            $code =
+            'SAL-'
+            .
+            now()->format('Ymd')
+            .
+            '-'
+            .
+            strtoupper(Str::random(5));
+
+
+        }
+        while(
+            Sale::where(
+                'sale_code',
+                $code
+            )->exists()
+        );
+
+
+
+        return $code;
+
+
+    }
+
+
 
 }

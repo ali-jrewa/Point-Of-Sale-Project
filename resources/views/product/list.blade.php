@@ -269,7 +269,7 @@
                                 <td>${product.name}</td> 
                                 <td>${product.sku}</td>
                                 <td>${product.retail_price}</td>
-                                <td>${product.stock}</td>
+                                <td>${product.stock_quantity}</td>
                                 <td class="
                                     ${product.status === 'active' ? 'text-success': product.status === 'inactive'
                                                 ? 'text-warning'

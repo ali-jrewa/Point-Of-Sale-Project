@@ -103,7 +103,7 @@
                                                 <td style="font-size: 15px;align-content:center">${{ number_format($purchase->tax,2) }}</td>
                                                 <td style="font-size: 15px;align-content:center">${{ number_format($purchase->total,2) }}</td>
                                                 <td style="font-size: 15px;align-content:center">
-                                                    <span class="{{ $purchase->purchase_status->value == 'completed'
+                                                    <span class="{{ $purchase->purchase_status->value == 'received'
                                                             ? 'text-success'
                                                             : ($purchase->purchase_status->value == 'pending'
                                                                 ? 'text-warning'
@@ -122,16 +122,16 @@
                                                 </td>
                                                 <td style="font-size: 15px;align-content:center">{{ \Carbon\Carbon::parse($purchase->purchased_at)->format('Y-m-d') }}</td>
                                                 <td style="font-size: 15px;align-content:center">
-                                                    
-                                                    
+
+
                                                     <button
                                                         class="btn btn-warning w-100 edit-btn"
                                                         data-id="{{ $purchase->id }}">Edit</button>
                                                     <button
                                                         class="btn btn-danger delete-btn w-100" style="text-"
                                                         data-id="{{ $purchase->id }}">Delete</button>
-                                                        
-                                                    <a role="button" 
+
+                                                    <a role="button"
                                                         href="{{ route('admin.purchase.show', $purchase->id) }}"
                                                         class="btn btn-info w-100">
                                                         View
@@ -851,7 +851,7 @@ $(document).ready(function () {
                                 </button>
 
                                 <a role="button" 
-                                    href="{{ route('admin.purchase.show', $purchase->id) }}"
+                                    href="${'{{ route('admin.purchase.show', ':id') }}'.replace(':id', purchase.id)}"
                                     class="btn btn-info w-100">
                                     View
                                 </a>

@@ -13,21 +13,27 @@ class Sale extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'sale_code',
-        'customer_id',
-        'user_id',
-        'invoice_number',
-        'subtotal',
-        'discount',
-        'tax',
-        'total',
-        'paid_amount',
-        'due_amount',
-        'sale_status',
-        'payment_status',
-        'notes',
-        'sold_at',
-    ];
+
+    'sale_code',
+    'customer_id',
+    'user_id',
+    'invoice_number',
+
+    'subtotal',
+    'discount',
+    'tax',
+    'total',
+
+    'paid_amount',
+    'due_amount',
+
+    'sale_status',
+    'payment_status',
+
+    'notes',
+    'sold_at',
+
+];
 
 
     protected $casts = [
@@ -66,5 +72,10 @@ class Sale extends Model
     public function payments()
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public function refunds()
+    {
+         return $this->hasMany(Refund::class);
     }
 }

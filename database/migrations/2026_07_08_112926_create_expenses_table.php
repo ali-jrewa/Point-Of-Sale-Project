@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\ExpenseStatus;
+use App\Enums\PaymentMethod;
 use App\Enums\PaymentMethodStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -36,7 +37,7 @@ return new class extends Migration
 
             // Payment Information
             $table->string('payment_method')
-                ->default(PaymentMethodStatus::Cash->value);
+                ->default(PaymentMethod::Cash->value);
 
             // Paid To
             $table->string('vendor_name')->nullable();

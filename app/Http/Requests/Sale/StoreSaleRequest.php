@@ -8,98 +8,265 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreSaleRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
+
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
-     public function rules(): array
+
+
+    public function rules(): array
     {
+
         return [
 
-            'customer_id' => 'nullable|exists:customers,id',
+            /*
+            |--------------------------------------------------------------------------
+            | Sale Information
+            |--------------------------------------------------------------------------
+            */
 
-            'invoice_number' => 'nullable|string|max:100',
+            'customer_id' => [
+                'nullable',
+                'exists:customers,id'
+            ],
 
-            'sold_at' => 'required|date',
 
-            'sale_status' => 'required|in:'.implode(',',SaleStatus::values()),
+            'invoice_number' => [
+                'nullable',
+                'string',
+                'max:100'
+            ],
 
-            'discount' => 'nullable|numeric|min:0',
 
-            'tax' => 'nullable|numeric|min:0',
+            'sold_at' => [
+                'required',
+                'date'
+            ],
 
-            'notes' => 'nullable|string',
 
-            'payment.amount' => 'nullable|numeric|min:0',
 
-            'payment.method' => 'nullable|in:'.implode(',',PaymentMethod::values()),
+            'sale_status' => [
+                'nullable',
+                'in:'.implode(',',SaleStatus::values())
+            ],
 
-            'payment.reference' => 'nullable|string|max:255',
 
-            'payment.notes' => 'nullable|string',
 
-            'items' => 'required|array|min:1',
+            'discount' => [
+                'nullable',
+                'numeric',
+                'min:0'
+            ],
 
-            'items.*.product_id' => 'required|exists:products,id',
 
-            'items.*.quantity' => 'required|integer|min:1',
 
-            'items.*.unit_price' => 'required|numeric|min:0',
+            'tax' => [
+                'nullable',
+                'numeric',
+                'min:0'
+            ],
 
-            'items.*.discount' => 'nullable|numeric|min:0',
 
-            'items.*.tax' => 'nullable|numeric|min:0',
+
+            'notes'=>[
+                'nullable',
+                'string'
+            ],
+
+
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Payment
+            |--------------------------------------------------------------------------
+            */
+
+
+            'payment.amount'=>[
+
+                'nullable',
+                'numeric',
+                'min:0'
+
+            ],
+
+
+
+            'payment.method'=>[
+
+                'required_with:payment.amount',
+                'in:'.implode(',',PaymentMethod::values())
+
+            ],
+
+
+
+            'payment.reference'=>[
+
+                'nullable',
+                'string',
+                'max:255'
+
+            ],
+
+
+
+            'payment.notes'=>[
+
+                'nullable',
+                'string'
+
+            ],
+
+
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Products
+            |--------------------------------------------------------------------------
+            */
+
+
+            'items'=>[
+
+                'required',
+                'array',
+                'min:1'
+
+            ],
+
+
+
+            'items.*.product_id'=>[
+
+                'required',
+                'exists:products,id'
+
+            ],
+
+
+
+            'items.*.quantity'=>[
+
+                'required',
+                'integer',
+                'min:1'
+
+            ],
+
+
+
+            'items.*.unit_price'=>[
+
+                'required',
+                'numeric',
+                'min:0'
+
+            ],
+
+
+
+            'items.*.discount'=>[
+
+                'nullable',
+                'numeric',
+                'min:0'
+
+            ],
+
+
+
+            'items.*.tax'=>[
+
+                'nullable',
+                'numeric',
+                'min:0'
+
+            ],
+
+
 
         ];
+
     }
+
+
 
     public function messages(): array
     {
+
         return [
 
-            'customer_id.exists' => 'Selected customer does not exist.',
+            'customer_id.exists'
+            =>
+            'Selected customer does not exist.',
 
-            'invoice_number.max' => 'Invoice number may not exceed 100 characters.',
 
-            'sale_status.required' => 'Sale status is required.',
+            'sold_at.required'
+            =>
+            'Sale date is required.',
 
-            'sold_at.required' => 'Sale date is required.',
 
-            'sold_at.date' => 'Sale date is invalid.',
 
-            'items.required' => 'Please add at least one product.',
+            'sale_status.required'
+            =>
+            'Sale status is required.',
 
-            'items.array' => 'Products format is invalid.',
 
-            'items.min' => 'Please add at least one product.',
 
-            'items.*.product_id.required' => 'Please select a product.',
+            'payment.amount.numeric'
+            =>
+            'Payment amount must be numeric.',
 
-            'items.*.product_id.exists' => 'Selected product does not exist.',
 
-            'items.*.quantity.required' => 'Quantity is required.',
 
-            'items.*.quantity.integer' => 'Quantity must be an integer.',
+            'payment.method.required_with'
+            =>
+            'Payment method is required when payment amount exists.',
 
-            'items.*.quantity.min' => 'Quantity must be at least 1.',
 
-            'items.*.unit_price.required' => 'Unit price is required.',
 
-            'items.*.unit_price.numeric' => 'Unit price must be numeric.',
+            'items.required'
+            =>
+            'Please add at least one product.',
 
-            'items.*.discount.numeric' => 'Discount must be numeric.',
 
-            'items.*.tax.numeric' => 'Tax must be numeric.',
+
+            'items.min'
+            =>
+            'Please add at least one product.',
+
+
+
+            'items.*.product_id.required'
+            =>
+            'Product is required.',
+
+
+
+            'items.*.quantity.required'
+            =>
+            'Product quantity is required.',
+
+
+
+            'items.*.quantity.min'
+            =>
+            'Quantity must be at least 1.',
+
+
+
+            'items.*.unit_price.required'
+            =>
+            'Product price is required.',
+
 
         ];
+
     }
+
 }

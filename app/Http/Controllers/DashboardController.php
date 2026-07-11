@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
+use App\Models\Product;
+use App\Models\Purchase;
+use App\Models\Sale;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -10,11 +14,21 @@ class DashboardController extends Controller
     {
         if(Auth::user()->role->name === "admin"){
 
-            return view('dashboard.admin_list');
+            $data['TotalProducts'] = Product::count();
+            $data['TotalSales'] = Sale::count();
+            $data['TotalCustomers'] = Customer::count();
+            $data['TotalPurchases'] = Purchase::count();
+            $products = Product::select('name' , 'retail_price')->get();
+            $chartData = [
+                'categories' => $products->pluck('name')->toArray(),
+                'data' => $products->pluck('retail_price')->toArray()
+            ];
 
-        }else if (Auth::user()->role->name === "user"){
+            return view('dashboard.admin_list' , ['chartData' => $chartData , 'data' => $data]);
 
-            return view('dashboard.user_list');
+        }else if (Auth::user()->role->name === "cashier"){
+
+            return view('dashboard.cashier_list');
             }
 
     }

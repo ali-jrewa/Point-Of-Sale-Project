@@ -6,8 +6,10 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseCategoryController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\RefundController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SupplierController;
 use App\Models\ExpenseCategory;
@@ -64,10 +66,17 @@ Route::middleware('auth')->group(function () {
         Route::get('/sale/data', [SaleController::class, 'getSales'])->name('sale.data');
         Route::resource('/sale', SaleController::class);
 
+        //payment routes
+        Route::post('/sale/{sale}/payment',    [PaymentController::class,'store'])->name('sale.payment.store');
 
-    });
-    Route::middleware('role:user')->group(function () {
-        Route::get('/user/dashboard', [DashboardController::class, 'dashboard'])->name('user.dashboard');
+        //refund routes
+        Route::get('sales/{sale}/refund', [RefundController::class, 'create'])->name('sale.refund.create');
+        Route::post('sales/{sale}/refund', [RefundController::class, 'store'])->name('sale.refund.store');
+        Route::delete('refunds/{refund}', [RefundController::class, 'destroy'])->name('refund.destroy');
+
+        });
+    Route::middleware('role:cashier')->group(function () {
+        Route::get('/cashier/dashboard', [DashboardController::class, 'dashboard'])->name('cashier.dashboard');
     });
 
 

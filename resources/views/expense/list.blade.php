@@ -63,17 +63,17 @@
                                     <table id="expense-table" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
-                                                <th>Expense No.</th>
-                                                <th>Category</th>
-                                                <th>Title</th>
-                                                <th>Vendor</th>
-                                                <th>Amount</th>
-                                                <th>Expense Date</th>
-                                                <th>Payment Method</th>
-                                                <th>Status</th>
-                                                <th>Created At</th>
-                                                <th>Updated At</th>
-                                                <th>Actions</th>
+                                                <th style="font-size: 15px">Expense No.</th>
+                                                <th style="font-size: 15px">Category</th>
+                                                <th style="font-size: 15px">Title</th>
+                                                <th style="font-size: 15px">Vendor</th>
+                                                <th style="font-size: 15px">Amount</th>
+                                                <th style="font-size: 15px">Expense Date</th>
+                                                <th style="font-size: 15px">Payment Method</th>
+                                                <th style="font-size: 15px">Status</th>
+                                                <th style="font-size: 15px">Created At</th>
+                                                <th style="font-size: 15px">Updated At</th>
+                                                <th style="font-size: 15px">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -116,7 +116,7 @@
                                                 </tr>
                                             @empty
                                                 <tr>
-                                                    <td colspan="9" class="text-center">No expenses found.</td>
+                                                    <td colspan="10" class="text-center">No expenses found.</td>
                                                 </tr>
                                             @endforelse
                                             @if(!empty($totalAmount))                                            <tr >
@@ -460,7 +460,7 @@
                     if (!response || response.length === 0) {
                         tableBody = `
                             <tr>
-                                <td colspan="8" class="text-center">
+                                <td colspan="10" class="text-center">
                                     No expenses found.
                                 </td>
                             </tr>
