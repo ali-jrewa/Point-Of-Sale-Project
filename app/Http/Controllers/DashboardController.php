@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\Payment;
 use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\Sale;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -18,6 +20,8 @@ class DashboardController extends Controller
             $data['TotalSales'] = Sale::count();
             $data['TotalCustomers'] = Customer::count();
             $data['TotalPurchases'] = Purchase::count();
+            $data['TotalUsers'] = User::whereIn('role_id',[3,2])->count();
+            $data['TotalPayments'] = Payment::sum('amount');
             $products = Product::select('name' , 'retail_price')->get();
             $chartData = [
                 'categories' => $products->pluck('name')->toArray(),

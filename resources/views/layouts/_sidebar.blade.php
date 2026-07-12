@@ -59,13 +59,13 @@
                             </a>
                         </li>
 
-                        <li class="nav-item"> <a href="{{ route('admin.sale.index') }}" class="nav-link @if (Request::segment(2) == 'sale') active @endif"> <i class="nav-icon fa fa-dollar"></i>
+                        <li class="nav-item"> <a href="{{ route('admin.sale.index') }}" class="nav-link @if (Request::segment(2) == 'sale') active @endif"> <i class="nav-icon fa fa-cart-plus"></i>
                                 <p>Sales List</p>
                             </a>
                         </li>
 
-                        <li class="nav-item"> <a href="" class="nav-link"> <i class="nav-icon fa fa-cart-plus"></i>
-                                <p>New Transaction</p>
+                        <li class="nav-item"> <a href="{{ route('admin.sale.index') }}" class="nav-link"> <i class="nav-icon fa fa-dollar"></i>
+                                <p>Payments</p>
                             </a>
                         </li>
 
@@ -83,8 +83,8 @@
 
                         <li class="nav-header">System</li>
 
-                        <li class="nav-item"> <a href="" class="nav-link"> <i class="nav-icon fa fa-users"></i>
-                                <p>User</p>
+                        <li class="nav-item"> <a href="{{ route('admin.user.index') }}" class="nav-link @if (Request::segment(2) == 'user') active @endif"> <i class="nav-icon fa fa-users"></i>
+                                <p>Users</p>
                             </a>
                         </li>
 
@@ -92,7 +92,7 @@
                                 <p>Setting</p>
                             </a>
                         </li>
-                        @elseif(Auth::user()->role->name == 'admin')
+                        @elseif(Auth::user()->role->name == 'manager')
                         <li class="nav-item"> <a href="{{ url('/admin/dashboard') }}" class="nav-link @if (Request::segment(2) == 'dashboard') active @endif"> <i class="nav-icon fa fa-dashboard"></i>
                                 <p>Dashboard</p>
                             </a>
@@ -137,12 +137,12 @@
                             </a>
                         </li>
 
-                        <li class="nav-item"> <a href="{{ route('admin.sale.index') }}" class="nav-link @if (Request::segment(2) == 'sale') active @endif"> <i class="nav-icon fa fa-dollar"></i>
+                        <li class="nav-item"> <a href="{{ route('admin.sale.index') }}" class="nav-link @if (Request::segment(2) == 'sale') active @endif"> <i class="nav-icon fa fa-cart-plus"></i>
                                 <p>Sales List</p>
                             </a>
                         </li>
 
-                        <li class="nav-item"> <a href="" class="nav-link"> <i class="nav-icon fa fa-cart-plus"></i>
+                        <li class="nav-item"> <a href="" class="nav-link"> <i class="nav-icon fa fa-dollar"></i>
                                 <p>New Transaction</p>
                             </a>
                         </li>
@@ -157,6 +157,21 @@
 
                         <li class="nav-item active"> <a href="{{ url('user/dashboard') }}" class="nav-link"> <i class="nav-icon bi bi-palette"></i>
                                 <p>Dashboard</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item"> <a href="{{ route('admin.sale.index') }}" class="nav-link @if (Request::segment(2) == 'sale') active @endif"> <i class="nav-icon fa fa-dollar"></i>
+                                <p>Sales List</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item"> <a href="{{ route('user.transaction.create') }}" class="nav-link @if (Request::segment(2) == 'transaction') active @endif"> <i class="nav-icon fa fa-cart-plus"></i>
+                                <p>New Transaction</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item"> <a href="{{ route('user.transaction.index') }}" class="nav-link @if (Request::segment(2) == 'transaction') active @endif"> <i class="nav-icon fa fa-cart-arrow-down"></i>
+                                <p>Active Transaction</p>
                             </a>
                         </li>
 

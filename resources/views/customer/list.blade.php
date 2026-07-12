@@ -78,9 +78,10 @@
                                                     <td class="{{ $customer->status->value === 'active' ? 'text-success' : ($customer->status->value === 'inactive' ? 'text-warning' : 'text-danger') }}">
                                                         {{ ucfirst($customer->status->value) }}
                                                     </td>
-                                                    <td>
+                                                    <td style="text-align:center">
                                                         <button class="btn btn-sm edit-btn btn-warning" data-id="{{ $customer->id }}">Edit</button>
                                                         <button class="btn btn-sm delete-btn btn-danger" data-id="{{ $customer->id }}">Delete</button>
+                                                        <button class="btn btn-sm add-credit-btn btn-info" data-id="{{ $customer->id }}">Add Credit</button>
                                                     </td>
                                                 </tr>
                                             @empty
@@ -245,6 +246,36 @@
     </div>
 </div>
 
+{{-- Add Credit Modal --}}
+<div class="modal fade" id="addCreditModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>Add Credit</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addCreditForm">
+                    @csrf
+                    <div class="mb-3">
+                        <label class="form-label">Customer</label>
+                        <input type="text" class="form-control" id="credit_customer_name" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Current Credit Limit</label>
+                        <input type="text" class="form-control" id="credit_current_limit" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="credit_limit" class="form-label">Amount to Add</label>
+                        <input type="number" step="0.01" min="0" class="form-control" id="credit_limit" name="credit_limit" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Credit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
  <!-- Flash message content will be inserted here -->
 <div class="flash-message alert alert-success" id="flash" style="display: none; position: fixed; top: 20px; right: 20px; z-index: 9999; background-color: #d4edda; color: #155724; padding: 10px 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
 </div>
@@ -295,9 +326,11 @@
                                             customer.status === 'active' ? 'Active' : customer.status === 'inactive' ? 'Inactive' : 'Blocked'
                                         }
                                     </td>
-                                    <td>
+                                    <td style="text-align:center">
                                         <button class="btn btn-sm edit-btn btn-warning" data-id="${customer.id}">Edit</button>
                                         <button class="btn btn-sm delete-btn btn-danger" data-id="${customer.id}">Delete</button>
+                                        <button class="btn btn-sm add-credit-btn btn-info" data-id="{{ $customer->id }}">Add Credit</button>
+
                                     </td>
                                 </tr>
                             `;
@@ -310,6 +343,7 @@
                     // Re-bind event handlers
                     $('.edit-btn').on('click', handleEdit);
                     $('.delete-btn').on('click', handleDelete);
+                    $('.add-credit-btn').on('click', handleAddCredit); 
                 },
                 error: function(xhr, status, error) {
                     console.error('Error fetching customers:', error);
@@ -340,6 +374,66 @@
 
 
 
+        });
+
+        // add credit
+        $('.add-credit-btn').on('click', handleAddCredit);
+
+        function handleAddCredit(){
+            const customerId = $(this).data('id');
+            const row = $(this).closest('tr');
+
+            $('#credit_customer_name').val(row.find('td').eq(1).text());
+            $('#credit_current_limit').val(row.find('td').eq(5).text());
+            $('#credit_limit').val('');
+
+            $('#addCreditForm').attr('data-id', customerId);
+            $('#addCreditModal').modal('show');
+        }
+
+        $('#addCreditForm').submit(function(e){
+            e.preventDefault();
+
+            let customerId = $(this).attr('data-id');
+
+            const url = "{{ route('admin.customer.addCredit', ['customer' => ':id']) }}"
+                .replace(':id', customerId);
+
+            $.ajax({
+                url: url,
+                method: 'POST',
+                data: $(this).serialize(),
+                success: function(response) {
+                    $('#addCreditModal').modal('hide');
+
+                    $('#addCreditForm')[0].reset();
+
+                    fetchCustomers();
+
+                    $('#flash')
+                        .removeClass('alert-danger alert-warning')
+                        .addClass('alert-success')
+                        .css({
+                            'background-color': '#d4edda',
+                            'color': '#155724'
+                        });
+
+                    $('.flash-message')
+                        .text(response.success)
+                        .fadeIn()
+                        .delay(3000)
+                        .fadeOut();
+                },
+                error: function(xhr) {
+                    let errors = xhr.responseJSON.errors;
+                    let errorMessage = '';
+                    $.each(errors, function(key, value) {
+                        errorMessage += value[0] + '\n';
+                    });
+                    alert('Error adding credit:\n' + errorMessage);
+                    console.error('Error adding credit:', xhr.responseText);
+                }
+            });
         });
 
         // edit

@@ -31,6 +31,10 @@ class CheckRole
             abort(403, 'Unauthorized. This area is restricted to: ' . implode(', ', $roles));
         }
 
+        if (!$request->user()->status == 'active') {
+            abort(403, 'You have no active status in this system.');
+        }
+
         return $next($request);
     }
 }

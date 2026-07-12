@@ -54,7 +54,7 @@ class RolesAndUsersSeeder extends Seeder
         ]);
 
         User::create([
-            'role_id'  => $cashierRole->id,
+            'role_id'  => $managerRole->id,
             'name'     => 'Banned Employee',
             'email'    => 'banned@pos.com',
             'password' => Hash::make('password123'),

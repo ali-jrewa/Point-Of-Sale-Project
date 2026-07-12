@@ -12,8 +12,10 @@ use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\RefundController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\UserController;
 use App\Models\ExpenseCategory;
 use App\Models\Sale;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 
@@ -44,6 +46,7 @@ Route::middleware('auth')->group(function () {
 
         // customer routes
         Route::get('/customer/data', [CustomerController::class, 'getCustomers'])->name('customer.data');
+        Route::post('/customer/{customer}/add-credit', [CustomerController::class, 'AddCredit'])->name('customer.addCredit');
         Route::resource('/customer', CustomerController::class);
 
         // supplier routes
@@ -73,6 +76,10 @@ Route::middleware('auth')->group(function () {
         Route::get('sales/{sale}/refund', [RefundController::class, 'create'])->name('sale.refund.create');
         Route::post('sales/{sale}/refund', [RefundController::class, 'store'])->name('sale.refund.store');
         Route::delete('refunds/{refund}', [RefundController::class, 'destroy'])->name('refund.destroy');
+
+        // users routes
+        Route::get('/user/data', [UserController::class, 'getUsers'])->name('user.data');
+        Route::resource('/user', UserController::class);
 
         });
     Route::middleware('role:cashier')->group(function () {

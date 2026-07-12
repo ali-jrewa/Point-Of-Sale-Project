@@ -3,11 +3,23 @@
 namespace App\Services;
 
 use App\Models\Customer;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class  CustomerService
 {
+    public function addCredit(Request $request, Customer $customer)
+    {
+        $validated = $request->validate([
+            'credit_limit' => 'required|numeric|min:0',
+        ]);
+
+        $customer->credit_limit += $validated['credit_limit'];
+        $customer->save();
+
+    }
+
      public function getPaginatedLinks()
     {
         return Customer::latest()->paginate(10);

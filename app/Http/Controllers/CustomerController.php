@@ -13,6 +13,15 @@ class CustomerController extends Controller
 
     public function __construct(protected CustomerService $customerService) {}
 
+    public function addCredit(Request $request, Customer $customer)
+    {
+        $this->customerService->addCredit($request, $customer);
+
+        return response()->json([
+            'success' => 'Credit added successfully.',
+        ]);
+    }
+
     /**
      * Display a listing of the resource.
      */
