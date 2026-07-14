@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\Expense;
 use App\Models\Product;
 use App\Models\Purchase;
 use Illuminate\Support\Facades\Auth;

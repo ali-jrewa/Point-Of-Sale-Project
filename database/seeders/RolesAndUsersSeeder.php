@@ -19,7 +19,7 @@ class RolesAndUsersSeeder extends Seeder
         // 1. Create Default POS Permissions
         $viewSales = Permission::create(['name' => 'view-sales', 'display_name' => 'View Sales Terminal']);
         $editSale  = Permission::create(['name' => 'edit-sale', 'display_name' => 'edit Transaction']);
-        $settings  = Permission::create(['name' => 'crud-users', 'display_name' => 'Manage System Settings']);
+        $crud_users  = Permission::create(['name' => 'crud-users', 'display_name' => 'Manage System Settings']);
 
         // 2. Create Default Roles
         $adminRole   = Role::create(['name' => 'admin', 'display_name' => 'Administrator']);
@@ -28,7 +28,7 @@ class RolesAndUsersSeeder extends Seeder
 
         // 3. Assign Permissions to Roles
         // Admin gets everything
-        $adminRole->permissions()->attach([$viewSales->id, $editSale->id, $settings->id]);
+        $adminRole->permissions()->attach([$viewSales->id, $editSale->id, $crud_users->id]);
 
         // Manager gets sales access and refund capabilities
         $managerRole->permissions()->attach([$viewSales->id, $editSale->id]);
