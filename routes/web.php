@@ -11,6 +11,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\RefundController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
@@ -44,8 +45,6 @@ Route::middleware('auth')->group(function () {
 
         // customer routes
         Route::get('/customer/data', [CustomerController::class, 'getCustomers'])->name('customer.data');
-        Route::get('/customer/pdf', [CustomerController::class, 'pdf'])->name('customer.pdf');
-        Route::get('/customer/{customer}/pdf', [CustomerController::class, 'pdfWithId'])->name('customer.pdfWithId');
         Route::post('/customer/{customer}/add-credit', [CustomerController::class, 'AddCredit'])->name('customer.addCredit');
         Route::resource('/customer', CustomerController::class);
 
@@ -90,6 +89,29 @@ Route::middleware('auth')->group(function () {
         Route::get('/account', [MyAccountController::class, 'index'])->name('account.index');
         Route::get('/account/{account}/edit', [MyAccountController::class, 'edit'])->name('account.edit');
         Route::put('/account/{account}', [MyAccountController::class, 'update'])->name('account.update');
+
+        // report routes
+        Route::prefix('report')->name('report.')->group(function () {
+            Route::get('/sales', [ReportController::class, 'sales'])->name('sales');
+            Route::get('/purchases', [ReportController::class, 'purchases'])->name('purchases');
+
+            Route::get('/supplier', [ReportController::class, 'supplier'])->name('supplier');
+            Route::get('/customer', [ReportController::class, 'customer'])->name('customer');
+
+            Route::get('/profit-loss', [ReportController::class, 'profitLoss'])->name('profit-loss');
+            Route::get('/expenses', [ReportController::class, 'expenses'])->name('expenses');
+            Route::get('/payments', [ReportController::class, 'payments'])->name('payments');
+            Route::get('/refunds', [ReportController::class, 'refunds'])->name('refunds');
+            Route::get('/stock', [ReportController::class, 'stock'])->name('stock');
+            Route::get('/low-stock', [ReportController::class, 'lowStock'])->name('low-stock');
+            Route::get('/top-customers', [ReportController::class, 'topCustomers'])->name('top-customers');
+            Route::get('/due', [ReportController::class, 'due'])->name('due');
+
+             //pdf for single row
+            Route::get('/supplier/{supplier}', [ReportController::class, 'supplierRow'])->name('supplier.row');
+            Route::get('/customer/{customer}', [ReportController::class, 'customerRow'])->name('customer.row');
+
+        });
 
         });
 

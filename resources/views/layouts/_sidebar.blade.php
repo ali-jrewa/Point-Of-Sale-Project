@@ -71,9 +71,76 @@
 
                         <li class="nav-header">Reports</li>
 
-                        <li class="nav-item"> <a href="" class="nav-link"> <i class="nav-icon fa-solid fa-money-bill-trend-up"></i>
-                                <p>Income</p>
+                        <li class="nav-item">
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fa-solid fa-chart-line"></i>
+                                <p>
+                                    Reports
+                                    <i class="right nav-arrow fas fa-angle-left"></i>
+                                </p>
                             </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.report.sales') }}" class="nav-link @if (Request::segment(3) == 'sales') active @endif">
+                                        <i class="nav-icon fa fa-cart-plus"></i>
+                                        <p>Sales Report</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.report.purchases') }}" class="nav-link @if (Request::segment(3) == 'purchases') active @endif">
+                                        <i class="nav-icon fas fa-file-invoice-dollar"></i>
+                                        <p>Purchase Report</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.report.profit-loss') }}" class="nav-link @if (Request::segment(3) == 'profit-loss') active @endif">
+                                        <i class="nav-icon fa-solid fa-money-bill-trend-up"></i>
+                                        <p>Profit &amp; Loss</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.report.expenses') }}" class="nav-link @if (Request::segment(3) == 'expenses') active @endif">
+                                        <i class="nav-icon fa fa-receipt"></i>
+                                        <p>Expense Report</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.report.payments') }}" class="nav-link @if (Request::segment(3) == 'payments') active @endif">
+                                        <i class="nav-icon fa fa-dollar"></i>
+                                        <p>Payment Report</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.report.refunds') }}" class="nav-link @if (Request::segment(3) == 'refunds') active @endif">
+                                        <i class="nav-icon fa fa-rotate-left"></i>
+                                        <p>Refund Report</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.report.stock') }}" class="nav-link @if (Request::segment(3) == 'stock') active @endif">
+                                        <i class="nav-icon fa fa-boxes-stacked"></i>
+                                        <p>Stock Report</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.report.low-stock') }}" class="nav-link @if (Request::segment(3) == 'low-stock') active @endif">
+                                        <i class="nav-icon fa-solid fa-triangle-exclamation"></i>
+                                        <p>Low Stock Alert</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.report.top-customers') }}" class="nav-link @if (Request::segment(3) == 'top-customers') active @endif">
+                                        <i class="nav-icon fa fa-id-card"></i>
+                                        <p>Top Customers</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.report.due') }}" class="nav-link @if (Request::segment(3) == 'due') active @endif">
+                                        <i class="nav-icon fa-solid fa-hourglass-half"></i>
+                                        <p>Due / Outstanding</p>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
 
                         <li class="nav-header">System</li>

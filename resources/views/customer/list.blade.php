@@ -51,8 +51,8 @@
                                             &nbsp;
                                             &nbsp;
                                             &nbsp;
-                                            <a href="{{ route('admin.customer.pdf') }}" class="btn btn-secondary btn-sm" >
-                                                Customer PDF
+                                            <a href="{{ route('admin.report.customer') }}" class="btn btn-secondary btn-sm" >
+                                                Customers Report
                                             </a>
                                         </ul>
                                     </div>
@@ -88,7 +88,7 @@
                                                         <button class="btn btn-sm edit-btn btn-warning" data-id="{{ $customer->id }}">Edit</button>
                                                         <button class="btn btn-sm delete-btn btn-danger" data-id="{{ $customer->id }}">Delete</button>
                                                         <button class="btn btn-sm add-credit-btn btn-info" data-id="{{ $customer->id }}">Add Credit</button>
-                                                        <button class="btn btn-sm pdf-btn btn-secondary" data-id="{{ $customer->id }}">PDF</button>
+                                                        <button class="btn btn-sm pdf-btn btn-secondary" data-id="{{ $customer->id }}">Report</button>
                                                     </td>
                                                 </tr>
                                             @empty
@@ -339,7 +339,7 @@
                                         <button class="btn btn-sm edit-btn btn-warning" data-id="${customer.id}">Edit</button>
                                         <button class="btn btn-sm delete-btn btn-danger" data-id="${customer.id}">Delete</button>
                                         <button class="btn btn-sm add-credit-btn btn-info" data-id="${customer.id}">Add Credit</button>
-                                        <button class="btn btn-sm pdf-btn btn-secondary" data-id="${customer.id}">PDF</button>
+                                        <button class="btn btn-sm pdf-btn btn-secondary" data-id="${customer.id}">Report</button>
 
                                     </td>
                                 </tr>
@@ -450,7 +450,7 @@
         // PDF for single customer
         function handlePdf() {
             const customerId = $(this).data('id');
-            const url = "{{ route('admin.customer.pdfWithId', ['customer' => ':id']) }}"
+            const url = "{{ route('admin.report.customer.row', ['customer' => ':id']) }}"
                 .replace(':id', customerId);
             window.location.href = url;
         }

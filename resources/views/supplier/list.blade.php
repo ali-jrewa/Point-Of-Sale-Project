@@ -48,6 +48,12 @@
                                             <a href="{{ route('admin.supplier.create') }}" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
                                                 Add Supplier
                                             </a>
+                                            &nbsp;
+                                            &nbsp;
+                                            &nbsp;
+                                            <a href="{{ route('admin.report.supplier') }}" class="btn btn-secondary btn-sm" >
+                                                Suppliers Report
+                                            </a>
                                         </ul>
                                     </div>
                                 </div>
@@ -82,6 +88,8 @@
                                                     <td>
                                                         <button class="btn btn-sm edit-btn btn-warning" data-id="{{ $supplier->id }}">Edit</button>
                                                         <button class="btn btn-sm delete-btn btn-danger" data-id="{{ $supplier->id }}">Delete</button>
+                                                        <button class="btn btn-sm pdf-btn btn-secondary" data-id="{{ $supplier->id }}">Report</button>
+
                                                     </td>
                                                 </tr>
                                             @empty
@@ -233,6 +241,7 @@
     $(document).ready(function() {
         $('.edit-btn').on('click', handleEdit);
         $('.delete-btn').on('click', handleDelete);
+         $('.pdf-btn').on('click', handlePdf);
 
 
         function fetchSuppliers(search = '') {
@@ -275,6 +284,8 @@
                                     <td>
                                         <button class="btn btn-sm edit-btn btn-warning" data-id="${supplier.id}">Edit</button>
                                         <button class="btn btn-sm delete-btn btn-danger" data-id="${supplier.id}">Delete</button>
+                                        <button class="btn btn-sm pdf-btn btn-secondary" data-id="${supplier.id}">Report</button>
+
                                     </td>
                                 </tr>
                             `;
@@ -287,6 +298,7 @@
                     // Re-bind event handlers
                     $('.edit-btn').on('click', handleEdit);
                     $('.delete-btn').on('click', handleDelete);
+                    $('.pdf-btn').on('click', handlePdf);
                 },
                 error: function(xhr, status, error) {
                     console.error('Error fetching suppliers:', error);
@@ -318,6 +330,14 @@
 
 
         });
+
+        // PDF for single supplier
+        function handlePdf() {
+            const supplierId = $(this).data('id');
+            const url = "{{ route('admin.report.supplier.row', ['supplier' => ':id']) }}"
+                .replace(':id', supplierId);
+            window.location.href = url;
+        }
 
         // edit
         function handleEdit(){

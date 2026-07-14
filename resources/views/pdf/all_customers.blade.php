@@ -61,9 +61,11 @@
                         <th>Name</th>
                         <th>Email</th>
                         <th>Phone</th>
+                        <th>Address</th>
                         <th>Credit Limit</th>
                         <th>Credit Used</th>
                         <th>Status</th>
+                        <th>Created At</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -74,9 +76,11 @@
                             <td>{{ $customer->first_name }} {{ $customer->last_name }}</td>
                             <td>{{ $customer->email }}</td>
                             <td>{{ $customer->phone }}</td>
+                            <td>{{ $customer->address }}</td>
                             <td>{{ $customer->credit_limit }}</td>
                             <td>{{ $customer->credit_used }}</td>
                             <td>{{ $customer->status }}</td>
+                            <td>{{ date('Y-m-d H:i A' , strtotime($customer->created_at)) }}</td>
                         </tr>
                     @endforeach
                 </tbody>
