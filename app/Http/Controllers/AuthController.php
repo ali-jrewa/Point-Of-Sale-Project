@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserStatus;
 use App\Http\Requests\LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,12 +21,13 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
 
-            if(Auth::user()->role->name === "admin"){
+            if(Auth::user()->role->name === "admin" && Auth::user()->status === UserStatus::Active ){
                 return redirect()->intended('/admin/dashboard');
-            } elseif(Auth::user()->role->name === "user"){
-                return redirect()->intended('/user/dashboard');
+            } elseif(Auth::user()->role->name === "cashier" && Auth::user()->status === UserStatus::Active){
+                return redirect()->intended('/cashier/dashboard');
+            } elseif(Auth::user()->role->name === "manager" && Auth::user()->status === UserStatus::Active){
+                return redirect()->intended('/manager/dashboard');
             }
-
         }
 
         return redirect()->back()

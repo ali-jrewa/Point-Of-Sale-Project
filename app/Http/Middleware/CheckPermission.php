@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class CheckPermission
@@ -15,14 +16,10 @@ class CheckPermission
      */
     public function handle(Request $request, Closure $next, string $permission): Response
     {
-        // 1. Ensure user is logged in
-        if (!$request->user()) {
-            return redirect()->route('login');
-        }
+        $user = Auth::user();
 
-        // 2. Check if user's role has the required permission string passed from the route
-        if (!$request->user()->hasPermission($permission)) {
-            abort(403, 'Unauthorized action. You do not have permission to access this page.');
+        if (!$user || !$user->role->hasPermission($permission)) {
+            abort(403, 'You do not have permission to access this resource.');
         }
 
         return $next($request);

@@ -102,8 +102,8 @@
                                             </td>
                                             <td>{{ \Carbon\Carbon::parse($sale->sold_at)->format('Y-m-d') }}</td>
                                             <td>
-                                                <button class="btn btn-warning btn-sm edit-btn" data-id="{{ $sale->id }}">Edit</button>
-                                                <button class="btn btn-danger btn-sm delete-btn" data-id="{{ $sale->id }}">Delete</button>
+                                                @permission('edit-sale')<button class="btn btn-warning btn-sm edit-btn" data-id="{{ $sale->id }}">Edit</button>
+                                                <button class="btn btn-danger btn-sm delete-btn" data-id="{{ $sale->id }}">Delete</button>@endpermission
                                                 <a href="{{ route('admin.sale.show',$sale->id) }}" role="button" class="mt-2 btn btn-info btn-sm">View</a>
                                                 @if($sale->paid_amount > 0 && $sale->sale_status->value !== 'refunded')
                                                     <button style="max-width:52px;max-height:30px !important;font-size:12px;padding:5px;margin-top:5px" class=" btn btn-secondary refund-btn" data-id="{{ $sale->id }}">Refund</button>

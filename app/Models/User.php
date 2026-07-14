@@ -58,18 +58,6 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class);
     }
 
-    /**
-     * Check if the user's role possesses a specific permission slug.
-     */
-    public function hasPermission(string $permissionName): bool
-    {
-        if (!$this->role) {
-            return false;
-        }
-
-        return $this->role->permissions()->where('name', $permissionName)->exists();
-    }
-
     public function sales()
     {
         return $this->hasMany(Sale::class);
@@ -78,5 +66,15 @@ class User extends Authenticatable
     public function payments()
     {
         return $this->hasMany(Payment::class);
+    }
+
+
+    public function hasPermission(string $permissionName): bool
+    {
+        if (!$this->role) {
+            return false;
+        }
+
+        return $this->role->permissions->contains('name', $permissionName);
     }
 }
