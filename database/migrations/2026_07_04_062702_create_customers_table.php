@@ -33,6 +33,8 @@ return new class extends Migration
             $table->decimal('credit_limit',12,2)
             ->default(0);
 
+            $table->decimal('credit_used',12,2)->default(0);
+
             $table->integer('reward_points')
             ->default(0)->nullable();
 

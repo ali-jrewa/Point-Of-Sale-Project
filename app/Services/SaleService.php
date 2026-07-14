@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Enums\SaleStatus;
+use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Sale;
 use Illuminate\Support\Facades\Auth;
@@ -15,9 +17,7 @@ use Illuminate\Validation\ValidationException;
 class SaleService
 {
 
-
     public function __construct(private PaymentService $paymentService){}
-
 
     /*
     |--------------------------------------------------------------------------
@@ -28,9 +28,7 @@ class SaleService
     public function store(array $data): Sale
     {
 
-
         return DB::transaction(function () use ($data) {
-
 
 
             /*
@@ -41,8 +39,6 @@ class SaleService
 
 
             $subtotal = 0;
-
-
 
             foreach($data['items'] as &$item)
             {
@@ -64,35 +60,31 @@ class SaleService
 
                 $subtotal += $lineSubtotal;
 
-
             }
 
+            $discount = $data['discount'] ?? 0;
+
+            $tax = $data['tax'] ?? 0;
 
 
+            $total = $subtotal - $discount + $tax;
 
-            $discount =
-                $data['discount'] ?? 0;
+            //credit
+            $customer = null;
 
+            if (!empty($data['customer_id']) && $data['payment']['method'] == PaymentMethod::Credit) {
+                $customer = Customer::lockForUpdate()->findOrFail($data['customer_id']);
 
+                $firstPayment = $data['payment']['amount'] ?? 0;
+                $projectedDue = max($total - $firstPayment, 0);
+                $available = $customer->credit_limit - $customer->credit_used;
 
-            $tax =
-                $data['tax'] ?? 0;
-
-
-
-
-            $total =
-                $subtotal
-                -
-                $discount
-                +
-                $tax;
-
-
-
-
-
-
+                if ($projectedDue > $available) {
+                    throw ValidationException::withMessages([
+                        'customer' => 'Customer exceeded credit limit.',
+                    ]);
+                }
+            }
             /*
             |--------------------------------------------------------------------------
             | Create Sale
@@ -102,86 +94,35 @@ class SaleService
 
             $sale = Sale::create([
 
+                'sale_code' => $this->generateSaleCode(),
 
-                'sale_code'=>
-                    $this->generateSaleCode(),
+                'customer_id' => $data['customer_id'] ?? null,
 
+                'user_id' => Auth::id(),
 
+                'invoice_number' => $data['invoice_number'] ?? null,
 
-                'customer_id'=>
-                    $data['customer_id'] ?? null,
+                'subtotal' => $subtotal,
 
+                'discount'=> $discount,
 
+                'tax'=> $tax,
 
-                'user_id'=>
-                    Auth::id(),
-
-
-
-                'invoice_number'=>
-                    $data['invoice_number'] ?? null,
-
-
-
-                'subtotal'=>
-                    $subtotal,
-
-
-
-                'discount'=>
-                    $discount,
-
-
-
-                'tax'=>
-                    $tax,
-
-
-
-                'total'=>
-                    $total,
-
-
+                'total'=> $total,
 
                 'paid_amount'=>0,
 
+                'due_amount'=> $total,
 
+                'sale_status'=>$data['sale_status']??SaleStatus::Draft,
 
-                'due_amount'=>
-                    $total,
+                'payment_status' => PaymentStatus::UnPaid,
 
+                'notes' => $data['notes'] ?? null,
 
-
-                'sale_status'=>
-                    $data['sale_status']
-                    ??
-                    SaleStatus::Completed,
-
-
-
-                'payment_status'=>
-                    PaymentStatus::UnPaid,
-
-
-
-                'notes'=>
-                    $data['notes'] ?? null,
-
-
-
-                'sold_at'=>
-                    $data['sold_at'],
-
-
+                'sold_at' => $data['sold_at'] ?? now(),
 
             ]);
-
-
-
-
-
-
-
 
             /*
             |--------------------------------------------------------------------------
@@ -189,97 +130,38 @@ class SaleService
             |--------------------------------------------------------------------------
             */
 
-
-            foreach($data['items'] as $item)
-            {
-
-
+            foreach($data['items'] as $item) {
 
                 $product = Product::lockForUpdate()->findOrFail($item['product_id']);
 
-
-
-
-                if(
-                    $product->stock_quantity
-                    <
-                    $item['quantity']
-                )
+                if( $product->stock_quantity < $item['quantity'])
                 {
-
-
                     throw ValidationException::withMessages([
-
-                        'items'=>
-                        "Not enough stock for {$product->name}"
-
-                    ]);
-
+                        'items' => "Not enough stock for {$product->name}"]);
 
                 }
 
-
-
-
-
-
                 $sale->items()->create([
 
+                    'product_id' => $product->id,
 
-                    'product_id'=>
-                        $product->id,
+                    'quantity' => $item['quantity'],
 
+                    'unit_price' => $item['unit_price'],
 
+                    'discount' => $item['discount'] ?? 0,
 
-                    'quantity'=>
-                        $item['quantity'],
+                    'tax' => $item['tax'] ?? 0,
 
-
-
-                    'unit_price'=>
-                        $item['unit_price'],
-
-
-
-                    'discount'=>
-                        $item['discount'] ?? 0,
-
-
-
-                    'tax'=>
-                        $item['tax'] ?? 0,
-
-
-
-                    'subtotal'=>
-                        $item['subtotal'],
-
-
+                    'subtotal' => $item['subtotal'],
 
                 ]);
 
-
-
-
-
-
                 $product->decrement(
-
-                    'stock_quantity',
-
-                    $item['quantity']
-
+                    'stock_quantity',$item['quantity']
                 );
 
-
-
             }
-
-
-
-
-
-
 
 
             /*
@@ -289,11 +171,8 @@ class SaleService
             */
 
 
-            if(
-                isset($data['payment'])
-            )
+            if(isset($data['payment']))
             {
-
 
                 $this->paymentService->store(
 
@@ -302,7 +181,6 @@ class SaleService
                     $data['payment']
 
                 );
-
 
             }
 
@@ -317,11 +195,7 @@ class SaleService
 
             ]);
 
-
-
         });
-
-
 
     }
 
@@ -668,6 +542,13 @@ class SaleService
                 );
 
 
+            }
+
+            if ($sale->customer && $sale->due_amount > 0) {
+                $sale->customer->decrement(
+                    'credit_used',
+                    min($sale->due_amount, $sale->customer->credit_used)
+                );
             }
 
             $sale->payments()->delete();

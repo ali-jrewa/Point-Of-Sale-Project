@@ -14,15 +14,7 @@ use Illuminate\Http\Request;
 class SaleController extends Controller
 {
 
-
-    public function __construct(
-        private SaleService $saleService
-    )
-    {
-
-    }
-
-
+    public function __construct(private SaleService $saleService){}
 
     /*
     |--------------------------------------------------------------------------
@@ -31,47 +23,34 @@ class SaleController extends Controller
     */
 
 
-   public function index(Request $request)
-{
-    $sales = $this->saleService->getSales();
+   public function index(Request $request) {
 
-    $customers = Customer::all();
+        $sales = $this->saleService->getSales();
 
-    $products = Product::all();
+        $customers = Customer::all();
 
-    return view('sale.list', compact(
-        'sales',
-        'customers',
-        'products'
-    ));
-}
+        $products = Product::all();
 
-public function getSales(Request $request)
-{
-    return response()->json(
+        return view('sale.list', compact(
+            'sales',
+            'customers',
+            'products'
+        ));
+    }
 
-        $this->saleService->getSales(
+    public function getSales(Request $request) {
 
-            $request->search,
+        return response()->json(
 
-            $request->sale_date
-
-        )
-
-    );
-}
-
-
-
-
-
+            $this->saleService->getSales($request->search,$request->sale_date)
+        );
+    }
 
     /*
     |--------------------------------------------------------------------------
     | Store Sale
     |--------------------------------------------------------------------------
     */
-
 
     public function store(StoreSaleRequest $request)
     {
@@ -87,21 +66,9 @@ public function getSales(Request $request)
         return response()->json([
 
             'message'=>'Sale created successfully',
-
-            'sale'=>$sale
-
         ],201);
 
-
-
     }
-
-
-
-
-
-
-
 
     /*
     |--------------------------------------------------------------------------

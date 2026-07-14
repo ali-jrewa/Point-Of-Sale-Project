@@ -6,6 +6,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpenseCategoryController;
 use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\MyAccountController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PurchaseController;
@@ -13,9 +14,6 @@ use App\Http\Controllers\RefundController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
-use App\Models\ExpenseCategory;
-use App\Models\Sale;
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 
@@ -46,6 +44,8 @@ Route::middleware('auth')->group(function () {
 
         // customer routes
         Route::get('/customer/data', [CustomerController::class, 'getCustomers'])->name('customer.data');
+        Route::get('/customer/pdf', [CustomerController::class, 'pdf'])->name('customer.pdf');
+        Route::get('/customer/{customer}/pdf', [CustomerController::class, 'pdfWithId'])->name('customer.pdfWithId');
         Route::post('/customer/{customer}/add-credit', [CustomerController::class, 'AddCredit'])->name('customer.addCredit');
         Route::resource('/customer', CustomerController::class);
 
@@ -70,7 +70,12 @@ Route::middleware('auth')->group(function () {
         Route::resource('/sale', SaleController::class);
 
         //payment routes
-        Route::post('/sale/{sale}/payment',    [PaymentController::class,'store'])->name('sale.payment.store');
+        Route::post('/sale/{sale}/payment',    [PaymentController::class,'store'])->name('payment.store');
+
+        Route::get('/payment',    [PaymentController::class,'index'])->name('payment.index');
+        Route::get('payment/data', [PaymentController::class, 'data'])->name('payment.data');
+        Route::get('payment/{payment}', [PaymentController::class, 'show'])->name('payment.show');
+
 
         //refund routes
         Route::get('sales/{sale}/refund', [RefundController::class, 'create'])->name('sale.refund.create');
@@ -81,9 +86,43 @@ Route::middleware('auth')->group(function () {
         Route::get('/user/data', [UserController::class, 'getUsers'])->name('user.data');
         Route::resource('/user', UserController::class);
 
+        //Account routes
+        Route::get('/account', [MyAccountController::class, 'index'])->name('account.index');
+        Route::get('/account/{account}/edit', [MyAccountController::class, 'edit'])->name('account.edit');
+        Route::put('/account/{account}', [MyAccountController::class, 'update'])->name('account.update');
+
         });
-    Route::middleware('role:cashier')->group(function () {
-        Route::get('/cashier/dashboard', [DashboardController::class, 'dashboard'])->name('cashier.dashboard');
+
+        // ===================================
+        // Cashier Routes
+        // ===================================
+    Route::middleware('role:cashier')
+    ->prefix('/cashier')
+    ->name('cashier.')->group(function () {
+
+        //dashboard
+        Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
+
+        //Account
+        Route::get('/account', [MyAccountController::class, 'index'])->name('account.index');
+        Route::get('/account/{account}/edit', [MyAccountController::class, 'edit'])->name('account.edit');
+        Route::put('/account/{account}', [MyAccountController::class, 'update'])->name('account.update');
+
+         // customer routes
+        Route::get('/customer/data', [CustomerController::class, 'getCustomers'])->name('customer.data');
+        Route::post('/customer/{customer}/add-credit', [CustomerController::class, 'AddCredit'])->name('customer.addCredit');
+        Route::resource('/customer', CustomerController::class);
+        // sale routes
+        Route::get('/sale/data', [SaleController::class, 'getSales'])->name('sale.data');
+        Route::resource('/sale', SaleController::class);
+
+        //payment routes
+        Route::post('/sale/{sale}/payment',    [PaymentController::class,'store'])->name('sale.payment.store');
+
+        //refund routes
+        Route::get('sales/{sale}/refund', [RefundController::class, 'create'])->name('sale.refund.create');
+        Route::post('sales/{sale}/refund', [RefundController::class, 'store'])->name('sale.refund.store');
+        Route::delete('refunds/{refund}', [RefundController::class, 'destroy'])->name('refund.destroy');
     });
 
 

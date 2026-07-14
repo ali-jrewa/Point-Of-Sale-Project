@@ -48,6 +48,12 @@
                                             <a href="{{ route('admin.customer.create') }}" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
                                                 Add Customer
                                             </a>
+                                            &nbsp;
+                                            &nbsp;
+                                            &nbsp;
+                                            <a href="{{ route('admin.customer.pdf') }}" class="btn btn-secondary btn-sm" >
+                                                Customer PDF
+                                            </a>
                                         </ul>
                                     </div>
                                 </div>
@@ -82,6 +88,7 @@
                                                         <button class="btn btn-sm edit-btn btn-warning" data-id="{{ $customer->id }}">Edit</button>
                                                         <button class="btn btn-sm delete-btn btn-danger" data-id="{{ $customer->id }}">Delete</button>
                                                         <button class="btn btn-sm add-credit-btn btn-info" data-id="{{ $customer->id }}">Add Credit</button>
+                                                        <button class="btn btn-sm pdf-btn btn-secondary" data-id="{{ $customer->id }}">PDF</button>
                                                     </td>
                                                 </tr>
                                             @empty
@@ -286,6 +293,8 @@
     $(document).ready(function() {
         $('.edit-btn').on('click', handleEdit);
         $('.delete-btn').on('click', handleDelete);
+        $('.add-credit-btn').on('click', handleAddCredit);
+        $('.pdf-btn').on('click', handlePdf);
 
 
         function fetchCustomers(search = '') {
@@ -329,7 +338,8 @@
                                     <td style="text-align:center">
                                         <button class="btn btn-sm edit-btn btn-warning" data-id="${customer.id}">Edit</button>
                                         <button class="btn btn-sm delete-btn btn-danger" data-id="${customer.id}">Delete</button>
-                                        <button class="btn btn-sm add-credit-btn btn-info" data-id="{{ $customer->id }}">Add Credit</button>
+                                        <button class="btn btn-sm add-credit-btn btn-info" data-id="${customer.id}">Add Credit</button>
+                                        <button class="btn btn-sm pdf-btn btn-secondary" data-id="${customer.id}">PDF</button>
 
                                     </td>
                                 </tr>
@@ -343,7 +353,8 @@
                     // Re-bind event handlers
                     $('.edit-btn').on('click', handleEdit);
                     $('.delete-btn').on('click', handleDelete);
-                    $('.add-credit-btn').on('click', handleAddCredit); 
+                    $('.add-credit-btn').on('click', handleAddCredit);
+                    $('.pdf-btn').on('click', handlePdf);
                 },
                 error: function(xhr, status, error) {
                     console.error('Error fetching customers:', error);
@@ -435,6 +446,14 @@
                 }
             });
         });
+
+        // PDF for single customer
+        function handlePdf() {
+            const customerId = $(this).data('id');
+            const url = "{{ route('admin.customer.pdfWithId', ['customer' => ':id']) }}"
+                .replace(':id', customerId);
+            window.location.href = url;
+        }
 
         // edit
         function handleEdit(){

@@ -1149,7 +1149,7 @@ $(document).ready(function () {
         let saleId = $("#edit_sale_id").val();
 
         $.ajax({
-            url: "{{ route('admin.sale.payment.store', ':id') }}".replace(':id', saleId),
+            url: "{{ route('admin.payment.store', ':id') }}".replace(':id', saleId),
             method: "POST",
             data: {
                 _token: "{{ csrf_token() }}",

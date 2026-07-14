@@ -64,13 +64,8 @@
                             </a>
                         </li>
 
-                        <li class="nav-item"> <a href="{{ route('admin.sale.index') }}" class="nav-link"> <i class="nav-icon fa fa-dollar"></i>
+                        <li class="nav-item"> <a href="{{ route('admin.payment.index') }}" class="nav-link @if (Request::segment(2) == 'payment') active @endif"> <i class="nav-icon fa fa-dollar"></i>
                                 <p>Payments</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item"> <a href="" class="nav-link"> <i class="nav-icon fa fa-cart-arrow-down"></i>
-                                <p>Active Transaction</p>
                             </a>
                         </li>
 
@@ -88,10 +83,16 @@
                             </a>
                         </li>
 
+                        <li class="nav-item"> <a href="{{ route('admin.account.index') }}" class="nav-link @if (Request::segment(2) == 'account') active @endif"> <i class="nav-icon fa fa-user"></i>
+                                <p>My Account</p>
+                            </a>
+                        </li>
+
                         <li class="nav-item"> <a href="" class="nav-link"> <i class="nav-icon fa fa-cogs"></i>
                                 <p>Setting</p>
                             </a>
                         </li>
+                        {{-- Admin Meun --}}
                         @elseif(Auth::user()->role->name == 'manager')
                         <li class="nav-item"> <a href="{{ url('/admin/dashboard') }}" class="nav-link @if (Request::segment(2) == 'dashboard') active @endif"> <i class="nav-icon fa fa-dashboard"></i>
                                 <p>Dashboard</p>
@@ -142,13 +143,8 @@
                             </a>
                         </li>
 
-                        <li class="nav-item"> <a href="" class="nav-link"> <i class="nav-icon fa fa-dollar"></i>
-                                <p>New Transaction</p>
-                            </a>
-                        </li>
-
-                        <li class="nav-item"> <a href="" class="nav-link"> <i class="nav-icon fa fa-cart-arrow-down"></i>
-                                <p>Active Transaction</p>
+                        <li class="nav-item"> <a href="{{ route('admin.payment.index') }}" class="nav-link @if (Request::segment(2) == 'payment') active @endif""> <i class="nav-icon fa fa-dollar"></i>
+                                <p>Payments</p>
                             </a>
                         </li>
 
@@ -160,24 +156,20 @@
                             </a>
                         </li>
 
-                        <li class="nav-item"> <a href="{{ route('admin.sale.index') }}" class="nav-link @if (Request::segment(2) == 'sale') active @endif"> <i class="nav-icon fa fa-dollar"></i>
+                        <li class="nav-item"> <a href="{{ route('user.sale.index') }}" class="nav-link @if (Request::segment(2) == 'sale') active @endif"> <i class="nav-icon fa fa-dollar"></i>
                                 <p>Sales List</p>
                             </a>
                         </li>
 
-                        <li class="nav-item"> <a href="{{ route('user.transaction.create') }}" class="nav-link @if (Request::segment(2) == 'transaction') active @endif"> <i class="nav-icon fa fa-cart-plus"></i>
-                                <p>New Transaction</p>
+                        {{--
+                         <li class="nav-item"> <a href="{{ route('user.transaction.create') }}" class="nav-link @if (Request::segment(2) == 'transaction') active @endif"> <i class="nav-icon fa fa-cart-plus"></i>
+                                <p>Payments</p>
                             </a>
-                        </li>
+                        </li> 
+                         --}}
 
-                        <li class="nav-item"> <a href="{{ route('user.transaction.index') }}" class="nav-link @if (Request::segment(2) == 'transaction') active @endif"> <i class="nav-icon fa fa-cart-arrow-down"></i>
-                                <p>Active Transaction</p>
-                            </a>
-                        </li>
-
-
-                        <li class="nav-item"> <a href="" class="nav-link"> <i class="nav-icon bi bi-table"></i>
-                                <p>Setting</p>
+                        <li class="nav-item"> <a href="{{ route('cashier.account.index') }}" class="nav-link @if (Request::segment(2) == 'account') active @endif"> <i class="nav-icon fa fa-user"></i>
+                                <p>My Account</p>
                             </a>
                         </li>
 

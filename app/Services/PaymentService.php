@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
+use App\Models\Customer;
 use App\Models\Payment;
 use App\Models\Sale;
 use Illuminate\Support\Facades\Auth;
@@ -35,12 +37,8 @@ class PaymentService
 
 
             if(
-                empty($paymentData)
-                ||
-                empty($paymentData['amount'])
-                ||
-                $paymentData['amount'] <= 0
-            )
+                empty($paymentData) || empty($paymentData['amount']) || $paymentData['amount'] <= 0
+                )
             {
 
                 $this->updateSalePayment($sale);
@@ -116,12 +114,7 @@ class PaymentService
 
                 'paid_at' =>
                     now(),
-
-
             ]);
-
-
-
 
             /*
             |--------------------------------------------------------------------------
@@ -132,7 +125,6 @@ class PaymentService
             $sale->refresh();
 
             $this->updateSalePayment($sale);
-
 
 
             return $payment;
@@ -179,27 +171,55 @@ class PaymentService
     {
         $paidAmount = $sale->payments()->sum('amount') - $sale->refunds()->sum('amount');
         $paidAmount = max($paidAmount, 0);
-        if ($paidAmount > $sale->total)
-            {
+
+        if ($paidAmount > $sale->total) {
             throw ValidationException::withMessages([
                 'payment' => 'The sale total cannot be less than the amount already paid.'
             ]);
         }
 
-        $dueAmount = max($sale->total - $paidAmount, 0);
+    $oldDue = $sale->due_amount;
+    $dueAmount = max($sale->total - $paidAmount, 0);
+    $delta = $dueAmount - $oldDue; // positive = customer now owes MORE, negative = owes LESS
 
-        $status = match(true) {
+    $status = match(true) {
         $paidAmount == 0 => PaymentStatus::UnPaid,
         $paidAmount == $sale->total => PaymentStatus::Paid,
         default => PaymentStatus::Partial,
-        };
+    };
 
-        $sale->update([
+    $sale->update([
         'paid_amount' => $paidAmount,
         'due_amount' => $dueAmount,
         'payment_status' => $status,
-        ]);
+    ]);
+
+    if ($sale->customer && $delta != 0) {
+        $this->adjustCustomerCredit($sale->customer, $delta);
     }
+}
+
+/**
+ * Keep customer.credit_used in sync with the change in a sale's due_amount.
+ * $delta > 0  => due increased => more credit used => enforce limit.
+ * $delta < 0  => due decreased => credit freed up.
+ */
+    protected function adjustCustomerCredit(Customer $customer, float $delta): void
+{
+    if ($delta > 0) {
+        $available = $customer->credit_limit - $customer->credit_used;
+
+        if ($delta > $available) {
+            throw ValidationException::withMessages([
+                'customer' => 'Customer exceeded credit limit.',
+            ]);
+        }
+
+        $customer->increment('credit_used', $delta);
+    } else {
+        $customer->decrement('credit_used', min(abs($delta), $customer->credit_used));
+    }
+}
 
 
     /*
