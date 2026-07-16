@@ -86,8 +86,31 @@
     </script> <!--end::OverlayScrollbars Configure--> <!-- OPTIONAL SCRIPTS --> <!-- sortablejs -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js" integrity="sha256-ipiJrswvAR4VAx/th+6zWsdeYmVae0iJuiR+6OqHJHQ=" crossorigin="anonymous"></script> <!-- sortablejs -->
 
+    {{-- back to report --}}
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        if (window.location.hash === '#reports-menu') {
+            var menu = document.getElementById('reports-menu');
+            if (menu) {
+                menu.classList.add('menu-open');
 
+                var submenu = menu.querySelector('.nav-treeview');
+                if (submenu) {
+                    submenu.style.display = 'block';
+                }
+
+                var link = menu.querySelector('.nav-link');
+                if (link) {
+                    link.setAttribute('aria-expanded', 'true');
+                }
+
+                menu.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    });
+    </script>
     @yield('script')
+
 </body><!--end::Body-->
 
 </html>

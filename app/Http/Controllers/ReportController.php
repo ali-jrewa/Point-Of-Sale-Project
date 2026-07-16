@@ -12,6 +12,7 @@ use App\Models\Sale;
 use App\Models\Supplier;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ReportController extends Controller
 {
@@ -27,11 +28,35 @@ class ReportController extends Controller
         return [$from, $to];
     }
 
+    private function renderReport(Request $request, string $view, array $viewData, string $filename)
+    {
+        if ($request->query('format') === 'pdf') {
+            return Pdf::loadView($view, $viewData)->download($filename);
+        }
+
+        return view($view, $viewData + [
+            'preview'     => true,
+            'downloadUrl' => $request->fullUrlWithQuery(['format' => 'pdf']),
+            'backUrl'     => $this->dashboardUrl(),
+        ]);
+    }
+
+    private function dashboardUrl(): string
+    {
+        $role = Auth::user()->role->name ?? 'admin';
+
+        return match ($role) {
+            'manager' => url('/manager/dashboard#reports-menu'),
+            'cashier' => url('/cashier/dashboard#reports-menu'),
+            default   => url('/admin/dashboard#reports-menu'),
+        };
+    }
+
     // ==========================================================
     // Supplier / Customer directory PDFs (already built)
     // ==========================================================
 
-    public function supplier()
+    public function supplier(Request $request)
     {
         $data = [
             'title' => "Suppliers PDF",
@@ -40,12 +65,10 @@ class ReportController extends Controller
 
         $supplierChunks = Supplier::all()->chunk(20);
 
-        $pdf = Pdf::loadView('pdf.all_suppliers', compact('data', 'supplierChunks'));
-
-        return $pdf->download('all_supplier_report.pdf');
+        return $this->renderReport($request, 'pdf.all_suppliers', compact('data', 'supplierChunks'), 'all_supplier_report.pdf');
     }
 
-    public function customer()
+    public function customer(Request $request)
     {
         $data = [
             'title' => "Customers PDF",
@@ -54,17 +77,13 @@ class ReportController extends Controller
 
         $customerChunks = Customer::all()->chunk(20);
 
-        $pdf = Pdf::loadView('pdf.all_customers', compact('data', 'customerChunks'));
-
-        return $pdf->download('all_customers_report.pdf');
+        return $this->renderReport($request, 'pdf.all_customers', compact('data', 'customerChunks'), 'all_customers_report.pdf');
     }
 
-    public function supplierRow(Supplier $supplier)
+    public function supplierRow(Request $request, Supplier $supplier)
     {
         $supplier->load([
-            'purchases' => function ($query) {
-                $query->orderBy('purchased_at', 'desc');
-            },
+            'purchases' => fn ($q) => $q->orderBy('purchased_at', 'desc'),
             'purchases.items.product',
         ]);
 
@@ -73,17 +92,13 @@ class ReportController extends Controller
             'date'  => now()->format('Y-m-d H:i'),
         ];
 
-        $pdf = Pdf::loadView('pdf.supplier', compact('data', 'supplier'));
-
-        return $pdf->download('supplier_' . $supplier->id . '_report.pdf');
+        return $this->renderReport($request, 'pdf.supplier', compact('data', 'supplier'), 'supplier_' . $supplier->id . '_report.pdf');
     }
 
-    public function customerRow(Customer $customer)
+    public function customerRow(Request $request, Customer $customer)
     {
         $customer->load([
-            'sales' => function ($query) {
-                $query->orderBy('sold_at', 'desc');
-            },
+            'sales' => fn ($q) => $q->orderBy('sold_at', 'desc'),
             'sales.items.product',
             'sales.payments',
             'sales.refunds.items.product',
@@ -94,14 +109,8 @@ class ReportController extends Controller
             'date'  => now()->format('Y-m-d H:i'),
         ];
 
-        $pdf = Pdf::loadView('pdf.customer', compact('data', 'customer'));
-
-        return $pdf->download('customer_' . $customer->id . '_report.pdf');
+        return $this->renderReport($request, 'pdf.customer', compact('data', 'customer'), 'customer_' . $customer->id . '_report.pdf');
     }
-
-    // ==========================================================
-    // Sales Report
-    // ==========================================================
 
     public function sales(Request $request)
     {
@@ -120,14 +129,8 @@ class ReportController extends Controller
             'to'    => $to,
         ];
 
-        $pdf = Pdf::loadView('pdf.sales', compact('data', 'sales'));
-
-        return $pdf->download('sales_report_' . $from . '_to_' . $to . '.pdf');
+        return $this->renderReport($request, 'pdf.sales', compact('data', 'sales'), 'sales_report_' . $from . '_to_' . $to . '.pdf');
     }
-
-    // ==========================================================
-    // Purchase Report
-    // ==========================================================
 
     public function purchases(Request $request)
     {
@@ -146,34 +149,17 @@ class ReportController extends Controller
             'to'    => $to,
         ];
 
-        $pdf = Pdf::loadView('pdf.purchases', compact('data', 'purchases'));
-
-        return $pdf->download('purchase_report_' . $from . '_to_' . $to . '.pdf');
+        return $this->renderReport($request, 'pdf.purchases', compact('data', 'purchases'), 'purchase_report_' . $from . '_to_' . $to . '.pdf');
     }
-
-    // ==========================================================
-    // Profit & Loss Report
-    // ==========================================================
 
     public function profitLoss(Request $request)
     {
         [$from, $to] = $this->resolveDateRange($request);
 
-        $totalRevenue = Sale::whereDate('sold_at', '>=', $from)
-            ->whereDate('sold_at', '<=', $to)
-            ->sum('total');
-
-        $totalCogs = Purchase::whereDate('purchased_at', '>=', $from)
-            ->whereDate('purchased_at', '<=', $to)
-            ->sum('total');
-
-        $totalExpenses = Expense::whereDate('expense_date', '>=', $from)
-            ->whereDate('expense_date', '<=', $to)
-            ->sum('amount');
-
-        $totalRefunds = Refund::whereDate('refunded_at', '>=', $from)
-            ->whereDate('refunded_at', '<=', $to)
-            ->sum('amount');
+        $totalRevenue = Sale::whereDate('sold_at', '>=', $from)->whereDate('sold_at', '<=', $to)->sum('total');
+        $totalCogs = Purchase::whereDate('purchased_at', '>=', $from)->whereDate('purchased_at', '<=', $to)->sum('total');
+        $totalExpenses = Expense::whereDate('expense_date', '>=', $from)->whereDate('expense_date', '<=', $to)->sum('amount');
+        $totalRefunds = Refund::whereDate('refunded_at', '>=', $from)->whereDate('refunded_at', '<=', $to)->sum('amount');
 
         $netRevenue = $totalRevenue - $totalRefunds;
         $grossProfit = $netRevenue - $totalCogs;
@@ -193,24 +179,13 @@ class ReportController extends Controller
             'to'    => $to,
         ];
 
-        $pdf = Pdf::loadView('pdf.profit-loss', compact(
-            'data',
-            'totalRevenue',
-            'totalRefunds',
-            'netRevenue',
-            'totalCogs',
-            'grossProfit',
-            'totalExpenses',
-            'netProfit',
-            'expensesByCategory'
-        ));
-
-        return $pdf->download('profit_loss_report_' . $from . '_to_' . $to . '.pdf');
+        return $this->renderReport(
+            $request,
+            'pdf.profit-loss',
+            compact('data', 'totalRevenue', 'totalRefunds', 'netRevenue', 'totalCogs', 'grossProfit', 'totalExpenses', 'netProfit', 'expensesByCategory'),
+            'profit_loss_report_' . $from . '_to_' . $to . '.pdf'
+        );
     }
-
-    // ==========================================================
-    // Expense Report
-    // ==========================================================
 
     public function expenses(Request $request)
     {
@@ -229,14 +204,8 @@ class ReportController extends Controller
             'to'    => $to,
         ];
 
-        $pdf = Pdf::loadView('pdf.expenses', compact('data', 'expenses'));
-
-        return $pdf->download('expense_report_' . $from . '_to_' . $to . '.pdf');
+        return $this->renderReport($request, 'pdf.expenses', compact('data', 'expenses'), 'expense_report_' . $from . '_to_' . $to . '.pdf');
     }
-
-    // ==========================================================
-    // Payment Report
-    // ==========================================================
 
     public function payments(Request $request)
     {
@@ -257,14 +226,8 @@ class ReportController extends Controller
             'to'    => $to,
         ];
 
-        $pdf = Pdf::loadView('pdf.payments', compact('data', 'payments', 'byMethod'));
-
-        return $pdf->download('payment_report_' . $from . '_to_' . $to . '.pdf');
+        return $this->renderReport($request, 'pdf.payments', compact('data', 'payments', 'byMethod'), 'payment_report_' . $from . '_to_' . $to . '.pdf');
     }
-
-    // ==========================================================
-    // Refund Report
-    // ==========================================================
 
     public function refunds(Request $request)
     {
@@ -283,16 +246,10 @@ class ReportController extends Controller
             'to'    => $to,
         ];
 
-        $pdf = Pdf::loadView('pdf.refunds', compact('data', 'refunds'));
-
-        return $pdf->download('refund_report_' . $from . '_to_' . $to . '.pdf');
+        return $this->renderReport($request, 'pdf.refunds', compact('data', 'refunds'), 'refund_report_' . $from . '_to_' . $to . '.pdf');
     }
 
-    // ==========================================================
-    // Stock Report
-    // ==========================================================
-
-    public function stock()
+    public function stock(Request $request)
     {
         $products = Product::with('category')->orderBy('name')->get();
 
@@ -304,21 +261,15 @@ class ReportController extends Controller
             'date'  => now()->format('Y-m-d H:i'),
         ];
 
-        $pdf = Pdf::loadView('pdf.stock', compact(
-            'data',
-            'products',
-            'totalStockValueCost',
-            'totalStockValueRetail'
-        ));
-
-        return $pdf->download('stock_report.pdf');
+        return $this->renderReport(
+            $request,
+            'pdf.stock',
+            compact('data', 'products', 'totalStockValueCost', 'totalStockValueRetail'),
+            'stock_report.pdf'
+        );
     }
 
-    // ==========================================================
-    // Low Stock Alert
-    // ==========================================================
-
-    public function lowStock()
+    public function lowStock(Request $request)
     {
         $products = Product::with('category')
             ->whereColumn('stock_quantity', '<=', 'low_stock_threshold')
@@ -330,26 +281,18 @@ class ReportController extends Controller
             'date'  => now()->format('Y-m-d H:i'),
         ];
 
-        $pdf = Pdf::loadView('pdf.low-stock', compact('data', 'products'));
-
-        return $pdf->download('low_stock_report.pdf');
+        return $this->renderReport($request, 'pdf.low-stock', compact('data', 'products'), 'low_stock_report.pdf');
     }
-
-    // ==========================================================
-    // Top Customers
-    // ==========================================================
 
     public function topCustomers(Request $request)
     {
         [$from, $to] = $this->resolveDateRange($request);
 
         $customers = Customer::withSum(['sales' => function ($query) use ($from, $to) {
-            $query->whereDate('sold_at', '>=', $from)
-                  ->whereDate('sold_at', '<=', $to);
+            $query->whereDate('sold_at', '>=', $from)->whereDate('sold_at', '<=', $to);
         }], 'total')
             ->withCount(['sales' => function ($query) use ($from, $to) {
-                $query->whereDate('sold_at', '>=', $from)
-                      ->whereDate('sold_at', '<=', $to);
+                $query->whereDate('sold_at', '>=', $from)->whereDate('sold_at', '<=', $to);
             }])
             ->having('sales_sum_total', '>', 0)
             ->orderByDesc('sales_sum_total')
@@ -363,16 +306,10 @@ class ReportController extends Controller
             'to'    => $to,
         ];
 
-        $pdf = Pdf::loadView('pdf.top-customers', compact('data', 'customers'));
-
-        return $pdf->download('top_customers_report_' . $from . '_to_' . $to . '.pdf');
+        return $this->renderReport($request, 'pdf.top-customers', compact('data', 'customers'), 'top_customers_report_' . $from . '_to_' . $to . '.pdf');
     }
 
-    // ==========================================================
-    // Due / Outstanding
-    // ==========================================================
-
-    public function due()
+    public function due(Request $request)
     {
         $sales = Sale::with('customer')
             ->where('due_amount', '>', 0)
@@ -386,8 +323,6 @@ class ReportController extends Controller
             'date'  => now()->format('Y-m-d H:i'),
         ];
 
-        $pdf = Pdf::loadView('pdf.due', compact('data', 'sales', 'totalDue'));
-
-        return $pdf->download('due_report.pdf');
+        return $this->renderReport($request, 'pdf.due', compact('data', 'sales', 'totalDue'), 'due_report.pdf');
     }
 }

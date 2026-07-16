@@ -71,7 +71,7 @@
 
                         <li class="nav-header">Reports</li>
 
-                        <li class="nav-item">
+                        <li class="nav-item" id="reports-menu">
                             <a href="#" class="nav-link">
                                 <i class="nav-icon fa-solid fa-chart-line"></i>
                                 <p>
@@ -213,7 +213,7 @@
 
                         <li class="nav-header">Reports</li>
 
-                        <li class="nav-item">
+                        <li class="nav-item" id="reports-menu">
                             <a href="#" class="nav-link">
                                 <i class="nav-icon fa-solid fa-chart-line"></i>
                                 <p>
@@ -321,3 +321,5 @@
                 </nav>
             </div>
         </aside>
+
+        

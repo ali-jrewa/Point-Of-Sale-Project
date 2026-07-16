@@ -15,6 +15,7 @@
     </style>
 </head>
 <body>
+     @include('pdf._toolbar')
 
     <div class="header">
         <h2>{{ $data['title'] }}</h2>
