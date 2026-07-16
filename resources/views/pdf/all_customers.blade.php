@@ -1,9 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <title>Customers Report</title>
     <style>
+        body {
+            font-family: {{ app()->getLocale() === 'ar' ? "'DejaVu Sans', sans-serif" : "sans-serif" }};
+        }
+        @if(app()->getLocale() === 'ar')
+        table, th, td { text-align: right; }
+        @endif
         body {
             font-family: sans-serif;
             color: #333;
@@ -41,7 +47,9 @@
         .page-break:last-child {
             page-break-after: avoid;
         }
+
     </style>
+
 </head>
 <body>
 

@@ -18,8 +18,17 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 
+Route::get('/lang/{locale}', function (string $locale) {
+    if (!in_array($locale, ['en', 'ar'])) {
+        abort(400);
+    }
 
-Route::middleware('guest')->group(function () {
+    session(['locale' => $locale]);
+
+    return back();
+    })->name('lang.switch');
+
+    Route::middleware('guest')->group(function () {
 
     Route::get('/', [AuthController::class, 'login']);
     Route::get('/login', [AuthController::class, 'login'])->name('login');

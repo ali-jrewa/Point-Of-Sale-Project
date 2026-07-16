@@ -7,13 +7,13 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-sm-6">
-                            <h3 class="mb-0">Customer</h3>
+                            <h3 class="mb-0">{{ __('customer.page_title') }}</h3>
                         </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-end">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item"><a href="#">{{ __('common.home') }}</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">
-                                    Customer List
+                                    {{ __('customer.customer_list') }}
                                 </li>
                             </ol>
                         </div>
@@ -28,31 +28,31 @@
                             <div class="mb-3 row">
 
                                     <div class="col-md-6">
-                                        <h4 class="mt-3 card-title btn">Search Customer</h4>
+                                        <h4 class="mt-3 card-title btn">{{ __('customer.search_customer') }}</h4>
                                         <input
                                             type="text"
                                             id="search"
                                             class="form-control"
-                                            placeholder="Search by code, name, phone, email or address">
+                                            placeholder="{{ __('customer.search_placeholder') }}">
 
                                     </div>
 
                                 </div>
                             <div class="mb-4 card">
                                 <div class="card-header">
-                                    <h3 class="card-title">Customer List</h3>
+                                    <h3 class="card-title">{{ __('customer.customer_list') }}</h3>
 
                                     <div class="card-tools">
                                         <ul class="pagination pagination-sm float-end">
 
                                             <a href="{{ route('admin.customer.create') }}" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
-                                                Add Customer
+                                                {{ __('customer.add_customer') }}
                                             </a>
                                             &nbsp;
                                             &nbsp;
                                             &nbsp;
                                             <a href="{{ route('admin.report.customer') }}" class="btn btn-secondary btn-sm" >
-                                                Customers Report
+                                                {{ __('customer.customer_report') }}
                                             </a>
                                         </ul>
                                     </div>
@@ -62,14 +62,14 @@
                                     <table id="customer-table" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
-                                                <th>Code</th>
-                                                <th>Customer</th>
-                                                <th>Phone</th>
-                                                <th>Email</th>
-                                                <th>Reward Points</th>
-                                                <th>Credit Limit</th>
-                                                <th>Status</th>
-                                                <th>Actions</th>
+                                                <th>{{ __('customer.code') }}</th>
+                                                <th>{{ __('customer.customer') }}</th>
+                                                <th>{{ __('customer.phone') }}</th>
+                                                <th>{{ __('customer.email') }}</th>
+                                                <th>{{ __('customer.reward_points') }}</th>
+                                                <th>{{ __('customer.credit_limit') }}</th>
+                                                <th>{{ __('customer.status') }}</th>
+                                                <th>{{ __('common.actions') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -85,10 +85,10 @@
                                                         {{ ucfirst($customer->status->value) }}
                                                     </td>
                                                     <td style="text-align:center">
-                                                        <button class="btn btn-sm edit-btn btn-warning" data-id="{{ $customer->id }}">Edit</button>
-                                                        <button class="btn btn-sm delete-btn btn-danger" data-id="{{ $customer->id }}">Delete</button>
-                                                        <button class="btn btn-sm add-credit-btn btn-info" data-id="{{ $customer->id }}">Add Credit</button>
-                                                        <button class="btn btn-sm pdf-btn btn-secondary" data-id="{{ $customer->id }}">Report</button>
+                                                        <button class="btn btn-sm edit-btn btn-warning" data-id="{{ $customer->id }}">{{ __('common.edit') }}</button>
+                                                        <button class="btn btn-sm delete-btn btn-danger" data-id="{{ $customer->id }}">{{ __('common.delete') }}</button>
+                                                        <button class="btn btn-sm add-credit-btn btn-info" data-id="{{ $customer->id }}">{{ __('customer.add_credit') }}</button>
+                                                        <button class="btn btn-sm pdf-btn btn-secondary" data-id="{{ $customer->id }}">{{ __('customer.report') }}</button>
                                                     </td>
                                                 </tr>
                                             @empty
@@ -115,51 +115,51 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addCustomerModalLabel">Add Customer</h5>
+                <h5 class="modal-title" id="addCustomerModalLabel">{{ __('customer.add_customer') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="addCustomerForm" method="POST" action="{{ route('admin.customer.store') }}">
                     @csrf
                     <div class="mb-3">
-                        <label for="first_name" class="form-label">First Name</label>
+                        <label for="first_name" class="form-label">{{ __('customer.first_name') }}</label>
                         <input type="text" class="form-control" id="first_name" name="first_name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="last_name" class="form-label">Last Name</label>
+                        <label for="last_name" class="form-label">{{ __('customer.last_name') }}</label>
                         <input type="text" class="form-control" id="last_name" name="last_name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="company_name" class="form-label">Company name</label>
+                        <label for="company_name" class="form-label">{{ __('customer.company_name') }}</label>
                         <input type="text" class="form-control" id="company_name" name="company_name" >
                     </div>
                     <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
+                        <label for="email" class="form-label">{{ __('customer.email') }}</label>
                         <input type="email" class="form-control" id="email" name="email" >
                     </div>
                     <div class="mb-3">
-                        <label for="phone" class="form-label">Phone</label>
+                        <label for="phone" class="form-label">{{ __('customer.phone') }}</label>
                         <input type="tel" class="form-control" id="phone" name="phone" required>
                     </div>
                     <div class="mb-3">
-                        <label for="date_of_birth" class="form-label">Date Of Birth</label>
+                        <label for="date_of_birth" class="form-label">{{ __('customer.date_of_birth') }}</label>
                         <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" >
                     </div>
                     <div class="mb-3">
-                        <label for="address" class="form-label">Address</label>
+                        <label for="address" class="form-label">{{ __('customer.address') }}</label>
                         <textarea class="form-control" id="address" name="address"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="credit_limit" class="form-label">Credit Limit</label>
+                        <label for="credit_limit" class="form-label">{{ __('customer.credit_limit') }}</label>
                         <input type="number" class="form-control" id="credit_limit" name="credit_limit" >
                     </div>
 
                     <div class="mb-3">
-                        <label for="notes" class="form-label">Notes</label>
+                        <label for="notes" class="form-label">{{ __('customer.notes') }}</label>
                         <textarea class="form-control" id="notes" name="notes"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="status" class="form-label">Status</label>
+                        <label for="status" class="form-label">{{ __('customer.status') }}</label>
                         <select class="form-control" id="status" name="status">
                             @foreach(App\Enums\CustomerStatus::values() as $status)
                                 <option value="{{ $status }}">
@@ -168,7 +168,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="submit" class="btn btn-primary">{{ __('common.save') }}</button>
                 </form>
             </div>
         </div>
@@ -181,7 +181,7 @@
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5>Edit Customer</h5>
+                <h5>{{ __('customer.edit_customer') }}</h5>
                 <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
@@ -191,7 +191,7 @@
                      @csrf
                     @method('PUT')
                     <div class="mb-3">
-                        <label>Customer Code</label>
+                        <label>{{ __('customer.code') }}</label>
 
                         <input
                             type="text"
@@ -200,50 +200,50 @@
                             readonly>
                     </div>
                     <div class="mb-3">
-                        <label for="first_name" class="form-label">First Name</label>
+                        <label for="first_name" class="form-label">{{ __('customer.first_name') }}</label>
                         <input type="text" class="form-control" id="edit_first_name" name="first_name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="last_name" class="form-label">Last Name</label>
+                        <label for="last_name" class="form-label">{{ __('customer.last_name') }}</label>
                         <input type="text" class="form-control" id="edit_last_name" name="last_name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="company_name" class="form-label">Company name</label>
+                        <label for="company_name" class="form-label">{{ __('customer.company_name') }}</label>
                         <input type="text" class="form-control" id="edit_company_name" name="company_name" >
                     </div>
                     <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
+                        <label for="email" class="form-label">{{ __('customer.email') }}</label>
                         <input type="email" class="form-control" id="edit_email" name="email" >
                     </div>
                     <div class="mb-3">
-                        <label for="phone" class="form-label">Phone</label>
+                        <label for="phone" class="form-label">{{ __('customer.phone') }}</label>
                         <input type="tel" class="form-control" id="edit_phone" name="phone" required>
                     </div>
                     <div class="mb-3">
-                        <label for="date_of_birth" class="form-label">Date Of Birth</label>
+                        <label for="date_of_birth" class="form-label">{{ __('customer.date_of_birth') }}</label>
                         <input type="date" class="form-control" id="edit_date_of_birth" name="date_of_birth" >
                     </div>
                     <div class="mb-3">
-                        <label for="address" class="form-label">Address</label>
+                        <label for="address" class="form-label">{{ __('customer.address') }}</label>
                         <textarea class="form-control" id="edit_address" name="address"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="credit_limit" class="form-label">Credit Limit</label>
+                        <label for="credit_limit" class="form-label">{{ __('customer.credit_limit') }}</label>
                         <input type="number" class="form-control" id="edit_credit_limit" name="credit_limit" >
                     </div>
                     <div class="mb-3">
-                        <label for="notes" class="form-label">Notes</label>
+                        <label for="notes" class="form-label">{{ __('customer.notes') }}</label>
                         <textarea class="form-control" id="edit_notes" name="notes"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="status" class="form-label">Status</label>
+                        <label for="status" class="form-label">{{ __('customer.status') }}</label>
                         <select class="form-control" id="edit_status" name="status">
                             <option value="{{ App\Enums\CustomerStatus::Active->value }}">Active</option>
                             <option value="{{ App\Enums\CustomerStatus::Inactive->value }}">Inactive</option>
                             <option value="{{ App\Enums\CustomerStatus::Blocked->value }}">Blocked</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="submit" class="btn btn-primary">{{ __('common.update') }}</button>
                 </form>
 
 
@@ -258,25 +258,25 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5>Add Credit</h5>
+                <h5>{{ __('customer.add_credit') }}</h5>
                 <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <form id="addCreditForm">
                     @csrf
                     <div class="mb-3">
-                        <label class="form-label">Customer</label>
+                        <label class="form-label">{{ __('customer.customer') }}</label>
                         <input type="text" class="form-control" id="credit_customer_name" readonly>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Current Credit Limit</label>
+                        <label class="form-label">{{ __('customer.current_credit_limit') }}</label>
                         <input type="text" class="form-control" id="credit_current_limit" readonly>
                     </div>
                     <div class="mb-3">
-                        <label for="credit_limit" class="form-label">Amount to Add</label>
+                        <label for="credit_limit" class="form-label">{{ __('customer.amount_to_add') }}</label>
                         <input type="number" step="0.01" min="0" class="form-control" id="credit_limit" name="credit_limit" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Add Credit</button>
+                    <button type="submit" class="btn btn-primary">{{ __('customer.add_credit') }}</button>
                 </form>
             </div>
         </div>
@@ -311,7 +311,7 @@
                         tableBody = `
                             <tr>
                                 <td colspan="8" class="text-center">
-                                    No customers found.
+                                   '{{ __("customer.no_customers_found") }}'
                                 </td>
                             </tr>
                         `;
@@ -332,14 +332,14 @@
                                         customer.status === 'active' ? 'text-success' : customer.status === 'inactive' ? 'text-warning' : 'text-danger'
                                     }">
                                         ${
-                                            customer.status === 'active' ? 'Active' : customer.status === 'inactive' ? 'Inactive' : 'Blocked'
+                                            customer.status === 'active' ? '{{ __("common.active") }}' : customer.status === 'inactive' ? '{{ __("common.inactive") }}' : '{{ __("common.blocked") }}'
                                         }
                                     </td>
                                     <td style="text-align:center">
-                                        <button class="btn btn-sm edit-btn btn-warning" data-id="${customer.id}">Edit</button>
-                                        <button class="btn btn-sm delete-btn btn-danger" data-id="${customer.id}">Delete</button>
-                                        <button class="btn btn-sm add-credit-btn btn-info" data-id="${customer.id}">Add Credit</button>
-                                        <button class="btn btn-sm pdf-btn btn-secondary" data-id="${customer.id}">Report</button>
+                                        <button class="btn btn-sm edit-btn btn-warning" data-id="${customer.id}">{{ __("common.edit") }}</button>
+                                        <button class="btn btn-sm delete-btn btn-danger" data-id="${customer.id}">{{ __("common.delete") }}</button>
+                                        <button class="btn btn-sm add-credit-btn btn-info" data-id="${customer.id}">{{ __("customer.add_credit") }}</button>
+                                        <button class="btn btn-sm pdf-btn btn-secondary" data-id="${customer.id}">{{ __("customer.report") }}</button>
 
                                     </td>
                                 </tr>
@@ -441,7 +441,7 @@
                     $.each(errors, function(key, value) {
                         errorMessage += value[0] + '\n';
                     });
-                    alert('Error adding credit:\n' + errorMessage);
+                    alert('{{ __("customer.error_add_credit") }}\n' + errorMessage);
                     console.error('Error adding credit:', xhr.responseText);
                 }
             });
@@ -506,7 +506,7 @@
             const url = "{{ route('admin.customer.destroy', ['customer' => ':id']) }}"
                 .replace(':id', id);
 
-            if(!confirm("Are you sure you want to delete this customer?")){
+            if(!confirm('{{ __("customer.delete_confirmation") }}')){
                 return;
             }
 
@@ -624,7 +624,7 @@
                     $.each(errors, function(key, value) {
                         erroeMessage += value[0] + '\n';
                     });
-                    alert('Error adding customer:\n' + erroeMessage);
+                    alert('{{ __("customer.error_add_customer") }}\n' + erroeMessage);
                     console.error('Error adding customer:', error);
                     console.error('Error adding customer:', xhr.responseText);
                 }

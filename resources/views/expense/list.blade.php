@@ -7,13 +7,13 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-sm-6">
-                            <h3 class="mb-0">Expense</h3>
+                            <h3 class="mb-0">{{ __('expense.page_title') }}</h3>
                         </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-end">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item"><a href="#">{{ __('common.home') }}</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">
-                                    Expense List
+                                    {{ __('expense.expense_list') }}
                                 </li>
                             </ol>
                         </div>
@@ -28,16 +28,16 @@
                             <div class="mb-3 row">
 
                                     <div class="col-md-9">
-                                        <h4 class="mt-3 card-title btn">Search Expense</h4>
+                                        <h4 class="mt-3 card-title btn">{{ __('expense.search_expense') }}</h4>
                                         <input
                                             type="text"
                                             id="search"
                                             class="form-control"
-                                            placeholder="Search by expense number, title, vendor, receipt_number, reference_no, payment_method or status">
+                                           placeholder="{{ __('expense.search_placeholder') }}">
 
                                     </div>
                                     <div class="col-md-3">
-                                        <label class="mt-4 form-label">Expense Date</label>
+                                        <label class="mt-4 form-label">{{ __('expense.expense_date') }}</label>
                                         <input
                                             type="date"
                                             id="expense_date_search"
@@ -47,13 +47,13 @@
                             </div>
                             <div class="mb-4 card">
                                 <div class="card-header">
-                                    <h3 class="card-title">Expense List</h3>
+                                    <h3 class="card-title">{{ __('expense.expense_list') }}</h3>
 
                                     <div class="card-tools">
                                         <ul class="pagination pagination-sm float-end">
 
                                             <a href="{{ route('admin.expense.create') }}" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addExpenseModal">
-                                                Add Expense
+                                                {{ __('expense.add_expense') }}
                                             </a>
                                         </ul>
                                     </div>
@@ -63,17 +63,17 @@
                                     <table id="expense-table" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
-                                                <th style="font-size: 15px">Expense No.</th>
-                                                <th style="font-size: 15px">Category</th>
-                                                <th style="font-size: 15px">Title</th>
-                                                <th style="font-size: 15px">Vendor</th>
-                                                <th style="font-size: 15px">Amount</th>
-                                                <th style="font-size: 15px">Expense Date</th>
-                                                <th style="font-size: 15px">Payment Method</th>
-                                                <th style="font-size: 15px">Status</th>
-                                                <th style="font-size: 15px">Created At</th>
-                                                <th style="font-size: 15px">Updated At</th>
-                                                <th style="font-size: 15px">Actions</th>
+                                                <th style="font-size: 15px">{{ __('expense.expense_no') }}</th>
+                                                <th style="font-size: 15px">{{ __('expense.category') }}</th>
+                                                <th style="font-size: 15px">{{ __('expense.title') }}</th>
+                                                <th style="font-size: 15px">{{ __('expense.vendor') }}</th>
+                                                <th style="font-size: 15px">{{ __('expense.amount') }}</th>
+                                                <th style="font-size: 15px">{{ __('expense.expense_date') }}</th>
+                                                <th style="font-size: 15px">{{ __('expense.payment_method') }}</th>
+                                                <th style="font-size: 15px">{{ __('expense.status') }}</th>
+                                                <th style="font-size: 15px">{{ __('expense.created_at') }}</th>
+                                                <th style="font-size: 15px">{{ __('expense.updated_at') }}</th>
+                                                <th style="font-size: 15px">{{ __('common.actions') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -104,23 +104,23 @@
                                                         : ($expense->status->value === 'pending'
                                                             ? 'text-warning'
                                                             : 'text-danger') }}">
-                                                        {{ ucfirst($expense->status->value) }}
+                                                        {{ __('expense_status.' . $expense->status->value) }}
                                                     </td>
 
                                                     <td>{{ $expense->created_at->format('Y-m-d H:i:s') }}</td>
                                                     <td>{{ $expense->updated_at->format('Y-m-d H:i:s') }}</td>
                                                     <td>
-                                                        <button class="btn btn-sm edit-btn btn-warning" data-id="{{ $expense->id }}">Edit</button>
-                                                        <button class="btn btn-sm delete-btn btn-danger" data-id="{{ $expense->id }}">Delete</button>
+                                                        <button class="btn btn-sm edit-btn btn-warning" data-id="{{ $expense->id }}">{{ __('common.edit') }}</button>
+                                                        <button class="btn btn-sm delete-btn btn-danger" data-id="{{ $expense->id }}">{{ __('common.delete') }}</button>
                                                     </td>
                                                 </tr>
                                             @empty
                                                 <tr>
-                                                    <td colspan="10" class="text-center">No expenses found.</td>
+                                                    <td colspan="10" class="text-center">{{ __('expense.no_expenses_found') }}</td>
                                                 </tr>
                                             @endforelse
                                             @if(!empty($totalAmount))                                            <tr >
-                                                <th colspan="2" class="text-center">Total Amount</th>
+                                                <th colspan="2" class="text-center">{{ __('expense.total_amount') }}</th>
                                                 <td>${{number_format($totalAmount,2)}}</td>
                                                 <th colspan="3"></th>
                                             </tr>
@@ -144,7 +144,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addExpenseModalLabel">Add Expense</h5>
+                <h5 class="modal-title" id="addExpenseModalLabel"> {{ __('expense.add_expense_title') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -152,14 +152,16 @@
                     @csrf
 
                     <div class="mb-3">
-                        <label>Expense Category</label>
+                       <label>{{ __('expense.expense_category') }}</label>
 
                         <select
                             class="form-control"
                             name="expense_category_id"
                             required>
 
-                            <option value=''>select expense category</option>
+                            <option value="">
+                                {{ __('expense.select_expense_category') }}
+                            </option>
 
                             @foreach($expenseCategories as $category)
 
@@ -173,7 +175,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Title</label>
+                        <label>{{ __('expense.title') }}</label>
 
                         <input
                             type="text"
@@ -183,7 +185,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Description</label>
+                        <label>{{ __('expense.description') }}</label>
 
                         <textarea
                             class="form-control"
@@ -191,7 +193,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Amount</label>
+                        <label>{{ __('expense.amount') }}</label>
 
                         <input
                             type="number"
@@ -202,7 +204,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Expense Date</label>
+                        <label>{{ __('expense.expense_date') }}</label>
 
                         <input
                             type="date"
@@ -212,7 +214,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Payment Method</label>
+                        <label>{{ __('expense.payment_method') }}</label>
 
                         <select
                             class="form-control"
@@ -221,7 +223,7 @@
                             @foreach(\App\Enums\PaymentMethod::values() as $method)
 
                                 <option value="{{ $method }}">
-                                    {{ ucwords(str_replace('_',' ',$method)) }}
+                                    {{ __('payment_method.' . $method) }}
                                 </option>
 
                             @endforeach
@@ -230,7 +232,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Vendor Name</label>
+                        <label>{{ __('expense.vendor_name') }}</label>
 
                         <input
                             type="text"
@@ -239,7 +241,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Receipt Number</label>
+                        <label>{{ __('expense.receipt_number') }}</label>
 
                         <input
                             type="text"
@@ -248,7 +250,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Reference Number</label>
+                        <label>{{ __('expense.reference_number') }}</label>
 
                         <input
                             type="text"
@@ -257,16 +259,16 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="status" class="form-label">Status</label>
+                        <label for="status" class="form-label">{{ __('expense.status') }}</label>
                         <select class="form-control" id="status" name="status">
                            @foreach(\App\Enums\ExpenseStatus::values() as $status)
                                 <option value="{{ $status }}">
-                                    {{ $status }}
+                                {{ __('expense_status.' . $status) }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="submit" class="btn btn-primary">{{ __('common.save') }}</button>
                 </form>
             </div>
         </div>
@@ -279,7 +281,7 @@
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5>Edit Expense</h5>
+                <h5>{{ __('expense.edit_expense_title') }}</h5>
                 <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
@@ -290,7 +292,7 @@
                     @method('PUT')
 
                     <div class="mb-3">
-                        <label>Expense Number</label>
+                        <label>{{ __('expense.expense_number') }}</label>
 
                         <input
                             type="text"
@@ -301,7 +303,7 @@
 
 
                      <div class="mb-3">
-                        <label>Expense Category</label>
+                        <label>{{ __('expense.expense_category') }}</label>
 
                         <select
                             class="form-control"
@@ -321,7 +323,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Title</label>
+                        <label>{{ __('expense.title') }}</label>
 
                         <input
                             type="text"
@@ -332,7 +334,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Description</label>
+                        <label>{{ __('expense.description') }}</label>
 
                         <textarea
                             class="form-control"
@@ -341,7 +343,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Amount</label>
+                        <label>{{ __('expense.amount') }}</label>
 
                         <input
                             type="number"
@@ -353,7 +355,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Expense Date</label>
+                        <label>{{ __('expense.expense_date') }}</label>
 
                         <input
                             type="date"
@@ -364,7 +366,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Payment Method</label>
+                        <label>{{ __('expense.payment_method') }}</label>
 
                         <select
                             class="form-control"
@@ -374,7 +376,7 @@
                             @foreach(\App\Enums\PaymentMethod::values() as $method)
 
                                 <option value="{{ $method }}">
-                                    {{ ucwords(str_replace('_',' ',$method)) }}
+                                    {{ __('payment_method.' . $method) }}
                                 </option>
 
                             @endforeach
@@ -383,7 +385,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Vendor Name</label>
+                        <label>{{ __('expense.vendor_name') }}</label>
 
                         <input
                             type="text"
@@ -393,7 +395,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Receipt Number</label>
+                        <label>{{ __('expense.receipt_number') }}</label>
 
                         <input
                             type="text"
@@ -403,7 +405,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Reference Number</label>
+                        <label>{{ __('expense.reference_number') }}</label>
 
                         <input
                             type="text"
@@ -413,16 +415,16 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="status" class="form-label">Status</label>
+                        <label for="status" class="form-label">{{ __('expense.status') }}</label>
                         <select class="form-control" name="status" id="edit_status">
                            @foreach(\App\Enums\ExpenseStatus::values() as $status)
                                 <option value="{{ $status }}">
-                                    {{ $status }}
+                                   {{ __('expense_status.' . $status) }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="submit" class="btn btn-primary">{{ __('common.update') }}</button>
                 </form>
 
 
@@ -437,6 +439,23 @@
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dayjs/dayjs.min.js"></script>
+<script>
+    const expenseStatusTranslations = {
+        paid: "{{ __('expense_status.paid') }}",
+        pending: "{{ __('expense_status.pending') }}",
+        cancelled: "{{ __('expense_status.cancelled') }}"
+    };
+
+    const paymentMethodTranslations = {
+        cash: "{{ __('payment_method.cash') }}",
+        credit_card: "{{ __('payment_method.credit_card') }}",
+        debit_card: "{{ __('payment_method.debit_card') }}",
+        bank_transfer: "{{ __('payment_method.bank_transfer') }}",
+        cheque: "{{ __('payment_method.cheque') }}",
+        mobile_payment: "{{ __('payment_method.mobile_payment') }}",
+        other: "{{ __('payment_method.other') }}"
+    };
+</script>
 <script type="text/javascript">
 
     $(document).ready(function() {
@@ -461,7 +480,7 @@
                         tableBody = `
                             <tr>
                                 <td colspan="10" class="text-center">
-                                    No expenses found.
+                                   {{ __('expense.no_expenses_found') }}
                                 </td>
                             </tr>
                         `;
@@ -479,7 +498,7 @@
                                     <td>${expense.vendor_name ?? '-'}</td>
                                     <td>${expense.amount}</td>
                                     <td>${dayjs(expense.expense_date).format('YYYY-MM-DD')}</td>
-                                    <td>${expense.payment_method}</td>
+                                    <td>${paymentMethodTranslations[expense.payment_method] ?? expense.payment_method}</td>
                                     <td class="${
                                         expense.status === 'paid'
                                             ? 'text-success'
@@ -487,19 +506,14 @@
                                                 ? 'text-warning'
                                                 : 'text-danger'
                                     }">
-                                        ${
-                                            expense.status === 'paid'
-                                                ? 'Paid'
-                                                : expense.status === 'pending'
-                                                    ? 'Pending'
-                                                    : 'Cancelled'
-                                        }
+                                        ${expenseStatusTranslations[expense.status] ?? expense.status}
                                     </td>
                                     <td>${created_at}</td>
                                     <td>${updated_at}</td>
                                     <td>
-                                        <button class="btn btn-sm edit-btn btn-warning" data-id="${expense.id}">Edit</button>
-                                        <button class="btn btn-sm delete-btn btn-danger" data-id="${expense.id}">Delete</button>
+                                        <button class="btn btn-sm edit-btn btn-warning" data-id="${expense.id}">{{ __('common.edit') }}
+</button>
+                                        <button class="btn btn-sm delete-btn btn-danger" data-id="${expense.id}">{{ __('common.delete') }}</button>
                                     </td>
                                 </tr>
                             `;
@@ -507,7 +521,7 @@
                          if (totalAmount > 0) {
                             tableBody += `
                                 <tr>
-                                    <td colspan="2" class="text-center text-right"><strong>Total Amount:</strong></td>
+                                    <td colspan="2" class="text-center text-right"><strong>{{ __('expense.total_amount') }}</strong></td>
                                     <td><strong>$${totalAmount.toFixed(2)}</strong></td>
                                     <td colspan="3"></td>
                                 </tr>
@@ -523,8 +537,8 @@
                     $('.delete-btn').on('click', handleDelete);
                 },
                 error: function(xhr, status, error) {
-                    console.error('Error fetching expenses:', error);
-                    console.error('Error fetching expenses:', xhr.responseText);
+                    console.error("{{ __('expense.error_fetching') }}", error);
+                    console.error("{{ __('expense.error_fetching') }}", error);
                 }
             });
         }
@@ -617,7 +631,7 @@
             const url = "{{ route('admin.expense.destroy', ['expense' => ':id']) }}"
                 .replace(':id', id);
 
-            if(!confirm("Are you sure you want to delete this expense?")){
+            if(!confirm("{{ __('expense.delete_confirmation') }}")){
                 return;
             }
 
@@ -684,7 +698,7 @@
                     $.each(errors, function(key, value) {
                         erroeMessage += value[0] + '\n';
                     });
-                    alert('Error adding expense:\n' + erroeMessage);
+                    alert("{{ __('expense.error_adding') }}\n" + erroeMessage);
                     console.error('Error adding expense:', error);
                     console.error('Error adding expense:', xhr.responseText);
                 }
@@ -735,7 +749,7 @@
                     $.each(errors, function(key, value) {
                         erroeMessage += value[0] + '\n';
                     });
-                    alert('Error adding expense:\n' + erroeMessage);
+                    alert("{{ __('expense.error_updating') }}\n" + erroeMessage);
                     console.error('Error adding expense:', error);
                     console.error('Error adding expense:', xhr.responseText);
                 }

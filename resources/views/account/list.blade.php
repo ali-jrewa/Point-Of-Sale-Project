@@ -38,13 +38,13 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-sm-6">
-                            <h3 class="mb-0">My Account</h3>
+                            <h3 class="mb-0">{{ __('account.page_title') }}</h3>
                         </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-end">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item"><a href="#">{{ __('common.home') }}</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">
-                                    My Account
+                                    {{ __('account.page_title') }}
                                 </li>
                             </ol>
                         </div>
@@ -58,18 +58,18 @@
                         <div class="col-md-12">
                             <div class="mb-4 card">
                                 <div class="card-header">
-                                    <h3 class="card-title">Account Information</h3>
+                                    <h3 class="card-title">{{ __('account.account_information') }}</h3>
                                 </div>
 
                                 <div class="card-body">
                                     <table id="user-table" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
-                                                <th>Name</th>
-                                                <th>Email</th>
-                                                <th>Role</th>
-                                                <th>Account Image</th>
-                                                <th>Actions</th>
+                                                <th>{{ __('account.name') }}</th>
+                                                <th>{{ __('account.email') }}</th>
+                                                <th>{{ __('account.role') }}</th>
+                                                <th>{{ __('account.account_image') }}</th>
+                                                <th>{{ __('account.actions') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -91,7 +91,7 @@
                                                     </td>
 
                                                     <td>
-                                                        <button class="btn btn-sm edit-btn btn-warning" data-id="{{ $account->id }}">Edit Account</button>
+                                                        <button class="btn btn-sm edit-btn btn-warning" data-id="{{ $account->id }}">{{ __('common.edit_account') }}</button>
                                                     </td>
                                                 </tr>
                                         </tbody>
@@ -110,7 +110,7 @@
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5>Edit Account</h5>
+                <h5>{{ __('common.edit_account') }}</h5>
                 <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
@@ -121,29 +121,29 @@
                     @method('PUT')
 
                     <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
+                        <label for="password" class="form-label">{{ __('account.password') }}</label>
                         <input type="text" class="form-control" id="edit_password" name="password" >
                     </div>
                     <div class="mb-3">
-                        <label for="password_c" class="form-label">Password Confirmation</label>
+                        <label for="password_c" class="form-label">{{ __('account.password_confirmation') }}</label>
                         <input type="password" class="form-control" id="password_confirmation" name="password_confirmation">
                     </div>
                     <div class="mb-3">
-                        <label for="account_image" class="form-label">Account Image</label>
+                        <label for="account_image" class="form-label">{{ __('account.account_image') }}</label>
                         <input type="file" class="form-control" id="edit_account_image" name="account_image" >
                         <div class="mt-2">
                             <img id="current_account_image"
                                 src=""
-                                alt="Current account image"
+                                alt="{{ __('account.current_account_image') }}"
                                 class="account-avatar"
                                 style="display:none;">
                             <span id="no_account_image" class="text-muted small" style="display:none;">
-                                No image uploaded
+                                {{ __('account.no_image_uploaded') }}
                             </span>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Update Account</button>
+                    <button type="submit" class="btn btn-primary">{{ __('common.update_account') }}</button>
                 </form>
 
 

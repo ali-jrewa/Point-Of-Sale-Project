@@ -1,8 +1,34 @@
 <nav class="app-header navbar navbar-expand bg-body">
             <div class="container-fluid">
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle"
+                            data-bs-toggle="dropdown">
+
+                        {{ strtoupper(app()->getLocale()) }}
+
+                    </button>
+
+                    <ul class="dropdown-menu">
+
+                        <li>
+                            <a class="dropdown-item"
+                            href="{{ route('lang.switch','en') }}">
+                                English
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item"
+                            href="{{ route('lang.switch','ar') }}">
+                                العربية
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
                 <ul class="navbar-nav">
                     <li class="nav-item"> <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"> <i class="bi bi-list"></i> </a> </li>
-                    <li class="nav-item d-none d-md-block"> <a href="#" class="nav-link">Home</a> </li>
+                    <li class="nav-item d-none d-md-block"> <a href="#" class="nav-link">{{ __('common.home') }}</a> </li>
                 </ul>
                 <ul class="navbar-nav ms-auto">
                     <!--Fullscreen Toggle-->

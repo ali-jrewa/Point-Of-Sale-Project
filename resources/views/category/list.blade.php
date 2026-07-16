@@ -7,13 +7,13 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-sm-6">
-                            <h3 class="mb-0">Category</h3>
+                            <h3 class="mb-0">{{ __('category.page_title') }}</h3>
                         </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-end">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item"><a href="#">{{ __('common.home') }}</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">
-                                    Category List
+                                    {{ __('category.category_list') }}
                                 </li>
                             </ol>
                         </div>
@@ -27,13 +27,13 @@
                         <div class="col-md-12">
                             <div class="mb-4 card">
                                 <div class="card-header">
-                                    <h3 class="card-title">Category List</h3>
+                                    <h3 class="card-title">{{ __('category.category_list') }}</h3>
 
                                     <div class="card-tools">
                                         <ul class="pagination pagination-sm float-end">
 
                                             <a href="{{ route('admin.category.create') }}" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-                                                Add Category
+                                                {{ __('category.add_category') }}
                                             </a>
                                         </ul>
                                     </div>
@@ -43,12 +43,12 @@
                                     <table id="category-table" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
-                                                <th>ID</th>
-                                                <th>Name</th>
-                                                <th>Status</th>
-                                                <th>Created At</th>
-                                                <th>Updated At</th>
-                                                <th>Actions</th>
+                                                <th>{{ __('category.id') }}</th>
+                                                <th>{{ __('category.name') }}</th>
+                                                <th>{{ __('category.status') }}</th>
+                                                <th>{{ __('category.created_at') }}</th>
+                                                <th>{{ __('category.updated_at') }}</th>
+                                                <th>{{ __('category.actions') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -68,28 +68,28 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addCategoryModalLabel">Add Category</h5>
+                <h5 class="modal-title" id="addCategoryModalLabel">{{ __('category.add_category') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="addCategoryForm" method="POST" action="{{ route('admin.category.store') }}">
                     @csrf
                     <div class="mb-3">
-                        <label for="name" class="form-label">Name</label>
+                        <label for="name" class="form-label">{{ __('category.name') }}</label>
                         <input type="text" class="form-control" id="name" name="name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
+                        <label for="description" class="form-label">{{ __('category.description') }}</label>
                         <textarea class="form-control" id="description" name="description"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="status" class="form-label">Status</label>
+                        <label for="status" class="form-label">{{ __('category.status') }}</label>
                         <select class="form-control" id="status" name="status">
                             <option value="{{ App\Enums\CategoryStatus::Active->value }}">Active</option>
                             <option value="{{ App\Enums\CategoryStatus::Inactive->value }}">Inactive</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="submit" class="btn btn-primary">{{ __('common.save') }}</button>
                 </form>
             </div>
         </div>
@@ -102,7 +102,7 @@
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5>Edit Category</h5>
+                <h5>{{ __('category.edit_category') }}</h5>
                 <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
@@ -114,7 +114,7 @@
                     @method('PUT')
 
                     <div class="mb-3">
-                        <label>Name</label>
+                        <label>{{ __('category.name') }}</label>
                         <input
                             type="text"
                             id="edit_name"
@@ -123,7 +123,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Description</label>
+                        <label>{{ __('category.description') }}</label>
                         <textarea
                             id="edit_description"
                             name="description"
@@ -131,7 +131,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Slug</label>
+                        <label>{{ __('category.slug') }}</label>
                         <input
                             type="text"
                             id="edit_slug"
@@ -140,7 +140,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label>Status</label>
+                        <label>{{ __('category.status') }}</label>
                         <select class="form-control" id="edit_status" name="status">
                             <option value="{{ App\Enums\CategoryStatus::Active->value }}">Active</option>
                             <option value="{{ App\Enums\CategoryStatus::Inactive->value }}">Inactive</option>
@@ -148,7 +148,7 @@
                     </div>
 
                     <button class="btn btn-primary">
-                        Update Category
+                        {{ __('category.update_category') }}
                     </button>
 
                 </form>
@@ -179,19 +179,19 @@
                     let tableBody = '';
                     $.each(response, function(index,category) {
 
-                        let created_at = category.created_at ? dayjs(category.created_at).format('YYYY-MM-DD HH:mm:ss') : 'N/A';
-                        let updated_at = category.updated_at ? dayjs(category.updated_at).format('YYYY-MM-DD HH:mm:ss') : 'N/A';
+                        let created_at = category.created_at ? dayjs(category.created_at).format('YYYY-MM-DD HH:mm:ss') : '{{ __("category.not_available") }}';
+                        let updated_at = category.updated_at ? dayjs(category.updated_at).format('YYYY-MM-DD HH:mm:ss') : '{{ __("category.not_available") }}';
 
                         tableBody += `
                             <tr>
                                 <td>${index + 1}</td>    
                                 <td>${category.name}</td> 
-                                <td class="${category.status === 'active' ? 'text-success' : 'text-danger'}">${category.status === 'active' ? 'Active' : 'Inactive'}</td>
+                                <td class="${category.status === 'active' ? 'text-success' : 'text-danger'}">${category.status === 'active' ? '{{ __("category.active") }}' : '{{ __("category.inactive") }}'}</td>
                                 <td>${created_at}</td>
                                 <td>${updated_at}</td>
                                 <td>
-                                    <button class="btn btn-sm edit-btn btn-warning " data-id="${category.id}">Edit</button>
-                                    <button class="btn btn-sm delete-btn btn-danger " data-id="${category.id}">Delete</button>
+                                    <button class="btn btn-sm edit-btn btn-warning " data-id="${category.id}">{{ __('common.edit') }}</button>
+                                    <button class="btn btn-sm delete-btn btn-danger " data-id="${category.id}">{{ __('common.delete') }}</button>
                                 </td>
                             </tr>
                         `;
@@ -250,7 +250,7 @@
             const url = "{{ route('admin.category.destroy', ['category' => ':id']) }}"
                 .replace(':id', id);
 
-            if(!confirm("Are you sure you want to delete this category?")){
+            if(!confirm("{{ __('category.delete_confirmation') }}")){
                 return;
             }
 
