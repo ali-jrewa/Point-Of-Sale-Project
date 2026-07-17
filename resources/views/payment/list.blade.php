@@ -9,12 +9,12 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-6">
-                    <h3 class="mb-0">Payments</h3>
+                    <h3>{{ __('payment.page_title') }}</h3>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Payment List</li>
+                        <li class="breadcrumb-item"><a href="#">{{ __('common.home') }}</a></li>
+                        <li class="breadcrumb-item active">{{ __('payment.payment_list') }}</li>
                     </ol>
                 </div>
             </div>
@@ -30,12 +30,12 @@
                     {{-- Search Area --}}
                     <div class="mb-3 row">
                         <div class="col-md-9">
-                            <h4 class="mt-3 card-title btn">Search Payment</h4>
+                            <h4 class="mt-3 card-title btn">{{ __('payment.search_payment') }}</h4>
                             <input type="text" id="search" class="form-control"
-                                placeholder="Search by Payment Code, Sale Code, Customer, Method or Reference">
+                                placeholder="{{ __('payment.search_placeholder') }}">
                         </div>
                         <div class="col-md-3">
-                            <label class="mt-4 form-label">Payment Date</label>
+                            <label class="mt-4 form-label">{{ __('payment.payment_date') }}</label>
                             <input type="date" id="payment_date_search" class="form-control">
                         </div>
                     </div>
@@ -43,22 +43,22 @@
                     {{-- Card --}}
                     <div class="mb-4 card">
                         <div class="card-header">
-                            <h3 class="card-title">Payment List</h3>
+                            <h3 class="card-title">{{ __('payment.payment_list') }}</h3>
                         </div>
 
                         <div class="card-body">
                             <table id="payment-table" class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
-                                        <th>Payment Code</th>
-                                        <th>Sale Code</th>
-                                        <th>Customer</th>
-                                        <th>Method</th>
-                                        <th>Amount</th>
-                                        <th>Reference</th>
-                                        <th>Received By</th>
-                                        <th>Paid At</th>
-                                        <th>Actions</th>
+                                        <th>{{ __('payment.payment_code') }}</th>
+                                        <th>{{ __('payment.sale_code') }}</th>
+                                        <th>{{ __('payment.customer') }}</th>
+                                        <th>{{ __('payment.method') }}</th>
+                                        <th>{{ __('payment.amount') }}</th>
+                                        <th>{{ __('payment.reference') }}</th>
+                                        <th>{{ __('payment.received_by') }}</th>
+                                        <th>{{ __('payment.paid_at') }}</th>
+                                        <th>{{ __('common.actions') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -73,12 +73,12 @@
                                                 @if($payment->sale && $payment->sale->customer)
                                                     {{ $payment->sale->customer->first_name.' '.$payment->sale->customer->last_name }}
                                                 @else
-                                                    Walk In Customer
+                                                    {{ __('payment.walk_in_customer') }}
                                                 @endif
                                             </td>
                                             <td>
                                                 <span class="badge bg-secondary">
-                                                    {{ ucfirst(str_replace('_',' ',$payment->method->value)) }}
+                                                    {{ __('payment_method.' . $payment->method->value) }}
                                                 </span>
                                             </td>
                                             <td class="text-success">${{ number_format($payment->amount,2) }}</td>
@@ -88,19 +88,19 @@
                                             <td>
                                                 <a href="{{ route('admin.payment.show', $payment->id) }}"
                                                     class="btn btn-info btn-sm">
-                                                    View
+                                                    {{ __('common.view') }}
                                                 </a>
                                             </td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="9" class="text-center">No payments found.</td>
+                                            <td colspan="9" class="text-center">{{ __('payment.no_payments_found') }}</td>
                                         </tr>
                                     @endforelse
 
                                     @if($grandTotal > 0)
                                         <tr>
-                                            <th colspan="4" class="text-center">Grand Total</th>
+                                            <th colspan="4" class="text-center">{{ __('payment.grand_total') }}</th>
                                             <th>${{ number_format($grandTotal,2) }}</th>
                                             <th colspan="4"></th>
                                         </tr>
@@ -124,8 +124,19 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dayjs/dayjs.min.js"></script>
 
+
 <script>
 $(document).ready(function () {
+
+    const paymentMethodTranslations = {
+    cash: "{{ __('payment_method.cash') }}",
+    credit_card: "{{ __('payment_method.credit_card') }}",
+    debit_card: "{{ __('payment_method.debit_card') }}",
+    bank_transfer: "{{ __('payment_method.bank_transfer') }}",
+    cheque: "{{ __('payment_method.cheque') }}",
+    mobile_payment: "{{ __('payment_method.mobile_payment') }}",
+    other: "{{ __('payment_method.other') }}"
+};
 
     let timer;
 
@@ -142,7 +153,7 @@ $(document).ready(function () {
 
                 if (!response.data || response.data.length === 0) {
 
-                    tableBody = `<tr><td colspan="9" class="text-center">No payments found.</td></tr>`;
+                    tableBody = `<tr><td colspan="9" class="text-center">{{ __('payment.no_payments_found') }}</td></tr>`;
 
                 } else {
 
@@ -152,20 +163,20 @@ $(document).ready(function () {
 
                         let customer = payment.sale && payment.sale.customer
                             ? payment.sale.customer.first_name + ' ' + payment.sale.customer.last_name
-                            : 'Walk In Customer';
+                            : {{ __('payment.walk_in_customer') }};
 
                         tableBody += `
                         <tr>
                             <td>${payment.payment_code}</td>
                             <td>${payment.sale ? payment.sale.sale_code : '-'}</td>
                             <td>${customer}</td>
-                            <td><span class="badge bg-secondary">${payment.method.replaceAll('_',' ')}</span></td>
+                            <td><span class="badge bg-secondary">${paymentMethodTranslations[payment.method] ?? payment.method}</span></td>
                             <td class="text-success">$${parseFloat(payment.amount).toFixed(2)}</td>
                             <td>${payment.reference ?? '-'}</td>
                             <td>${payment.user ? payment.user.name : '-'}</td>
                             <td>${dayjs(payment.paid_at).format('YYYY-MM-DD HH:mm')}</td>
                             <td>
-                                <a href="/admin/payment/${payment.id}" class="btn btn-info btn-sm">View</a>
+                                <a href="/admin/payment/${payment.id}" class="btn btn-info btn-sm">{{ __('payment.view') }}</a>
                             </td>
                         </tr>
                         `;
@@ -173,7 +184,7 @@ $(document).ready(function () {
 
                     tableBody += `
                     <tr>
-                        <th colspan="4" class="text-center">Grand Total</th>
+                        <th colspan="4" class="text-center">{{ __('payment.grand_total') }}</th>
                         <th>$${grandTotal.toFixed(2)}</th>
                         <th colspan="4"></th>
                     </tr>
@@ -183,7 +194,7 @@ $(document).ready(function () {
                 $("#payment-table tbody").html(tableBody);
             },
             error: function (xhr) {
-                console.log(xhr.responseText);
+                console.error("{{ __('payment.error_fetching') }}", xhr.responseText);
             }
         });
     }

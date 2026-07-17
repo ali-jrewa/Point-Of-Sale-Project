@@ -7,13 +7,13 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-sm-6">
-                            <h3 class="mb-0">Purchase</h3>
+                            <h3 class="mb-0">{{ __('purchase.page_title') }}</h3>
                         </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-end">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item"><a href="#">{{ __('common.home') }}</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">
-                                    Purchase List
+                                    {{ __('purchase.purchase_list') }}
                                 </li>
                             </ol>
                         </div>
@@ -28,18 +28,18 @@
                             <div class="mb-3 row">
 
                                     <div class="col-md-9">
-                                        <h4 class="mt-3 card-title btn">Search Purchase</h4>
+                                        <h4 class="mt-3 card-title btn">{{ __('purchase.search_purchase') }}</h4>
                                         <input
                                             type="text"
                                             id="search"
                                             class="form-control"
-                                           placeholder="Search by purchase code, supplier, invoice number, purchase status or payment status">
+                                           placeholder="{{ __('purchase.search_placeholder') }}">
 
                                     </div>
                                     <div class="col-md-3">
 
                                         <label class="mt-4 form-label">
-                                            Purchase Date
+                                            {{ __('purchase.purchase_date') }}
                                         </label>
 
                                         <input
@@ -54,14 +54,14 @@
                             <div class="mb-4 card">
                                 <div class="card-header">
                                     <h3 class="card-title">
-                                        Purchase List
+                                        {{ __('purchase.page_title') }}
                                     </h3>
 
                                     <div class="card-tools">
                                         <ul class="pagination pagination-sm float-end">
 
                                             <a href="{{ route('admin.purchase.create') }}" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addPurchaseModal">
-                                                Add Purchase
+                                                {{ __('purchase.add_purchase') }}
                                             </a>
                                         </ul>
                                     </div>
@@ -71,17 +71,17 @@
                                     <table id="purchase-table" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
-                                            <th>Purchase Code</th>
-                                            <th>Supplier</th>
-                                            <th>Invoice No.</th>
-                                            <th>Subtotal</th>
-                                            <th>Discount</th>
-                                            <th>Tax</th>
-                                            <th>Total</th>
-                                            <th>Purchase Status</th>
-                                            <th>Payment Status</th>
-                                            <th>Purchase Date</th>
-                                            <th>Actions</th>
+                                                <th>{{ __('purchase.purchase_code') }}</th>
+                                                <th>{{ __('purchase.supplier') }}</th>
+                                                <th>{{ __('purchase.invoice_number') }}</th>
+                                                <th>{{ __('purchase.subtotal') }}</th>
+                                                <th>{{ __('purchase.discount') }}</th>
+                                                <th>{{ __('purchase.tax') }}</th>
+                                                <th>{{ __('purchase.total') }}</th>
+                                                <th>{{ __('purchase.purchase_status') }}</th>
+                                                <th>{{ __('purchase.payment_status') }}</th>
+                                                <th>{{ __('purchase.purchase_date') }}</th>
+                                                <th>{{ __('common.actions') }}</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -108,7 +108,7 @@
                                                             : ($purchase->purchase_status->value == 'pending'
                                                                 ? 'text-warning'
                                                                 : 'text-danger') }}">
-                                                        {{ ucfirst($purchase->purchase_status->value) }}
+                                                        {{ __('purchase_status.' . $purchase->purchase_status->value) }}
                                                     </span>
                                                 </td>
                                                 <td style="font-size: 15px;align-content:center">
@@ -117,7 +117,7 @@
                                                             : ($purchase->payment_status->value == 'partial'
                                                                 ? 'text-warning'
                                                                 : 'text-danger') }}">
-                                                        {{ ucfirst($purchase->payment_status->value) }}
+                                                        {{ __('common.' . $purchase->payment_status->value) }}
                                                     </span>
                                                 </td>
                                                 <td style="font-size: 15px;align-content:center">{{ \Carbon\Carbon::parse($purchase->purchased_at)->format('Y-m-d') }}</td>
@@ -126,15 +126,15 @@
 
                                                     <button
                                                         class="btn btn-warning w-100 edit-btn"
-                                                        data-id="{{ $purchase->id }}">Edit</button>
+                                                        data-id="{{ $purchase->id }}">{{ __('common.edit') }}</button>
                                                     <button
                                                         class="btn btn-danger delete-btn w-100" style="text-"
-                                                        data-id="{{ $purchase->id }}">Delete</button>
+                                                        data-id="{{ $purchase->id }}">{{ __('common.delete') }}</button>
 
                                                     <a role="button"
                                                         href="{{ route('admin.purchase.show', $purchase->id) }}"
                                                         class="btn btn-info w-100">
-                                                        View
+                                                        {{ __('purchase.view_purchase') }}
                                                     </a>
                                                 </td>
                                             </tr>
@@ -145,7 +145,7 @@
 
                                                 <td colspan="11" class="text-center">
 
-                                                    No purchases found.
+                                                    {{ __('purchase.no_purchases_found') }}
 
                                                 </td>
 
@@ -158,7 +158,7 @@
 
                                                     <th colspan="6" class="text-center">
 
-                                                        Grand Total
+                                                        {{ __('purchase.grand_total') }}
 
                                                     </th>
 
@@ -192,7 +192,7 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addPurchaseModalLabel">Add Purchase</h5>
+                <h5 class="modal-title" id="addPurchaseModalLabel">{{ __('purchase.add_purchase_title') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -200,14 +200,14 @@
                     @csrf
 
                     <div class="mb-3">
-                        <label>Supplier</label>
+                        <label>{{ __('purchase.supplier') }}</label>
 
                         <select
                             class="form-control"
                             name="supplier_id"
                             required>
 
-                            <option value="">Select Supplier</option>
+                            <option value="">{{ __('purchase.select_supplier') }}</option>
 
                             @foreach($suppliers as $id => $name)
 
@@ -224,7 +224,7 @@
 
                     <div class="mb-3">
 
-                        <label>Invoice Number</label>
+                        <label>{{ __('purchase.invoice_number') }}</label>
 
                         <input
                             type="text"
@@ -237,7 +237,7 @@
 
                         <div class="col-md-6">
 
-                            <label>Purchase Date</label>
+                            <label>{{ __('purchase.purchase_date') }}</label>
 
                             <input
                                 type="date"
@@ -250,7 +250,7 @@
 
                         <div class="col-md-6">
 
-                            <label>Purchase Status</label>
+                            <label>{{ __('purchase.purchase_status') }}</label>
 
                             <select
                                 class="form-control"
@@ -260,7 +260,7 @@
 
                                     <option value="{{ $status }}">
 
-                                        {{ ucfirst($status) }}
+                                        {{ __('purchase_status.' . $status) }}
 
                                     </option>
 
@@ -276,7 +276,7 @@
 
                         <div class="col-md-6">
 
-                            <label>Payment Status</label>
+                            <label>{{ __('purchase.payment_status') }}</label>
 
                             <select
                                 class="form-control"
@@ -286,7 +286,7 @@
 
                                     <option value="{{ $status }}">
 
-                                        {{ ucfirst($status) }}
+                                        {{ __('common.' . $status) }}
 
                                     </option>
 
@@ -301,7 +301,7 @@
 
                     <div class="mt-3">
 
-                        <label>Notes</label>
+                        <label>{{ __('purchase.notes') }}</label>
 
                         <textarea
                             class="form-control"
@@ -312,7 +312,7 @@
 
                     <hr>
 
-                    <h5>Purchase Items</h5>
+                    <h5>{{ __('purchase.purchase_items') }}</h5>
 
                     <table
                         class="table table-bordered"
@@ -322,19 +322,19 @@
 
                             <tr>
 
-                                <th width="15%">Product</th>
+                                <th width="15%">{{ __('purchase.product') }}</th>
 
-                                <th width="15%">Qty</th>
+                                <th width="15%">{{ __('purchase.quantity') }}</th>
 
-                                <th width="15%">Cost</th>
+                                <th width="15%">{{ __('purchase.cost') }}</th>
 
-                                <th width="15%">Discount</th>
+                                <th width="15%">{{ __('purchase.item_discount') }}</th>
 
-                                <th width="15%">Tax</th>
+                                <th width="15%">{{ __('purchase.item_tax') }}</th>
 
-                                <th width="15%">Subtotal</th>
+                                <th width="15%">{{ __('purchase.item_subtotal') }}</th>
 
-                                <th></th>
+                                <th>{{ __('common.actions') }}</th>
 
                             </tr>
 
@@ -351,7 +351,7 @@
                         class="btn btn-success btn-sm"
                         id="addItem">
 
-                        + Add Product
+                        {{ __('purchase.add_product') }}
 
                     </button>
 
@@ -363,7 +363,7 @@
 
                             <div class="mb-2">
 
-                                <label>Purchase Discount</label>
+                                <label>{{ __('purchase.purchase_discount') }}</label>
 
                                 <input
                                     type="number"
@@ -377,7 +377,7 @@
 
                             <div class="mb-2">
 
-                                <label>Purchase Tax</label>
+                                <label>{{ __('purchase.purchase_tax') }}</label>
 
                                 <input
                                     type="number"
@@ -391,7 +391,7 @@
 
                             <div class="mb-2">
 
-                                <label>Grand Total</label>
+                                <label>{{ __('purchase.grand_total') }}</label>
 
                                 <input
                                     type="text"
@@ -405,7 +405,7 @@
 
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Save Purchase</button>
+                    <button type="submit" class="btn btn-primary">{{ __('purchase.save_purchase') }}</button>
                 </form>
             </div>
         </div>
@@ -417,7 +417,7 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editPurchaseModalLabel">Edit Purchase</h5>
+                <h5 class="modal-title" id="editPurchaseModalLabel"> {{ __('purchase.edit_purchase_title') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -426,7 +426,7 @@
                     @method('PUT')
 
                     <div class="mb-3">
-                        <label>Supplier</label>
+                        <label>{{ __('purchase.supplier') }}</label>
 
                         <select
                             class="form-control"
@@ -434,7 +434,7 @@
                             id="edit_supplier_id"
                             required>
 
-                            <option value="">Select Supplier</option>
+                            <option value="">{{ __('purchase.select_supplier') }}</option>
 
                             @foreach($suppliers as $id => $name)
 
@@ -451,7 +451,7 @@
 
                     <div class="mb-3">
 
-                        <label>Invoice Number</label>
+                        <label>{{ __('purchase.invoice_number') }}</label>
 
                         <input
                             type="text"
@@ -465,7 +465,7 @@
 
                         <div class="col-md-6">
 
-                            <label>Purchase Date</label>
+                            <label>{{ __('purchase.purchase_date') }}</label>
 
                             <input
                                 type="date"
@@ -479,7 +479,7 @@
 
                         <div class="col-md-6">
 
-                            <label>Purchase Status</label>
+                            <label>{{ __('purchase.purchase_status') }}</label>
 
                             <select
                                 class="form-control"
@@ -490,7 +490,7 @@
 
                                     <option value="{{ $status }}">
 
-                                        {{ ucfirst($status) }}
+                                       {{ __('purchase_status.' . $status) }}
 
                                     </option>
 
@@ -506,7 +506,7 @@
 
                         <div class="col-md-6">
 
-                            <label>Payment Status</label>
+                            <label>{{ __('purchase.payment_status') }}</label>
 
                             <select
                                 class="form-control"
@@ -517,7 +517,7 @@
 
                                     <option value="{{ $status }}">
 
-                                        {{ ucfirst($status) }}
+                                        {{ __('common.' . $status) }}
 
                                     </option>
 
@@ -532,7 +532,7 @@
 
                     <div class="mt-3">
 
-                        <label>Notes</label>
+                       <label>{{ __('purchase.notes') }}</label>
 
                         <textarea
                             class="form-control"
@@ -544,7 +544,7 @@
 
                     <hr>
 
-                    <h5>Purchase Items</h5>
+                    <h5>{{ __('purchase.purchase_items') }}</h5>
 
                     <table
                         class="table table-bordered"
@@ -554,17 +554,17 @@
 
                             <tr>
 
-                                <th width="16%">Product</th>
+                                <th width="16%">{{ __('purchase.product') }}</th>
 
-                                <th width="16%">Qty</th>
+                                <th width="16%">{{ __('purchase.quantity') }}</th>
 
-                                <th width="16%">Cost</th>
+                                <th width="16%">{{ __('purchase.cost') }}</th>
 
-                                <th width="16%">Discount</th>
+                                <th width="16%">{{ __('purchase.item_discount') }}</th>
 
-                                <th width="16%">Tax</th>
+                                <th width="16%">{{ __('purchase.item_tax') }}</th>
 
-                                <th width="16%">Subtotal</th>
+                                <th width="16%">{{ __('purchase.item_subtotal') }}</th>
 
                                 <th></th>
 
@@ -583,7 +583,7 @@
                         class="btn btn-success btn-sm"
                         id="editAddItem">
 
-                        + Add Product
+                        {{ __('purchase.add_product') }}
 
                     </button>
 
@@ -595,7 +595,7 @@
 
                             <div class="mb-2">
 
-                                <label>Purchase Discount</label>
+                                <label>{{ __('purchase.purchase_discount') }}</label>
 
                                 <input
                                     type="number"
@@ -609,7 +609,7 @@
 
                             <div class="mb-2">
 
-                                <label>Purchase Tax</label>
+                                <label>{{ __('purchase.purchase_tax') }}</label>
 
                                 <input
                                     type="number"
@@ -623,7 +623,7 @@
 
                             <div class="mb-2">
 
-                                <label>Grand Total</label>
+                                <label>{{ __('purchase.grand_total') }}</label>
 
                                 <input
                                     type="text"
@@ -637,7 +637,7 @@
 
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Update Purchase</button>
+                    <button type="submit" class="btn btn-primary">{{ __('purchase.update_purchase') }}</button>
                 </form>
             </div>
         </div>
@@ -652,6 +652,18 @@
 <script type="text/javascript">
 
 $(document).ready(function () {
+
+    const purchaseStatusTranslations = {
+    pending: "{{ __('purchase_status.pending') }}",
+    received: "{{ __('purchase_status.received') }}",
+    cancelled: "{{ __('purchase_status.cancelled') }}"
+};
+
+const paymentStatusTranslations = {
+    paid: "{{ __('common.paid') }}",
+    partial: "{{ __('common.partial') }}",
+    unpaid: "{{ __('common.unpaid') }}"
+};
 
 
     // ==========================
@@ -713,7 +725,7 @@ $(document).ready(function () {
 
                             <td colspan="11" class="text-center">
 
-                                No purchases found.
+                               {{ __('purchase.no_purchases_found') }}
 
                             </td>
 
@@ -775,17 +787,14 @@ $(document).ready(function () {
 
 
                             <td class="${
-                                purchase.purchase_status === 'completed'
+                                purchase.purchase_status === 'received'
                                 ? 'text-success'
                                 : purchase.purchase_status === 'pending'
                                 ? 'text-warning'
                                 : 'text-danger'
                             }">
 
-                                ${
-                                    purchase.purchase_status.charAt(0).toUpperCase()
-                                    + purchase.purchase_status.slice(1)
-                                }
+                                ${purchaseStatusTranslations[purchase.purchase_status]}
 
                             </td>
 
@@ -801,10 +810,7 @@ $(document).ready(function () {
                             }">
 
 
-                                ${
-                                    purchase.payment_status.charAt(0).toUpperCase()
-                                    + purchase.payment_status.slice(1)
-                                }
+                                ${paymentStatusTranslations[purchase.payment_status]}
 
 
                             </td>
@@ -831,7 +837,7 @@ $(document).ready(function () {
 
                                 >
 
-                                    Edit
+                                    {{ __('common.edit') }}
 
                                 </button>
 
@@ -845,7 +851,7 @@ $(document).ready(function () {
 
                                 >
 
-                                    Delete
+                                    {{ __('common.delete') }}
                                     
 
                                 </button>
@@ -853,7 +859,7 @@ $(document).ready(function () {
                                 <a role="button" 
                                     href="${'{{ route('admin.purchase.show', ':id') }}'.replace(':id', purchase.id)}"
                                     class="btn btn-info w-100">
-                                    View
+                                    {{ __('purchase.view_purchase') }}
                                 </a>
 
 
@@ -877,7 +883,7 @@ $(document).ready(function () {
 
                         <th colspan="6" class="text-center">
 
-                            Grand Total
+                            {{ __('purchase.grand_total') }}
 
                         </th>
 
@@ -1213,7 +1219,7 @@ $(document).ready(function () {
 
 
 
-        if(!confirm("Are you sure you want to delete this purchase?")){
+        if(!confirm("{{ __('purchase.delete_confirmation') }}")){
 
             return;
 
@@ -1310,7 +1316,7 @@ $(document).ready(function () {
 
                     <option value="">
 
-                        Select Product
+                        {{ __('purchase.select_product') }}
 
                     </option>
 
@@ -1862,7 +1868,7 @@ $(document).ready(function () {
         if($("#purchaseItemsTable tbody tr").length === 0){
 
 
-            alert("Please add at least one product.");
+            alert("{{ __('purchase.minimum_product') }}");
 
             return;
 

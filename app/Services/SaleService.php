@@ -134,7 +134,7 @@ class SaleService
 
                 $product = Product::lockForUpdate()->findOrFail($item['product_id']);
 
-                if( $product->stock_quantity < $item['quantity'])
+                if( ($product->stock_quantity - $product->low_stock_threshold) < $item['quantity'])
                 {
                     throw ValidationException::withMessages([
                         'items' => "Not enough stock for {$product->name}"]);

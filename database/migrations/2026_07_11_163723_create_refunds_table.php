@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->string('refund_code')->unique();
             $table->decimal('amount', 12, 2);
+            $table->decimal('cash_refunded', 10, 2)->default(0);
             $table->string('method'); // cash, card, store_credit
             $table->text('reason')->nullable();
             $table->timestamp('refunded_at');

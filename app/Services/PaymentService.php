@@ -168,7 +168,7 @@ class PaymentService
 
    public function updateSalePayment(Sale $sale): void
     {
-        $paidAmount = $sale->payments()->sum('amount') - $sale->refunds()->sum('amount');
+        $paidAmount = $sale->payments()->sum('amount') - $sale->refunds()->sum('cash_refunded');
         $paidAmount = max($paidAmount, 0);
 
         if ($paidAmount > $sale->total) {

@@ -11,7 +11,7 @@
 
             <div class="col-sm-6">
                 <h3 class="mb-0">
-                    Purchase Details
+                     {{ __('purchase_show.page_title') }}
                 </h3>
             </div>
 
@@ -20,15 +20,15 @@
                 <ol class="breadcrumb float-sm-end">
 
                     <li class="breadcrumb-item">
-                        <a href="#">Home</a>
+                        <a href="#">{{ __('common.home') }}</a>
                     </li>
 
                     <li class="breadcrumb-item">
-                        Purchase
+                         {{ __('purchase_show.purchase') }}
                     </li>
 
                     <li class="breadcrumb-item active">
-                        View
+                        {{ __('purchase_show.view') }}
                     </li>
 
                 </ol>
@@ -48,7 +48,7 @@
     <div class="card-header">
 
         <h3 class="card-title">
-            Purchase Information
+            {{ __('purchase_show.purchase_information') }}
         </h3>
 
     </div>
@@ -59,7 +59,7 @@
 
             <div class="mb-3 col-md-4">
 
-                <strong>Purchase Code</strong>
+               <strong>{{ __('purchase_show.purchase_code') }}</strong>
 
                 <p>{{ $purchase->purchase_code }}</p>
 
@@ -67,13 +67,12 @@
 
             <div class="mb-3 col-md-4">
 
-                <strong>Supplier</strong>
+                <strong>{{ __('purchase_show.supplier') }}</strong>
 
                 <p>
 
-                    {{ $purchase->supplier?->first_name }}
-
-                    {{ $purchase->supplier?->last_name }}
+                    {{ $purchase->supplier ? $purchase->supplier->first_name . ' ' . $purchase->supplier->last_name
+                            : __('purchase_show.not_available') }}
 
                 </p>
 
@@ -81,7 +80,7 @@
 
             <div class="mb-3 col-md-4">
 
-                <strong>Invoice Number</strong>
+                <strong>{{ __('purchase_show.invoice_number') }}</strong>
 
                 <p>{{ $purchase->invoice_number ?? '-' }}</p>
 
@@ -89,7 +88,7 @@
 
             <div class="mb-3 col-md-4">
 
-                <strong>Purchase Date</strong>
+               <strong>{{ __('purchase_show.purchase_date') }}</strong>
 
                 <p>{{ $purchase->purchased_at->format('Y-m-d') }}</p>
 
@@ -97,7 +96,7 @@
 
             <div class="mb-3 col-md-4">
 
-                <strong>Created By</strong>
+                <strong>{{ __('purchase_show.created_by') }}</strong>
 
                 <p>{{ $purchase->user->name }}</p>
 
@@ -105,7 +104,7 @@
 
             <div class="mb-3 col-md-4">
 
-                <strong>Created At</strong>
+                <strong>{{ __('purchase_show.created_at') }}</strong>
 
                 <p>{{ $purchase->created_at->format('Y-m-d H:i') }}</p>
 
@@ -113,7 +112,7 @@
 
             <div class="mb-3 col-md-4">
 
-                <strong>Purchase Status</strong>
+                <strong>{{ __('purchase_show.purchase_status') }}</strong>
 
                 <p>
 
@@ -123,7 +122,7 @@
                             ? 'text-warning'
                             : 'text-danger') }}">
 
-                        {{ ucfirst($purchase->purchase_status->value) }}
+                        {{ __('purchase_status.' . $purchase->purchase_status->value) }}
 
                     </span>
 
@@ -133,7 +132,7 @@
 
             <div class="mb-3 col-md-4">
 
-                <strong>Payment Status</strong>
+                <strong>{{ __('purchase_show.payment_status') }}</strong>
 
                 <p>
 
@@ -143,7 +142,7 @@
                             ? 'text-warning'
                             : 'text-danger') }}">
 
-                        {{ ucfirst($purchase->payment_status->value) }}
+                        {{ __('common.' . $purchase->payment_status->value) }}
 
                     </span>
 
@@ -152,9 +151,9 @@
             </div>
             <div class="mb-3 col-md-4">
 
-                <strong>Updated At</strong>
+                <strong>{{ __('purchase_show.updated_at') }}</strong>
 
-                <p>{{ $purchase->updated_at->format('Y-m-d H:i') ?? "N/A" }}</p>
+                <p{{ $purchase->updated_at?->format('Y-m-d H:i') ?? __('purchase_show.not_available') }}</p>
 
             </div>
 
@@ -169,7 +168,7 @@
 
         <h3 class="card-title">
 
-            Purchased Products
+             {{ __('purchase_show.purchased_products') }}
 
         </h3>
 
@@ -183,17 +182,17 @@
 
             <tr>
 
-                <th>Product</th>
+                <th>{{ __('purchase_show.product') }}</th>
 
-                <th>Quantity</th>
+                <th>{{ __('purchase_show.quantity') }}</th>
 
-                <th>Unit Cost</th>
+                <th>{{ __('purchase_show.unit_cost') }}</th>
 
-                <th>Discount</th>
+                <th>{{ __('purchase_show.discount') }}</th>
 
-                <th>Tax</th>
+                <th>{{ __('purchase_show.tax') }}</th>
 
-                <th>Subtotal</th>
+                <th>{{ __('purchase_show.subtotal') }}</th>
 
             </tr>
 
@@ -259,7 +258,7 @@
 
         <h3 class="card-title">
 
-            Purchase Summary
+             {{ __('purchase_show.purchase_summary') }}
 
         </h3>
 
@@ -272,7 +271,7 @@
             <tr>
 
                 <th width="30%">
-                    Subtotal
+                    {{ __('purchase_show.subtotal') }}
                 </th>
 
                 <td>
@@ -286,7 +285,7 @@
             <tr>
 
                 <th>
-                    Discount
+                    {{ __('purchase_show.discount') }}
                 </th>
 
                 <td>
@@ -300,7 +299,7 @@
             <tr>
 
                 <th>
-                    Tax
+                    {{ __('purchase_show.tax') }}
                 </th>
 
                 <td>
@@ -313,9 +312,7 @@
 
             <tr>
 
-                <th>
-                    Grand Total
-                </th>
+                <th>{{ __('purchase_show.grand_total') }}</th>
 
                 <td>
 
@@ -331,9 +328,7 @@
 
             <tr>
 
-                <th>
-                    Notes
-                </th>
+                <th>{{ __('purchase_show.notes') }}</th>
 
                 <td>
 
@@ -353,13 +348,13 @@
     <a href="{{ route('admin.purchase.index') }}"
        class="btn btn-secondary">
 
-        Back
+        {{ __('purchase_show.back') }}
 
     </a>
 
     <a href="{{ route('admin.purchase.index', ['edit' => $purchase->id]) }}"
         class="btn btn-warning">
-            Edit Purchase
+            {{ __('purchase_show.edit_purchase') }}
     </a>
 
 </div>

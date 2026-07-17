@@ -7,13 +7,13 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-sm-6">
-                            <h3 class="mb-0">Supplier</h3>
+                            <h3 class="mb-0">{{ __('supplier.title') }}</h3>
                         </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-end">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item"><a href="#">{{ __('supplier.home') }}</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">
-                                    Supplier List
+                                    {{ __('supplier.supplier_list') }}
                                 </li>
                             </ol>
                         </div>
@@ -28,31 +28,31 @@
                             <div class="mb-3 row">
 
                                     <div class="col-md-6">
-                                        <h4 class="mt-3 card-title btn">Search Supplier</h4>
+                                        <h4 class="mt-3 card-title btn">{{ __('supplier.search_supplier') }}</h4>
                                         <input
                                             type="text"
                                             id="search"
                                             class="form-control"
-                                            placeholder="Search by code, name, phone, email or address">
+                                            placeholder="{{ __('supplier.search_placeholder') }}">
 
                                     </div>
 
                                 </div>
                             <div class="mb-4 card">
                                 <div class="card-header">
-                                    <h3 class="card-title">Supplier List</h3>
+                                    <h3 class="card-title">{{ __('supplier.supplier_list') }}</h3>
 
                                     <div class="card-tools">
                                         <ul class="pagination pagination-sm float-end">
 
                                             <a href="{{ route('admin.supplier.create') }}" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
-                                                Add Supplier
+                                                {{ __('supplier.add_supplier') }}
                                             </a>
                                             &nbsp;
                                             &nbsp;
                                             &nbsp;
                                             <a href="{{ route('admin.report.supplier') }}" class="btn btn-secondary btn-sm" >
-                                                Suppliers Report
+                                                {{ __('supplier.suppliers_report') }}
                                             </a>
                                         </ul>
                                     </div>
@@ -62,39 +62,39 @@
                                     <table id="supplier-table" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
-                                                <th>Supplier</th>
-                                                <th>Company Name</th>
-                                                <th>Phone</th>
-                                                <th>Email</th>
-                                                <th>Address</th>
-                                                <th>Tax Number</th>
-                                                <th>Status</th>
-                                                <th>Actions</th>
+                                                <th>{{ __('supplier.supplier') }}</th>
+                                                <th>{{ __('supplier.company_name') }}</th>
+                                                <th>{{ __('supplier.phone') }}</th>
+                                                <th>{{ __('supplier.email') }}</th>
+                                                <th>{{ __('supplier.address') }}</th>
+                                                <th>{{ __('supplier.tax_number') }}</th>
+                                                <th>{{ __('supplier.status') }}</th>
+                                                <th>{{ __('supplier.actions') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             @forelse($suppliers as $supplier)
                                                 <tr>
                                                     <td>{{ $supplier->first_name }} {{ $supplier->last_name }}</td>
-                                                    <td>{{ $supplier->company_name ?? 'N/A' }}</td>
+                                                    <td>{{ $supplier->company_name ?? __('supplier.na') }}</td>
                                                     <td>{{ $supplier->phone }}</td>
-                                                    <td>{{ $supplier->email ?? 'N/A' }}</td>
-                                                    <td>{{ $supplier->address ?? 'N/A' }}</td>
-                                                    <td>{{ $supplier->tax_number ?? 'N/A'}}</td>
+                                                    <td>{{ $supplier->email ?? __('supplier.na') }}</td>
+                                                    <td>{{ $supplier->address ?? __('supplier.na') }}</td>
+                                                    <td>{{ $supplier->tax_number ?? __('supplier.na')}}</td>
 
                                                     <td class="{{ $supplier->status === \App\Enums\SupplierStatus::Active ? 'text-success' : 'text-warning' }}">
                                                          {{ $supplier->status->name }}
                                                     </td>
                                                     <td>
-                                                        <button class="btn btn-sm edit-btn btn-warning" data-id="{{ $supplier->id }}">Edit</button>
-                                                        <button class="btn btn-sm delete-btn btn-danger" data-id="{{ $supplier->id }}">Delete</button>
-                                                        <button class="btn btn-sm pdf-btn btn-secondary" data-id="{{ $supplier->id }}">Report</button>
+                                                        <button class="btn btn-sm edit-btn btn-warning" data-id="{{ $supplier->id }}">{{ __('supplier.edit') }}</button>
+                                                        <button class="btn btn-sm delete-btn btn-danger" data-id="{{ $supplier->id }}">{{ __('supplier.delete') }}</button>
+                                                        <button class="btn btn-sm pdf-btn btn-secondary" data-id="{{ $supplier->id }}">{{ __('supplier.report') }}</button>
 
                                                     </td>
                                                 </tr>
                                             @empty
                                                 <tr>
-                                                    <td colspan="8" class="text-center">No suppliers found.</td>
+                                                    <td colspan="8" class="text-center">{{ __('supplier.no_suppliers_found') }}</td>
                                                 </tr>
                                             @endforelse
                                         </tbody>
@@ -116,38 +116,38 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addSupplierModalLabel">Add Supplier</h5>
+                <h5 class="modal-title" id="addSupplierModalLabel">{{ __('supplier.add_supplier_title') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="addSupplierForm" method="POST" action="{{ route('admin.supplier.store') }}">
                     @csrf
                     <div class="mb-3">
-                        <label for="first_name" class="form-label">First Name</label>
+                        <label for="first_name" class="form-label">{{ __('supplier.first_name') }}</label>
                         <input type="text" class="form-control" id="first_name" name="first_name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="last_name" class="form-label">Last Name</label>
+                        <label for="last_name" class="form-label">{{ __('supplier.last_name') }}</label>
                         <input type="text" class="form-control" id="last_name" name="last_name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="company_name" class="form-label">Company name</label>
+                        <label for="company_name" class="form-label">{{ __('supplier.company_name') }}</label>
                         <input type="text" class="form-control" id="company_name" name="company_name" >
                     </div>
                     <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
+                        <label for="email" class="form-label">{{ __('supplier.email') }}</label>
                         <input type="email" class="form-control" id="email" name="email" >
                     </div>
                     <div class="mb-3">
-                        <label for="phone" class="form-label">Phone</label>
+                        <label for="phone" class="form-label">{{ __('supplier.phone') }}</label>
                         <input type="tel" class="form-control" id="phone" name="phone" required>
                     </div>
                     <div class="mb-3">
-                        <label for="address" class="form-label">Address</label>
+                        <label for="address" class="form-label">{{ __('supplier.address') }}</label>
                         <textarea class="form-control" id="address" name="address"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="status" class="form-label">Status</label>
+                        <label for="status" class="form-label">{{ __('supplier.status') }}</label>
                         <select class="form-control" id="status" name="status">
                             @foreach(App\Enums\SupplierStatus::values() as $status)
                                 <option value="{{ $status }}">
@@ -156,7 +156,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="submit" class="btn btn-primary">{{ __('supplier.save') }}</button>
                 </form>
             </div>
         </div>
@@ -169,7 +169,7 @@
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5>Edit Supplier</h5>
+                <h5>{{ __('supplier.edit_supplier') }}</h5>
                 <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
@@ -180,39 +180,39 @@
                     @method('PUT')
 
                     <div class="mb-3">
-                        <label for="first_name" class="form-label">First Name</label>
+                        <label for="first_name" class="form-label">{{ __('supplier.first_name') }}</label>
                         <input type="text" class="form-control" id="edit_first_name" name="first_name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="last_name" class="form-label">Last Name</label>
+                        <label for="last_name" class="form-label">{{ __('supplier.last_name') }}</label>
                         <input type="text" class="form-control" id="edit_last_name" name="last_name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="company_name" class="form-label">Company name</label>
+                        <label for="company_name" class="form-label">{{ __('supplier.company_name') }}</label>
                         <input type="text" class="form-control" id="edit_company_name" name="company_name" >
                     </div>
                     <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
+                        <label for="email" class="form-label">{{ __('supplier.email') }}</label>
                         <input type="email" class="form-control" id="edit_email" name="email" >
                     </div>
                     <div class="mb-3">
-                        <label for="phone" class="form-label">Phone</label>
+                        <label for="phone" class="form-label">{{ __('supplier.phone') }}</label>
                         <input type="tel" class="form-control" id="edit_phone" name="phone" required>
                     </div>
                     <div class="mb-3">
-                        <label for="address" class="form-label">Address</label>
+                        <label for="address" class="form-label">{{ __('supplier.address') }}</label>
                         <textarea class="form-control" id="edit_address" name="address"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="tax_number" class="form-label">Tax Number</label>
+                        <label for="tax_number" class="form-label">{{ __('supplier.tax_number') }}</label>
                         <input type="number" class="form-control" id="edit_tax_number" name="tax_number" >
                     </div>
                     <div class="mb-3">
-                        <label for="notes" class="form-label">Notes</label>
+                        <label for="notes" class="form-label"> {{ __('supplier.notes') }}</label>
                         <textarea class="form-control" id="edit_notes" name="notes"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="status" class="form-label">Status</label>
+                        <label for="status" class="form-label">{{ __('supplier.status') }}</label>
                         <select class="form-control" id="edit_status" name="status">
                              @foreach(App\Enums\SupplierStatus::values() as $status)
                                 <option value="{{ $status }}">
@@ -221,7 +221,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="submit" class="btn btn-primary">{{ __('supplier.update') }}</button>
                 </form>
 
 
@@ -258,7 +258,7 @@
                         tableBody = `
                             <tr>
                                 <td colspan="8" class="text-center">
-                                    No suppliers found.
+                                    {{ __('supplier.no_suppliers_found') }}
                                 </td>
                             </tr>
                         `;
@@ -269,22 +269,22 @@
                             tableBody += `
                                 <tr>
                                     <td>${supplier.first_name} ${supplier.last_name}</td>
-                                        <td>${supplier.company_name ?? 'N/A' }</td>
+                                        <td>${supplier.company_name ?? {{ __('supplier.na') }} }</td>
                                     <td>${supplier.phone}</td>
-                                    <td>${supplier.email ?? 'N/A' }</td>
-                                    <td>${supplier.address ?? 'N/A' }</td>
-                                    <td>${supplier.tax_number ?? 'N/A' }</td>
+                                    <td>${supplier.email ?? {{ __('supplier.na') }} }</td>
+                                    <td>${supplier.address ?? {{ __('supplier.na') }} }</td>
+                                    <td>${supplier.tax_number ?? {{ __('supplier.na') }} }</td>
                                     <td class="${
                                         supplier.status === 'active' ? 'text-success' :  'text-warning'
                                     }">
                                         ${
-                                            supplier.status === 'active' ? 'Active' :  'Inactive'
+                                            supplier.status === 'active' ? {{ __('supplier.active') }} : {{ __('supplier.inactive') }}
                                         }
                                     </td>
                                     <td>
-                                        <button class="btn btn-sm edit-btn btn-warning" data-id="${supplier.id}">Edit</button>
-                                        <button class="btn btn-sm delete-btn btn-danger" data-id="${supplier.id}">Delete</button>
-                                        <button class="btn btn-sm pdf-btn btn-secondary" data-id="${supplier.id}">Report</button>
+                                        <button class="btn btn-sm edit-btn btn-warning" data-id="${supplier.id}">{{ __('supplier.edit') }}</button>
+                                        <button class="btn btn-sm delete-btn btn-danger" data-id="${supplier.id}">{{ __('supplier.delete') }}</button>
+                                        <button class="btn btn-sm pdf-btn btn-secondary" data-id="${supplier.id}">{{ __('supplier.report') }}</button>
 
                                     </td>
                                 </tr>
@@ -384,7 +384,7 @@
             const url = "{{ route('admin.supplier.destroy', ['supplier' => ':id']) }}"
                 .replace(':id', id);
 
-            if(!confirm("Are you sure you want to delete this supplier?")){
+            if(!confirm("{{ __('supplier.delete_confirmation') }}")){
                 return;
             }
 
@@ -450,7 +450,7 @@
                     $.each(errors, function(key, value) {
                         erroeMessage += value[0] + '\n';
                     });
-                    alert('Error adding supplier:\n' + erroeMessage);
+                    alert("{{ __('supplier.error_add_supplier') }}\n" + erroeMessage);
                     console.error('Error adding supplier:', error);
                     console.error('Error adding supplier:', xhr.responseText);
                 }

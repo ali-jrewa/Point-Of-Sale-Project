@@ -151,7 +151,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="credit_limit" class="form-label">{{ __('customer.credit_limit') }}</label>
-                        <input type="number" class="form-control" id="credit_limit" name="credit_limit" >
+                        <input type="number" class="form-control" id="credit_limit" name="credit_limit" min="0" value="0" >
                     </div>
 
                     <div class="mb-3">

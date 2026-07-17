@@ -20,17 +20,31 @@ class RefundService
     {
         return DB::transaction(function () use ($sale, $data) {
 
-            $totalRefundAmount = 0;
+            // re-fetch WITH row lock - can't call lockForUpdate() on an already-loaded model
+            $sale = Sale::lockForUpdate()->findOrFail($sale->id);
 
-            // Validate quantities first, before creating anything
+            if (! in_array($sale->sale_status, [
+                SaleStatus::Completed,
+                SaleStatus::PartiallyRefunded,
+            ])) {
+                throw ValidationException::withMessages([
+                    'sale' => 'This sale is not eligible for refund.',
+                ]);
+            }
+
+            $itemsValue = 0; // value of goods being returned
+
             foreach ($data['items'] as $item) {
-
                 $saleItem = $sale->items()->findOrFail($item['sale_item_id']);
 
-                $alreadyRefunded = RefundItem::where('sale_item_id', $saleItem->id)
-                    ->sum('quantity');
-
+                $alreadyRefunded = RefundItem::where('sale_item_id', $saleItem->id)->sum('quantity');
                 $availableToRefund = $saleItem->quantity - $alreadyRefunded;
+
+                if ($item['quantity'] <= 0) {
+                    throw ValidationException::withMessages([
+                        'items' => "Refund quantity must be greater than zero for {$saleItem->product->name}."
+                    ]);
+                }
 
                 if ($item['quantity'] > $availableToRefund) {
                     throw ValidationException::withMessages([
@@ -38,30 +52,30 @@ class RefundService
                     ]);
                 }
 
-                $unitRefund = $saleItem->subtotal / $saleItem->quantity;
-                $totalRefundAmount += $unitRefund * $item['quantity'];
+                $unitValue = $saleItem->subtotal / $saleItem->quantity;
+                $itemsValue += $unitValue * $item['quantity'];
             }
 
-            if ($totalRefundAmount > $sale->paid_amount) {
-                throw ValidationException::withMessages([
-                    'amount' => 'Refund amount cannot exceed amount paid.'
-                ]);
-            }
+            // shrink the order's value by what's being returned
+            $newTotal = max($sale->total - $itemsValue, 0);
+
+            // cash only refunded if customer had paid more than the new (shrunk) total
+            $cashRefund = max($sale->paid_amount - $newTotal, 0);
 
             $refund = Refund::create([
-                'sale_id'     => $sale->id,
-                'user_id'     => Auth::id(),
-                'refund_code' => $this->generateRefundCode(),
-                'amount'      => $totalRefundAmount,
-                'method'      => $data['method'],
-                'reason'      => $data['reason'] ?? null,
-                'refunded_at' => now(),
+                'sale_id'       => $sale->id,
+                'user_id'       => Auth::id(),
+                'refund_code'   => $this->generateRefundCode(),
+                'amount'        => $itemsValue,
+                'cash_refunded' => $cashRefund,
+                'method'        => $data['method'],
+                'reason'        => $data['reason'] ?? null,
+                'refunded_at'   => now(),
             ]);
 
             foreach ($data['items'] as $item) {
-
                 $saleItem = $sale->items()->findOrFail($item['sale_item_id']);
-                $unitRefund = $saleItem->subtotal / $saleItem->quantity;
+                $unitValue = $saleItem->subtotal / $saleItem->quantity;
                 $restock = $item['restock'] ?? true;
 
                 RefundItem::create([
@@ -69,7 +83,7 @@ class RefundService
                     'sale_item_id' => $saleItem->id,
                     'product_id'   => $saleItem->product_id,
                     'quantity'     => $item['quantity'],
-                    'amount'       => $unitRefund * $item['quantity'],
+                    'amount'       => $unitValue * $item['quantity'],
                     'restocked'    => $restock,
                 ]);
 
@@ -80,16 +94,15 @@ class RefundService
                 }
             }
 
-            // Recalculate paid/due/payment_status net of refunds
-            $this->paymentService->updateSalePayment($sale->fresh());
-
-            $totalRefunded = $sale->refunds()->sum('amount');
-
+            // update total FIRST, so paid_amount check has the correct new total to compare against
             $sale->update([
-                'sale_status' => $totalRefunded >= $sale->total
-                    ? SaleStatus::Refunded
-                    : SaleStatus::PartiallyRefunded,
+                'total'       => $newTotal,
+                'subtotal'    => max($sale->subtotal - $itemsValue, 0),
+                'sale_status' => $newTotal <= 0 ? SaleStatus::Refunded : SaleStatus::PartiallyRefunded,
             ]);
+
+            $sale = $sale->fresh();
+            $this->paymentService->updateSalePayment($sale);
 
             return $refund->load('items.product');
         });
@@ -99,7 +112,7 @@ class RefundService
     {
         DB::transaction(function () use ($refund) {
 
-            $sale = $refund->sale;
+            $sale = $refund->sale()->lockForUpdate()->first();
 
             foreach ($refund->items as $item) {
                 if ($item->restocked) {
@@ -108,16 +121,24 @@ class RefundService
                 }
             }
 
+            $itemsValue = $refund->amount;
+
             $refund->delete();
 
-            $this->paymentService->updateSalePayment($sale->fresh());
-
-            $totalRefunded = $sale->refunds()->sum('amount');
-
+            // restore the value the refund had removed from the sale
             $sale->update([
-                'sale_status' => $totalRefunded == 0
-                    ? SaleStatus::Completed
-                    : SaleStatus::PartiallyRefunded,
+                'total'    => $sale->total + $itemsValue,
+                'subtotal' => $sale->subtotal + $itemsValue,
+            ]);
+
+            $sale = $sale->fresh();
+            $this->paymentService->updateSalePayment($sale);
+
+            $sale = $sale->fresh();
+            $sale->update([
+                'sale_status' => $sale->refunds()->exists()
+                    ? SaleStatus::PartiallyRefunded
+                    : SaleStatus::Completed,
             ]);
         });
     }

@@ -9,12 +9,14 @@
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-6">
-                    <h3 class="mb-0">Sales</h3>
+                    <h3 class="mb-0">
+                        {{ __('sale.title') }}
+                    </h3>
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
-                        <li class="breadcrumb-item"><a href="#">Home</a></li>
-                        <li class="breadcrumb-item active">Sale List</li>
+                        <li class="breadcrumb-item"><a href="#">{{ __('common.home') }}</a></li>
+                        <li class="breadcrumb-item active">{{ __('sale.sale_list') }}</li>
                     </ol>
                 </div>
             </div>
@@ -30,12 +32,12 @@
                     {{-- Search Area --}}
                     <div class="mb-3 row">
                         <div class="col-md-9">
-                            <h4 class="mt-3 card-title btn">Search Sale</h4>
+                            <h4 class="mt-3 card-title btn">{{ __('sale.search_sale') }}</h4>
                             <input type="text" id="search" class="form-control"
-                                placeholder="Search by Sale Code, Invoice No, Customer Name, Sale Status or Payment Status">
+                                placeholder="{{ __('sale.search_placeholder') }}"/>
                         </div>
                         <div class="col-md-3">
-                            <label class="mt-4 form-label">Sale Date</label>
+                            <label class="mt-4 form-label">{{ __('sale.sale_date') }}</label>
                             <input type="date" id="sale_date_search" class="form-control">
                         </div>
                     </div>
@@ -43,12 +45,12 @@
                     {{-- Card --}}
                     <div class="mb-4 card">
                         <div class="card-header">
-                            <h3 class="card-title">Sale List</h3>
+                            <h3 class="card-title">{{ __('sale.sale_list') }}</h3>
                             <div class="card-tools">
                                 <ul class="pagination pagination-sm float-end">
                                     <a href="{{ route('admin.sale.create') }}" class="btn btn-primary btn-sm"
                                         data-bs-toggle="modal" data-bs-target="#addSaleModal">
-                                        Add Sale
+                                        {{ __('sale.add_sale') }}
                                     </a>
                                 </ul>
                             </div>
@@ -58,17 +60,17 @@
                             <table id="sale-table" class="table table-bordered table-striped">
                                 <thead>
                                     <tr>
-                                        <th style="font-size:15px">Sale Code</th>
-                                        <th style="font-size:15px">Customer</th>
-                                        <th style="font-size:15px">Invoice No.</th>
-                                        <th style="font-size:15px">Subtotal</th>
-                                        <th style="font-size:15px">Discount</th>
-                                        <th style="font-size:15px">Tax</th>
-                                        <th style="font-size:15px">Total</th>
-                                        <th style="font-size:15px">Sale Status</th>
-                                        <th style="font-size:15px">Payment Status</th>
-                                        <th style="font-size:15px">Sale Date</th>
-                                        <th style="font-size:15px">Actions</th>
+                                        <th style="font-size:15px">{{ __('sale.sale_code') }}</th>
+                                        <th style="font-size:15px">{{ __('sale.customer') }}</th>
+                                        <th style="font-size:15px">{{ __('sale.invoice_number') }}</th>
+                                        <th style="font-size:15px">{{ __('sale.discount') }}</th>
+                                        <th style="font-size:15px">{{ __('sale.tax') }}</th>
+                                        <th style="font-size:15px">{{ __('sale.subtotal') }}</th>
+                                        <th style="font-size:15px">{{ __('sale.total') }}</th>
+                                        <th style="font-size:15px">{{ __('sale.sale_status') }}</th>
+                                        <th style="font-size:15px">{{ __('sale.payment_status') }}</th>
+                                        <th style="font-size:15px">{{ __('sale.sale_date_column') }}</th>
+                                        <th style="font-size:15px">{{ __('sale.actions') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -82,43 +84,45 @@
                                                 @if($sale->customer)
                                                     {{ $sale->customer->first_name.' '.$sale->customer->last_name }}
                                                 @else
-                                                    Walk In Customer
+                                                    {{ __('sale.walk_in_customer') }}
                                                 @endif
                                             </td>
                                             <td style="font-size:15px">{{ $sale->invoice_number ?? '-' }}</td>
-                                            <td>${{ number_format($sale->subtotal,2) }}</td>
+
                                             <td>${{ number_format($sale->discount,2) }}</td>
                                             <td>${{ number_format($sale->tax,2) }}</td>
+                                            <td>${{ number_format($sale->subtotal,2) }}</td>
                                             <td>${{ number_format($sale->total,2) }}</td>
+
                                             <td>
-                                                <span class="{{ $sale->sale_status->value == 'completed' ? 'text-success' : ($sale->sale_status->value == 'pending' ? 'text-warning' : 'text-danger') }}">
-                                                    {{ ucfirst($sale->sale_status->value) }}
+                                                <span class="{{ $sale->sale_status->value == \App\Enums\SaleStatus::Completed->value ? 'text-success' : ($sale->sale_status->value == 'pending' ? 'text-warning' : 'text-danger') }}">
+                                                    {{ __('sale.' . $sale->sale_status->value) }}
                                                 </span>
                                             </td>
                                             <td>
-                                                <span class="{{ $sale->payment_status->value == 'paid' ? 'text-success' : ($sale->payment_status->value == 'partial' ? 'text-warning' : 'text-danger') }}">
-                                                    {{ ucfirst($sale->payment_status->value) }}
+                                                <span class="{{ $sale->payment_status->value == \App\Enums\PaymentStatus::Paid->value ? 'text-success' : ($sale->payment_status->value == 'partial' ? 'text-warning' : 'text-danger') }}">
+                                                    {{ __('sale.' . $sale->payment_status->value) }}
                                                 </span>
                                             </td>
                                             <td>{{ \Carbon\Carbon::parse($sale->sold_at)->format('Y-m-d') }}</td>
                                             <td>
-                                                @permission('edit-sale')<button class="btn btn-warning btn-sm edit-btn" data-id="{{ $sale->id }}">Edit</button>
-                                                <button class="btn btn-danger btn-sm delete-btn" data-id="{{ $sale->id }}">Delete</button>@endpermission
-                                                <a href="{{ route('admin.sale.show',$sale->id) }}" role="button" class="mt-2 btn btn-info btn-sm">View</a>
-                                                @if($sale->paid_amount > 0 && $sale->sale_status->value !== 'refunded')
-                                                    <button style="max-width:52px;max-height:30px !important;font-size:12px;padding:5px;margin-top:5px" class=" btn btn-secondary refund-btn" data-id="{{ $sale->id }}">Refund</button>
+                                                @permission('edit-sale')<button class="btn btn-warning btn-sm edit-btn" data-id="{{ $sale->id }}">{{ __('sale.edit') }}</button>
+                                                <button class="btn btn-danger btn-sm delete-btn" data-id="{{ $sale->id }}">{{ __('sale.delete') }}</button>@endpermission
+                                                <a href="{{ route('admin.sale.show',$sale->id) }}" role="button" class="mt-2 btn btn-info btn-sm">{{ __('sale.view') }}</a>
+                                                @if($sale->paid_amount > 0 && $sale->sale_status->value !== \App\Enums\SaleStatus::Refunded->value)
+                                                    <button style="max-width:52px;max-height:30px !important;font-size:12px;padding:5px;margin-top:5px" class=" btn btn-secondary refund-btn" data-id="{{ $sale->id }}">{{ __('sale.refund') }}</button>
                                                 @endif
                                             </td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="13" class="text-center">No sales found.</td>
+                                            <td colspan="13" class="text-center">{{ __('sale.no_sales') }}</td>
                                         </tr>
                                     @endforelse
 
                                     @if($grandTotal > 0)
                                         <tr>
-                                            <th colspan="6" class="text-center">Grand Total</th>
+                                            <th colspan="6" class="text-center">{{ __('sale.grand_total') }}</th>
                                             <th>${{ number_format($grandTotal,2) }}</th>
                                             <th colspan="6"></th>
                                         </tr>
@@ -144,7 +148,7 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add Sale</h5>
+                <h5 class="modal-title">{{ __('sale.add_sale') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -152,9 +156,9 @@
                     @csrf
 
                     <div class="mb-3">
-                        <label>Customer</label>
+                        <label>{{ __('sale.customer_label') }}</label>
                         <select name="customer_id" class="form-control">
-                            <option value="">Walk In Customer</option>
+                            <option value="">{{ __('sale.walk_in_customer') }}</option>
                             @foreach($customers as $customer)
                                 <option value="{{ $customer->id }}">
                                     {{ $customer->first_name.' '.$customer->last_name }}
@@ -165,58 +169,58 @@
 
                     <div class="row">
                         <div class="col-md-6">
-                            <label>Invoice Number</label>
+                            <label>{{ __('sale.invoice_label') }}</label>
                             <input type="text" name="invoice_number" class="form-control">
                         </div>
                         <div class="col-md-6">
-                            <label>Sale Date</label>
+                           <label>{{ __('sale.sale_date_label') }}</label>
                             <input type="date" name="sold_at" value="{{ now()->format('Y-m-d') }}" class="form-control" required>
                         </div>
                     </div>
 
                     <div class="mt-3 row">
                         <div class="col-md-6">
-                            <label>Sale Status</label>
+                            <label>{{ __('sale.sale_status_label') }}</label>
                             <select name="sale_status" class="form-control">
                                 @foreach(\App\Enums\SaleStatus::values() as $status)
-                                    <option value="{{ $status }}">{{ ucfirst($status) }}</option>
+                                     <option value="{{ $status }}">{{ __('sale.' . $status) }}</option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
 
                     <hr>
-                    <h5>Sale Items</h5>
+                    <h5>{{ __('sale.sale_items') }}</h5>
 
                     <table class="table table-bordered" id="saleItemsTable">
                         <thead>
                             <tr>
-                                <th>Product</th>
-                                <th>Qty</th>
-                                <th>Price</th>
-                                <th>Discount</th>
-                                <th>Tax</th>
-                                <th>Subtotal</th>
+                                <th>{{ __('sale.product') }}</th>
+                                <th>{{ __('sale.quantity') }}</th>
+                                <th>{{ __('sale.price') }}</th>
+                                <th>{{ __('sale.discount') }}</th>
+                                <th>{{ __('sale.tax') }}</th>
+                                <th>{{ __('sale.subtotal') }}</th>
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody></tbody>
                     </table>
 
-                    <button type="button" class="btn btn-success btn-sm" id="addSaleItem">+ Add Product</button>
+                    <button type="button" class="btn btn-success btn-sm" id="addSaleItem">{{ __('sale.add_product') }}</button>
 
                     <hr>
 
                     {{-- Totals --}}
                     <div class="row">
                         <div class="offset-md-8 col-md-4">
-                            <label>Discount</label>
+                            <label>{{ __('sale.discount') }}</label>
                             <input type="number" step="0.01" value="0" id="sale_discount" name="discount" class="form-control">
 
-                            <label class="mt-2">Tax</label>
+                            <label class="mt-2">{{ __('sale.tax') }}</label>
                             <input type="number" step="0.01" value="0" id="sale_tax" name="tax" class="form-control">
 
-                            <label class="mt-2">Total</label>
+                            <label class="mt-2">{{ __('sale.total') }}</label>
                             <input type="text" id="sale_total" class="form-control" readonly>
                         </div>
                     </div>
@@ -224,33 +228,33 @@
                     <hr>
 
                     {{-- Payment --}}
-                    <h5>Payment</h5>
+                    <h5>{{ __('sale.payment') }}</h5>
 
                     <div class="row">
                         <div class="col-md-4">
-                            <label>Amount</label>
+                            <label>{{ __('sale.amount') }}</label>
                             <input type="number" step="0.01" name="payment[amount]" id="payment_amount" value="0" class="form-control">
                         </div>
                         <div class="col-md-4">
-                            <label>Method</label>
+                            <label>{{ __('sale.method') }}</label>
                             <select name="payment[method]" class="form-control">
                                 @foreach(\App\Enums\PaymentMethod::values() as $method)
-                                    <option value="{{ $method }}">{{ ucfirst($method) }}</option>
+                                    <option value="{{ $method }}">{{ __('sale.' . $method) }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-4">
-                            <label>Reference</label>
+                            <label>{{ __('sale.reference') }}</label>
                             <input type="text" name="payment[reference]" class="form-control">
                         </div>
                     </div>
 
                     <div class="mt-3">
-                        <label>Notes</label>
+                        <label>{{ __('sale.notes') }}</label>
                         <textarea name="notes" class="form-control"></textarea>
                     </div>
 
-                    <button type="submit" class="mt-3 btn btn-primary">Save Sale</button>
+                    <button type="submit" class="mt-3 btn btn-primary">{{ __('sale.save_sale') }}</button>
                 </form>
             </div>
         </div>
@@ -275,7 +279,7 @@
 
                     <div class="mb-3 card border-info">
                         <div class="text-white card-header bg-info">
-                            <strong>Payment Summary</strong>
+                            <strong>{{ __('sale.payment_summary') }}</strong>
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -322,7 +326,7 @@
                     <hr>
 
                     <div class="mb-3">
-                        <label>Customer</label>
+                        <label>{{ __('sale.customer_label') }}</label>
                         <select id="edit_customer_id" name="customer_id" class="form-control">
                             <option value="">Select Customer</option>
                             @foreach($customers as $customer)
@@ -339,7 +343,7 @@
                             <input type="text" id="edit_invoice_number" name="invoice_number" class="form-control">
                         </div>
                         <div class="col-md-6">
-                            <label>Sale Date</label>
+                            <label>{{ __('sale.sale_date_label') }}</label>
                             <input type="date" id="edit_sold_at" name="sold_at" class="form-control">
                         </div>
                     </div>
@@ -348,7 +352,7 @@
                         <label>Sale Status</label>
                         <select id="edit_sale_status" name="sale_status" class="form-control">
                             @foreach(\App\Enums\SaleStatus::values() as $status)
-                                <option value="{{ $status }}">{{ ucfirst($status) }}</option>
+                                 <option value="{{ $status }}">{{ __('sale.' . $status) }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -405,7 +409,7 @@
                             <label>Method</label>
                             <select id="new_payment_method" class="form-control">
                                 @foreach(\App\Enums\PaymentMethod::values() as $method)
-                                    <option value="{{ $method }}">{{ ucfirst(str_replace('_',' ',$method)) }}</option>
+                                    <option value="{{ $method }}">{{ __('sale.' . $method) }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -436,7 +440,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Refund Sale <span id="refund_sale_code"></span></h5>
+                <h5 class="modal-title">{{ __('sale.refund_sale') }}<span id="refund_sale_code"></span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -480,7 +484,7 @@
                             <label>Refund Method</label>
                             <select id="refund_method" class="form-control" required>
                                 @foreach(\App\Enums\PaymentMethod::values() as $method)
-                                    <option value="{{ $method }}">{{ ucfirst(str_replace('_',' ',$method)) }}</option>
+                                    <option value="{{ $method }}">{{ __('sale.' . $method) }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -536,7 +540,34 @@
 <script src="https://cdn.jsdelivr.net/npm/dayjs/dayjs.min.js"></script>
 
 <script>
+
 $(document).ready(function () {
+
+    const lang = {
+    saleStatus: {
+        draft: "{{ __('sale.draft') }}",
+        pending: "{{ __('sale.pending') }}",
+        completed: "{{ __('sale.completed') }}",
+        cancelled: "{{ __('sale.cancelled') }}",
+        partially_refunded: "{{ __('sale.partially_refunded') }}",
+        refunded: "{{ __('sale.refunded') }}"
+    },
+
+    paymentStatus: {
+        paid: "{{ __('sale.paid') }}",
+        partial: "{{ __('sale.partial') }}",
+        unpaid: "{{ __('sale.unpaid') }}"
+    },
+
+    paymentMethod: {
+        cash: "{{ __('sale.cash') }}",
+        card: "{{ __('sale.card') }}",
+        bank_transfer: "{{ __('sale.bank_transfer') }}",
+        mobile_wallet: "{{ __('sale.mobile_wallet') }}",
+        credit: "{{ __('sale.credit') }}"
+    }
+};
+
 
     let timer;
     let saleRowIndex = 0;
@@ -573,7 +604,7 @@ $(document).ready(function () {
 
                     tableBody = `
                         <tr>
-                            <td colspan="13" class="text-center">No sales found.</td>
+                            <td colspan="13" class="text-center">{{ __('sale.no_sales') }}</td>
                         </tr>
                     `;
 
@@ -585,32 +616,30 @@ $(document).ready(function () {
 
                         let customer = sale.customer
                             ? sale.customer.first_name + ' ' + sale.customer.last_name
-                            : 'Walk In Customer';
+                            : "{{ __('sale.walk_in_customer') }}";
 
                         tableBody += `
                         <tr>
-                            <td>${sale.sale_code}</td>
-                            <td>${customer}</td>
-                            <td>${sale.invoice_number ?? '-'}</td>
-                            <td>$${parseFloat(sale.subtotal).toFixed(2)}</td>
-                            <td>$${parseFloat(sale.discount).toFixed(2)}</td>
-                            <td>$${parseFloat(sale.tax).toFixed(2)}</td>
-                            <td>$${parseFloat(sale.total).toFixed(2)}</td>
-                            <td>$${parseFloat(sale.paid_amount).toFixed(2)}</td>
-                            <td>$${parseFloat(sale.due_amount).toFixed(2)}</td>
-                            <td class="${sale.sale_status === 'completed' ? 'text-success' : sale.sale_status === 'pending' ? 'text-warning' : 'text-danger'}">
-                                ${sale.sale_status.charAt(0).toUpperCase() + sale.sale_status.slice(1)}
+                            <td style="font-size:15px">${sale.sale_code}</td>
+                            <td style="font-size:15px">${customer}</td>
+                            <td style="font-size:15px">${sale.invoice_number ?? '-'}</td>
+                            <td style="font-size:15px">$${parseFloat(sale.discount).toFixed(2)}</td>
+                            <td style="font-size:15px">$${parseFloat(sale.tax).toFixed(2)}</td>
+                            <td style="font-size:15px">$${parseFloat(sale.subtotal).toFixed(2)}</td>
+                            <td style="font-size:15px">$${parseFloat(sale.total).toFixed(2)}</td>
+                            <td style="font-size:15px" class="${sale.sale_status === "{{ \App\Enums\SaleStatus::Completed->value }}" ? 'text-success' : sale.sale_status === 'pending' ? 'text-warning' : 'text-danger'}">
+                                ${lang.saleStatus[sale.sale_status]}
                             </td>
-                            <td class="${sale.payment_status === 'paid' ? 'text-success' : sale.payment_status === 'partial' ? 'text-warning' : 'text-danger'}">
-                                ${sale.payment_status.charAt(0).toUpperCase() + sale.payment_status.slice(1)}
+                            <td style="font-size:15px" class="${sale.payment_status === 'paid' ? 'text-success' : sale.payment_status === 'partial' ? 'text-warning' : 'text-danger'}">
+                                ${lang.paymentStatus[sale.payment_status]}
                             </td>
-                            <td>${dayjs(sale.sold_at).format('YYYY-MM-DD')}</td>
-                            <td>
-                                <button class="btn btn-warning btn-x-sm edit-btn" data-id="${sale.id}">Edit</button>
-                                <button class="btn btn-danger btn-x-sm delete-btn" data-id="${sale.id}">Delete</button>
-                                <a href="/admin/sale/${sale.id}" class="btn btn-info btn-x-sm">View</a>
+                            <td style="font-size:15px">${dayjs(sale.sold_at).format('YYYY-MM-DD')}</td>
+                            <td >
+                                <button class="btn btn-warning btn-x-sm edit-btn" data-id="${sale.id}">{{ __('sale.edit') }}</button>
+                                <button class="btn btn-danger btn-x-sm delete-btn" data-id="${sale.id}">{{ __('sale.delete') }}</button>
+                                <a href="/admin/sale/${sale.id}" class="btn btn-info btn-x-sm">{{ __('sale.view') }}</a>
                                 ${sale.paid_amount > 0 && sale.sale_status !== 'refunded'
-                                    ? `<button class="btn btn-secondary btn-x-sm refund-btn" data-id="${sale.id}">Refund</button>`
+                                    ? `<button class="btn btn-secondary btn-x-sm refund-btn" data-id="${sale.id}">{{ __('sale.refund') }}</button>`
                                     : ''}
                             </td>
                         </tr>
@@ -619,7 +648,7 @@ $(document).ready(function () {
 
                     tableBody += `
                     <tr>
-                        <th colspan="6" class="text-center">Grand Total</th>
+                        <th colspan="6" class="text-center">{{ __('sale.grand_total') }}</th>
                         <th>$${grandTotal.toFixed(2)}</th>
                         <th colspan="6"></th>
                     </tr>
@@ -646,7 +675,7 @@ $(document).ready(function () {
                 populateRefundModal(response);
             },
             error: function () {
-                alert("Unable to load sale for refund.");
+                alert("{{ __('sale.unable_load_refund') }}");
             }
         });
     }
@@ -702,7 +731,7 @@ $(document).ready(function () {
             <tr>
                 <td>${r.refund_code}</td>
                 <td>$${parseFloat(r.amount).toFixed(2)}</td>
-                <td>${r.method.replaceAll('_',' ')}</td>
+                <td>${lang.paymentMethod[r.method]}</td>
                 <td>${dayjs(r.refunded_at).format('YYYY-MM-DD')}</td>
                 <td>${r.reason ?? '-'}</td>
             </tr>
@@ -710,7 +739,7 @@ $(document).ready(function () {
         });
 
         if (historyRows === "") {
-            historyRows = `<tr><td colspan="5" class="text-center">No refunds yet.</td></tr>`;
+            historyRows = `<tr><td colspan="5" class="text-center">{{ __('sale.no_refunds') }}</td></tr>`;
         }
 
         $("#refundHistoryTable").html(historyRows);
@@ -769,7 +798,7 @@ $(document).ready(function () {
         });
 
         if (items.length === 0) {
-            alert("Please enter a quantity to refund for at least one item.");
+            alert("{{ __('sale.refund_validation') }}");
             return;
         }
 
@@ -805,7 +834,7 @@ $(document).ready(function () {
                     alert(message);
 
                 } else {
-                    alert("Something went wrong processing the refund.");
+                    alert("{{ __('sale.refund_error') }}");
                 }
             }
         });
@@ -923,7 +952,7 @@ $(document).ready(function () {
                 populateEditModal(sale);
             },
             error: function () {
-                alert("Unable to load sale.");
+            alert("{{ __('sale.unable_load_sale') }}");
             }
         });
     }
@@ -955,7 +984,7 @@ $(document).ready(function () {
             paymentRows += `
             <tr>
                 <td>${payment.payment_code}</td>
-                <td>${payment.method.replaceAll("_"," ").replace(/\b\w/g, c => c.toUpperCase())}</td>
+                <td>${lang.paymentMethod[payment.method].replace(/\b\w/g, c => c.toUpperCase())}</td>
                 <td>$${parseFloat(payment.amount).toFixed(2)}</td>
                 <td>${dayjs(payment.paid_at).format("YYYY-MM-DD")}</td>
                 <td>${payment.reference ?? "-"}</td>
@@ -964,7 +993,7 @@ $(document).ready(function () {
         });
 
         if (paymentRows === "") {
-            paymentRows = `<tr><td colspan="5" class="text-center">No payments yet.</td></tr>`;
+            paymentRows = `<tr><td colspan="5" class="text-center">{{ __('sale.no_payments') }}</td></tr>`;
         }
 
         $("#paymentHistoryTable").html(paymentRows);
@@ -1181,7 +1210,7 @@ $(document).ready(function () {
                     alert(message);
 
                 } else {
-                    alert("Something went wrong.");
+                    alert("{{ __('sale.something_wrong') }}");
                 }
             }
         });

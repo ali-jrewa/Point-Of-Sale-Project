@@ -13,11 +13,19 @@ return [
     'update' => 'تحديث',
     'edit' => 'تعديل',
     'delete' => 'حذف',
+    'view' => 'عرض',
 
     // Status
     'active' => 'نشط',
     'inactive' => 'غير نشط',
     'blocked' => 'محظور',
+
+    'paid' => 'مدفوع',
+    'partial' => 'مدفوع جزئياً',
+    'unpaid' => 'غير مدفوع',
+
+    // product status
+     'archived' => 'مؤرشف',
 
     'actions' => 'الإجراءات',
 

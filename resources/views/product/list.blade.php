@@ -7,13 +7,13 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-sm-6">
-                            <h3 class="mb-0">Product</h3>
+                            <h3 class="mb-0">{{ __('product.page_title') }}</h3>
                         </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-end">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item"><a href="#">{{ __('common.home') }}</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">
-                                    Product List
+                                    {{ __('product.product_list') }}
                                 </li>
                             </ol>
                         </div>
@@ -28,25 +28,25 @@
                             <div class="mb-3 row">
 
                                     <div class="col-md-6">
-                                        <h4 class="mt-3 card-title btn">Search Product</h4>
+                                        <h4 class="mt-3 card-title btn">{{ __('product.search_product') }}</h4>
                                         <input
                                             type="text"
                                             id="search"
                                             class="form-control"
-                                            placeholder="Search by category, name, barcode or status">
+                                            placeholder="{{ __('product.search_placeholder') }}">
 
                                     </div>
 
                                 </div>
                             <div class="mb-4 card">
                                 <div class="card-header">
-                                    <h3 class="card-title">Product List</h3>
+                                    <h3 class="card-title">{{ __('product.product_list') }}</h3>
 
                                     <div class="card-tools">
                                         <ul class="pagination pagination-sm float-end">
 
                                             <a href="{{ route('admin.product.create') }}" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addProductModal">
-                                                Add Product
+                                                {{ __('product.add_product') }}
                                             </a>
                                         </ul>
                                     </div>
@@ -56,16 +56,16 @@
                                     <table id="product-table" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
-                                                <th>ID</th>
-                                                <th>Category</th>
-                                                <th>Name</th>
-                                                <th>SKU</th>
-                                                <th>Retail Price</th>
-                                                <th>Stock</th>
-                                                <th>Status</th>
-                                                <th>Created At</th>
-                                                <th>Updated At</th>
-                                                <th>Actions</th>
+                                                <th>{{ __('product.id') }}</th>
+                                                <th>{{ __('product.category') }}</th>
+                                                <th>{{ __('product.name') }}</th>
+                                                <th>{{ __('product.sku') }}</th>
+                                                <th>{{ __('product.retail_price') }}</th>
+                                                <th>{{ __('product.stock') }}</th>
+                                                <th>{{ __('product.status') }}</th>
+                                                <th>{{ __('product.created_at') }}</th>
+                                                <th>{{ __('product.updated_at') }}</th>
+                                                <th>{{ __('common.actions') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -85,51 +85,51 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addProductModalLabel">Add Product</h5>
+                <h5 class="modal-title" id="addProductModalLabel">{{ __('product.add_product_title') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="addProductForm" method="POST" action="{{ route('admin.product.store') }}">
                     @csrf
                     <div class="mb-3">
-                        <label for="category_name" class="form-label">Category Name</label>
+                        <label for="category_name" class="form-label">{{ __('product.category_name') }}</label>
                         <select class="form-control" id="category_id" name="category_id" required>
-                            <option value="">Select a category</option>
+                            <option value="">{{ __('product.select_category') }}</option>
                             @foreach($categories as $key => $value)
                                 <option value="{{ $key }}">{{ $value }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="name" class="form-label">Product Name</label>
+                        <label for="name" class="form-label">{{ __('product.product_name') }}   </label>
                         <input type="text" class="form-control" id="name" name="name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
+                        <label for="description" class="form-label">{{ __('product.description') }}</label>
                         <textarea class="form-control" id="description" name="description"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="cost_price" class="form-label">Cost Price</label>
+                        <label for="cost_price" class="form-label">{{ __('product.cost_price') }}</label>
                         <input type="number" class="form-control" id="cost_price" name="cost_price" step="0.01" required>
                     </div>
                     <div class="mb-3">
-                        <label for="retail_price" class="form-label">Retail Price</label>
+                        <label for="retail_price" class="form-label">{{ __('product.retail_price') }}</label>
                         <input type="number" class="form-control" id="retail_price" name="retail_price" step="0.01" required>
                     </div>
                     <div class="mb-3">
-                        <label for="sku" class="form-label">SKU</label>
+                        <label for="sku" class="form-label">{{ __('product.sku') }}</label>
                         <input type="text" class="form-control" id="sku" name="sku" required>
                     </div>
                     <div class="mb-3">
-                        <label for="barcode" class="form-label">Barcode</label>
+                        <label for="barcode" class="form-label">{{ __('product.barcode') }}</label>
                         <input type="text" class="form-control" id="barcode" name="barcode" required>
                     </div>
                     <div class="mb-3">
-                        <label for="low_stock_threshold" class="form-label">Low Stock Threshold</label>
+                        <label for="low_stock_threshold" class="form-label">{{ __('product.low_stock_threshold') }}</label>
                         <input type="number" class="form-control" id="low_stock_threshold" name="low_stock_threshold" step="1" required>
                     </div>
                     <div class="mb-3">
-                        <label for="status" class="form-label">Status</label>
+                        <label for="status" class="form-label">{{ __('product.status') }}</label>
                         <select class="form-control" id="status" name="status" required>
                             @foreach(\App\Enums\ProductStatus::values() as $status)
                                 <option value="{{ $status }}">
@@ -138,7 +138,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="submit" class="btn btn-primary">{{ __('common.save') }}</button>
                 </form>
             </div>
         </div>
@@ -151,7 +151,7 @@
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5>Edit Product</h5>
+                <h5>{{ __('product.edit_product_title') }}</h5>
                 <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
@@ -163,9 +163,9 @@
                     @method('PUT')
 
                     <div class="mb-3">
-                        <label for="category_name" class="form-label">Category Name</label>
+                        <label for="category_name" class="form-label">{{ __('product.category_name') }}</label>
                         <select class="form-control" id="edit_category_id" name="category_id" required>
-                            <option value="">Select a category</option>
+                            <option value="">{{ __('product.select_category') }}</option>
                             @foreach($categories as $key => $value)
                                 <option value="{{ $key }}">{{ $value }}</option>
                             @endforeach
@@ -173,46 +173,46 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="name" class="form-label">Product Name</label>
+                        <label for="name" class="form-label">{{ __('product.product_name') }}</label>
                         <input type="text" class="form-control" id="edit_name" name="name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
+                        <label for="description" class="form-label">{{ __('product.description') }}</label>
                         <textarea class="form-control" id="edit_description" name="description"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="cost_price" class="form-label">Cost Price</label>
+                        <label for="cost_price" class="form-label">{{ __('product.cost_price') }}</label>
                         <input type="number" class="form-control" id="edit_cost_price" name="cost_price" step="0.01" required>
                     </div>
                     <div class="mb-3">
-                        <label for="retail_price" class="form-label">Retail Price</label>
+                        <label for="retail_price" class="form-label">{{ __('product.retail_price') }}</label>
                         <input type="number" class="form-control" id="edit_retail_price" name="retail_price" step="0.01" required>
                     </div>
                     <div class="mb-3">
-                        <label for="sku" class="form-label">SKU</label>
+                        <label for="sku" class="form-label">{{ __('product.sku') }}</label>
                         <input type="text" class="form-control" id="edit_sku" name="sku" required>
                     </div>
                     <div class="mb-3">
-                        <label for="barcode" class="form-label">Barcode</label>
+                        <label for="barcode" class="form-label">{{ __('product.barcode') }}</label>
                         <input type="text" class="form-control" id="edit_barcode" name="barcode" required>
                     </div>
                     <div class="mb-3">
-                        <label for="low_stock_threshold" class="form-label">Low Stock Threshold</label>
+                        <label for="low_stock_threshold" class="form-label">{{ __('product.low_stock_threshold') }}</label>
                         <input type="number" class="form-control" id="edit_low_stock_threshold" name="low_stock_threshold" step="1" required>
                     </div>
                     <div class="mb-3">
-                        <label for="status" class="form-label">Status</label>
+                        <label for="status" class="form-label">{{ __('product.status') }}</label>
                         <select class="form-control" id="edit_status" name="status" required>
                             @foreach(\App\Enums\ProductStatus::values() as $status)
                                 <option value="{{ $status }}">
-                                    {{ $status }}
+                                    {{ __('common.' . $status) }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
 
                     <button class="btn btn-primary">
-                        Update Product
+                        {{ __('product.update_product') }}
                     </button>
 
                 </form>
@@ -231,6 +231,13 @@
 <script type="text/javascript">
 
     $(document).ready(function() {
+        const productStatusTranslations = {
+    active: "{{ __('common.active') }}",
+    inactive: "{{ __('common.inactive') }}",
+    archived: "{{ __('common.archived') }}"
+};
+
+
        fetchProducts($("#search").val());
 
 
@@ -250,7 +257,7 @@
                         $('#product-table tbody').html(`
                             <tr>
                                 <td colspan="10" class="py-4 text-center text-muted">
-                                    No products found.
+                                    {{ __('product.no_products_found') }}
                                 </td>
                             </tr>
                         `);
@@ -277,17 +284,17 @@
                                     }">
                                     ${
                                         product.status === 'active'
-                                            ? 'Active'
+                                            ? productStatusTranslations.active
                                             : product.status === 'inactive'
-                                                ? 'Inactive'
-                                                : 'Archived'
+                                                ? productStatusTranslations.inactive
+                                                : productStatusTranslations.archived
                                     }
                                 </td>
                                 <td>${created_at}</td>
                                 <td>${updated_at}</td>
                                 <td>
-                                    <button class="btn btn-sm edit-btn btn-warning " data-id="${product.id}">Edit</button>
-                                    <button class="btn btn-sm delete-btn btn-danger " data-id="${product.id}">Delete</button>
+                                    <button class="btn btn-sm edit-btn btn-warning " data-id="${product.id}">{{ __('common.edit') }}</button>
+                                    <button class="btn btn-sm delete-btn btn-danger " data-id="${product.id}">{{ __('common.delete') }}</button>
                                 </td>
                             </tr>
                         `;
@@ -372,7 +379,7 @@
             const url = "{{ route('admin.product.destroy', ['product' => ':id']) }}"
                 .replace(':id', id);
 
-            if(!confirm("Are you sure you want to delete this product?")){
+            if(!confirm("{{ __('product.delete_confirmation') }}")){
                 return;
             }
 
@@ -439,7 +446,7 @@
                     $.each(errors, function(key, value) {
                         erroeMessage += value[0] + '\n';
                     });
-                    alert('Error adding product:\n' + erroeMessage);
+                    alert("{{ __('product.error_adding') }}\n" + erroeMessage);
                     console.error('Error adding product:', error);
                     console.error('Error adding product:', xhr.responseText);
                 }
@@ -491,7 +498,7 @@
                     $.each(errors, function(key, value) {
                         erroeMessage += value[0] + '\n';
                     });
-                    alert('Error adding product category:\n' + erroeMessage);
+                    alert("{{ __('product.error_updating') }}\n" + erroeMessage);
 
                     console.log(xhr.responseText);
 

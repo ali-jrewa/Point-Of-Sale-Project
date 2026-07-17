@@ -7,13 +7,13 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-sm-6">
-                            <h3 class="mb-0">Expenses Category</h3>
+                            <h3 class="mb-0">{{ __('expense_category.page_title') }}</h3>
                         </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-end">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                 <li class="breadcrumb-item"><a href="#">{{ __('common.home') }}</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">
-                                    Expenses Category List
+                                    {{ __('expense_category.expense_category_list') }}
                                 </li>
                             </ol>
                         </div>
@@ -33,7 +33,7 @@
                                         <ul class="pagination pagination-sm float-end">
 
                                             <a href="{{ route('admin.expense-category.create') }}" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addExpenseCategoryModal">
-                                                Add Expense Category
+                                               {{ __('expense_category.add_expense_category') }}
                                             </a>
                                         </ul>
                                     </div>
@@ -43,14 +43,14 @@
                                     <table id="expense-category-table" class="table table-bordered table-striped">
                                         <thead>
                                             <tr>
-                                                <th>ID</th>
-                                                <th>Code</th>
-                                                <th>Name</th>
-                                                <th>Description</th>
-                                                <th>Status</th>
-                                                <th>Created At</th>
-                                                <th>Updated At</th>
-                                                <th>Actions</th>
+                                                <th>{{ __('expense_category.id') }}</th>
+                                                <th>{{ __('expense_category.code') }}</th>
+                                                <th>{{ __('expense_category.code') }}</th>
+                                                <th>{{ __('expense_category.name') }}</th>
+                                                <th>{{ __('common.status') }}</th>
+                                                <th>{{ __('expense_category.created_at') }}</th>
+                                                <th>{{ __('expense_category.updated_at') }}</th>
+                                                <th>{{ __('common.actions') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -70,31 +70,31 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addExpenseCategoryModalLabel">Add Expense Category</h5>
+                <h5 class="modal-title" id="addExpenseCategoryModalLabel">{{ __('expense_category.add_title') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="addExpenseCategoryForm" method="POST" action="{{ route('admin.expense-category.store') }}">
                     @csrf
                     <div class="mb-3">
-                        <label for="name" class="form-label">Expense Category Name</label>
+                        <label for="name" class="form-label">{{ __('expense_category.expense_category_name') }}</label>
                         <input type="text" class="form-control" id="name" name="name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
+                        <label for="description" class="form-label">{{ __('expense_category.code') }}</label>
                         <textarea class="form-control" id="description" name="description"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="status" class="form-label">Status</label>
+                        <label for="status" class="form-label">{{ __('expense_category.status') }}</label>
                         <select class="form-control" id="status" name="status" required>
                             @foreach(\App\Enums\ExpenseCategoryStatus::values() as $status)
                                 <option value="{{ $status }}">
-                                    {{ $status }}
+                                    {{ __('common.' . $status) }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="submit" class="btn btn-primary">{{ __('common.save') }}</button>
                 </form>
             </div>
         </div>
@@ -107,7 +107,7 @@
         <div class="modal-content">
 
             <div class="modal-header">
-                <h5>Edit Expense Category</h5>
+                <h5>{{ __('expense_category.edit_title') }}</h5>
                 <button class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
@@ -119,30 +119,30 @@
                     @method('PUT')
 
                     <div class="mb-3">
-                        <label for="edit_name" class="form-label">Expense Category Name</label>
+                        <label for="edit_name" class="form-label">{{ __('expense_category.expense_category_name') }}</label>
                         <input type="text" class="form-control" id="edit_name" name="name" required>
                     </div>
                     <div class="mb-3">
-                        <label for="edit_code" class="form-label">Expense Category Code</label>
+                        <label for="edit_code" class="form-label">{{ __('expense_category.expense_category_code') }}</label>
                         <input type="text" class="form-control" id="edit_code" name="code">
                     </div>
                     <div class="mb-3">
-                        <label for="edit_description" class="form-label">Description</label>
+                        <label for="edit_description" class="form-label">{{ __('expense_category.description') }}</label>
                         <textarea class="form-control" id="edit_description" name="description"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="status" class="form-label">Status</label>
+                        <label for="status" class="form-label">{{ __('expense_category.status') }}</label>
                         <select class="form-control" id="edit_status" name="status" required>
                             @foreach(\App\Enums\ExpenseCategoryStatus::values() as $status)
-                                <option value="{{ $status }}">
-                                    {{ $status }}
+                                 <option value="{{ $status }}">
+                                    {{ __('common.' . $status) }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
 
                     <button class="btn btn-primary">
-                        Update Expense Category
+                        {{ __('expense_category.update_expense_category') }}
                     </button>
 
                 </form>
@@ -200,8 +200,8 @@
 
                                 <td>${updated_at}</td>
                                 <td>
-                                    <button class="btn btn-sm edit-btn btn-warning " data-id="${expenseCategory.id}">Edit</button>
-                                    <button class="btn btn-sm delete-btn btn-danger " data-id="${expenseCategory.id}">Delete</button>
+                                    <button class="btn btn-sm edit-btn btn-warning " data-id="${expenseCategory.id}">{{ __('common.edit') }}</button>
+                                    <button class="btn btn-sm delete-btn btn-danger " data-id="${expenseCategory.id}">{{ __('common.delete') }}</button>
                                 </td>
                             </tr>
                         `;
@@ -246,8 +246,8 @@
                 $("#editExpenseCategoryModal").modal("show");
             },
                 error: function(xhr, status, error) {
-                    console.error('Error fetching expense category data:', error);
-                    console.error('Error fetching expense category data:', xhr.responseText);
+                    console.error("{{ __('expense_category.error_fetching') }}", error);
+                    console.error("{{ __('expense_category.error_fetching') }}", error);
                     }
                 });
         }
@@ -260,7 +260,7 @@
             const url = "{{ route('admin.expense-category.destroy', ['expense_category' => ':id']) }}"
                 .replace(':id', id);
 
-            if(!confirm("Are you sure you want to delete this expense category?")){
+            if(!confirm("{{ __('expense_category.delete_confirmation') }}")){
                 return;
             }
 
@@ -327,8 +327,8 @@
                     $.each(errors, function(key, value) {
                         erroeMessage += value[0] + '\n';
                     });
-                    alert('Error adding expense category:\n' + erroeMessage);
-                    console.error('Error adding expense category:', error);
+                    alert("{{ __('expense_category.error_adding') }}\n" + erroeMessage);
+                    console.error("{{ __('expense_category.error_fetching') }}", error);
                     console.error('Error adding expense category:', xhr.responseText);
                 }
             });

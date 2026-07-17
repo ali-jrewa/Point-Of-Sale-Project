@@ -8,13 +8,13 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-6">
-                <h3 class="mb-0">Payment Details</h3>
+                <h3 class="mb-0">{{ __('paymentShow.page_title') }}</h3>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                    <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('admin.payment.index') }}">Payments</a></li>
-                    <li class="breadcrumb-item active">View</li>
+                    <li class="breadcrumb-item"><a href="#">{{ __('common.home') }}</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('admin.payment.index') }}"> {{ __('paymentShow.payments') }}</a></li>
+                    <li class="breadcrumb-item active"> {{ __('common.view') }}</li>
                 </ol>
             </div>
         </div>
@@ -27,19 +27,19 @@
     {{-- Payment Information --}}
     <div class="card">
         <div class="card-header">
-            <h3 class="card-title">Payment Information</h3>
+            <h3 class="card-title">{{ __('paymentShow.payment_information') }}</h3>
         </div>
 
         <div class="card-body">
             <div class="row">
 
                 <div class="mb-3 col-md-4">
-                    <strong>Payment Code</strong>
+                    <strong>{{ __('paymentShow.payment_code') }}</strong>
                     <p>{{ $payment->payment_code }}</p>
                 </div>
 
                 <div class="mb-3 col-md-4">
-                    <strong>Sale Code</strong>
+                    <strong>{{ __('paymentShow.sale_code') }}</strong>
                     <p>
                         @if($payment->sale)
                             <a href="{{ route('admin.sale.show', $payment->sale->id) }}">
@@ -52,52 +52,52 @@
                 </div>
 
                 <div class="mb-3 col-md-4">
-                    <strong>Customer</strong>
+                    <strong>{{ __('paymentShow.customer') }}</strong>
                     <p>
                         @if($payment->sale && $payment->sale->customer)
                             {{ $payment->sale->customer->first_name }} {{ $payment->sale->customer->last_name }}
                         @else
-                            Walk In Customer
+                            {{ __('paymentShow.walk_in_customer') }}
                         @endif
                     </p>
                 </div>
 
                 <div class="mb-3 col-md-4">
-                    <strong>Method</strong>
+                    <strong>{{ __('paymentShow.method') }}</strong>
                     <p>
                         <span class="badge bg-secondary">
-                            {{ ucfirst(str_replace('_',' ',$payment->method->value)) }}
+                           {{ __('payment_method.' . $payment->method->value) }}
                         </span>
                     </p>
                 </div>
 
                 <div class="mb-3 col-md-4">
-                    <strong>Amount</strong>
+                    <strong>{{ __('paymentShow.amount') }}</strong>
                     <p class="text-success"><strong>${{ number_format($payment->amount,2) }}</strong></p>
                 </div>
 
                 <div class="mb-3 col-md-4">
-                    <strong>Reference</strong>
+                    <strong>{{ __('paymentShow.reference') }}</strong>
                     <p>{{ $payment->reference ?? '-' }}</p>
                 </div>
 
                 <div class="mb-3 col-md-4">
-                    <strong>Received By</strong>
+                    <strong>{{ __('paymentShow.received_by') }}</strong>
                     <p>{{ $payment->user->name ?? '-' }}</p>
                 </div>
 
                 <div class="mb-3 col-md-4">
-                    <strong>Paid At</strong>
+                    <strong>{{ __('paymentShow.paid_at') }}</strong>
                     <p>{{ \Carbon\Carbon::parse($payment->paid_at)->format('Y-m-d H:i') }}</p>
                 </div>
 
                 <div class="mb-3 col-md-4">
-                    <strong>Recorded At</strong>
+                    <strong>{{ __('paymentShow.recorded_at') }}</strong>
                     <p>{{ $payment->created_at->format('Y-m-d H:i') }}</p>
                 </div>
 
                 <div class="mb-3 col-md-8">
-                    <strong>Notes</strong>
+                    <strong>{{ __('paymentShow.notes') }}</strong>
                     <p>{{ $payment->notes ?? '-' }}</p>
                 </div>
 
@@ -109,28 +109,30 @@
     @if($payment->sale)
     <div class="mt-3 card">
         <div class="card-header">
-            <h3 class="card-title">Sale Summary</h3>
+            <h3 class="card-title">
+                {{ __('paymentShow.sale_summary') }}
+            </h3>
         </div>
 
         <div class="card-body">
             <table class="table">
                 <tr>
-                    <th width="30%">Sale Total</th>
+                    <th width="30%">{{ __('paymentShow.sale_total') }}</th>
                     <td>${{ number_format($payment->sale->total,2) }}</td>
                 </tr>
                 <tr>
-                    <th>Total Paid</th>
+                    <th>{{ __('paymentShow.total_paid') }}</th>
                     <td class="text-success">${{ number_format($payment->sale->paid_amount,2) }}</td>
                 </tr>
                 <tr>
-                    <th>Due Amount</th>
+                    <th>{{ __('paymentShow.due_amount') }}</th>
                     <td class="{{ $payment->sale->due_amount > 0 ? 'text-danger' : 'text-success' }}">
                         ${{ number_format($payment->sale->due_amount,2) }}
                     </td>
                 </tr>
                 <tr>
-                    <th>Payment Status</th>
-                    <td>{{ ucfirst($payment->sale->payment_status->value) }}</td>
+                    <th>{{ __('paymentShow.payment_status') }}</th>
+                    <td>{{ __('common.' . $payment->sale->payment_status->value) }}</td>
                 </tr>
             </table>
         </div>
@@ -140,12 +142,12 @@
     {{-- Actions --}}
     <div class="mt-3 mb-4">
         <a href="{{ route('admin.payment.index') }}" class="btn btn-secondary">
-            Back
+            {{ __('paymentShow.back') }}
         </a>
 
         @if($payment->sale)
             <a href="{{ route('admin.sale.show', $payment->sale->id) }}" class="btn btn-info">
-                View Sale
+                {{ __('paymentShow.view_sale') }}
             </a>
         @endif
     </div>
