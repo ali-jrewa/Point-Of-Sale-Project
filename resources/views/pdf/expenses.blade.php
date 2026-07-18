@@ -10,35 +10,35 @@
 
     <div class="header">
         <h2>{{ $data['title'] }}</h2>
-        <p>Generated on: {{ $data['date'] }}</p>
+        <p>{{ __('report/expenses.generated_on') }}: {{ $data['date'] }}</p>
     </div>
 
-    <p class="range">Period: {{ $data['from'] }} to {{ $data['to'] }}</p>
+    <p class="range">{{ __('report/expenses.period') }}: {{ $data['from'] }} {{ __('report/expenses.to') }} {{ $data['to'] }}</p>
 
     @php $grandTotal = $expenses->sum('amount'); @endphp
 
-    <div class="section-title">Summary</div>
+    <div class="section-title">{{ __('report/expenses.summary') }}</div>
     <table>
         <tr>
-            <th width="25%">Total Expenses</th>
+            <th width="25%">{{ __('report/expenses.total_expenses') }}</th>
             <td>{{ $expenses->count() }}</td>
-            <th width="25%">Grand Total</th>
+            <th width="25%">{{ __('report/expenses.grand_total') }}</th>
             <td>${{ number_format($grandTotal, 2) }}</td>
         </tr>
     </table>
 
-    <div class="section-title">Expense Detail</div>
+    <div class="section-title">{{ __('report/expenses.expense_detail') }}</div>
     <table>
         <thead>
             <tr>
-                <th>Expense #</th>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Vendor</th>
-                <th>Method</th>
-                <th>Date</th>
-                <th>Amount</th>
-                <th>Status</th>
+                <th>{{ __('report/expenses.expense_number') }}</th>
+                <th>{{ __('report/expenses.title') }}</th>
+                <th>{{ __('report/expenses.category') }}</th>
+                <th>{{ __('report/expenses.vendor') }}</th>
+                <th>{{ __('report/expenses.method') }}</th>
+                <th>{{ __('report/expenses.date') }}</th>
+                <th>{{ __('report/expenses.amount') }}</th>
+                <th>{{ __('report/expenses.status') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -54,10 +54,10 @@
                     <td>{{ ucfirst($expense->status) }}</td>
                 </tr>
             @empty
-                <tr><td colspan="8">No expenses found for this period.</td></tr>
+                <tr><td colspan="8">{{ __('report/expenses.no_expenses_found') }}</td></tr>
             @endforelse
             <tr class="totals-row">
-                <td colspan="6">Total</td>
+                <td colspan="6">{{ __('report/expenses.total') }}</td>
                 <td>${{ number_format($grandTotal, 2) }}</td>
                 <td></td>
             </tr>

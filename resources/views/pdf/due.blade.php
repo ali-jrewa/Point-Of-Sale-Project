@@ -10,31 +10,31 @@
 
     <div class="header">
         <h2>{{ $data['title'] }}</h2>
-        <p>Generated on: {{ $data['date'] }}</p>
+        <p>{{ __('report/due.generated_on') }}: {{ $data['date'] }}</p>
     </div>
 
-    <div class="section-title">Summary</div>
+    <div class="section-title">{{ __('report/due.summary') }}</div>
     <table>
         <tr>
-            <th width="25%">Outstanding Sales</th>
+            <th width="25%">{{ __('report/due.outstanding_sales') }}</th>
             <td>{{ $sales->count() }}</td>
-            <th width="25%">Total Due</th>
+            <th width="25%">{{ __('report/due.total_due') }}</th>
             <td class="text-danger">${{ number_format($totalDue, 2) }}</td>
         </tr>
     </table>
 
-    <div class="section-title">Outstanding Detail</div>
+    <div class="section-title">{{ __('report/due.outstanding_detail') }}</div>
     <table>
         <thead>
             <tr>
-                <th>Sale Code</th>
-                <th>Customer</th>
-                <th>Phone</th>
-                <th>Sale Date</th>
-                <th>Total</th>
-                <th>Paid</th>
-                <th>Due</th>
-                <th>Payment Status</th>
+                <th>{{ __('report/due.sale_code') }}</th>
+                <th>{{ __('report/due.customer') }}</th>
+                <th>{{ __('report/due.phone') }}</th>
+                <th>{{ __('report/due.sale_date') }}</th>
+                <th>{{ __('report/due.total') }}</th>
+                <th>{{ __('report/due.paid') }}</th>
+                <th>{{ __('report/due.due') }}</th>
+                <th>{{ __('report/due.payment_status') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -45,7 +45,7 @@
                         @if($sale->customer)
                             {{ $sale->customer->first_name }} {{ $sale->customer->last_name }}
                         @else
-                            Walk In
+                            {{ __('report/due.walk_in') }}
                         @endif
                     </td>
                     <td>{{ $sale->customer->phone ?? '-' }}</td>
@@ -56,10 +56,10 @@
                     <td>{{ ucfirst($sale->payment_status->value) }}</td>
                 </tr>
             @empty
-                <tr><td colspan="8">No outstanding balances. Everything is settled.</td></tr>
+                <tr><td colspan="8">{{ __('report/due.no_outstanding_balances') }}</td></tr>
             @endforelse
             <tr class="totals-row">
-                <td colspan="6">Total Due</td>
+                <td colspan="6">{{ __('report/due.total_due') }}</td>
                 <td>${{ number_format($totalDue, 2) }}</td>
                 <td></td>
             </tr>
