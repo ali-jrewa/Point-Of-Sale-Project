@@ -10,20 +10,20 @@
 
     <div class="header">
         <h2>{{ $data['title'] }}</h2>
-        <p>Generated on: {{ $data['date'] }}</p>
+        <p>{{ __('report/top_customer.generated_on') }}: {{ $data['date'] }}</p>
     </div>
 
-    <p class="range">Period: {{ $data['from'] }} to {{ $data['to'] }}</p>
+    <p class="range">{{ __('report/top_customer.period') }}: {{ $data['from'] }} {{ __('report/top_customer.to') }} {{ $data['to'] }}</p>
 
-    <div class="section-title">Top 20 Customers by Spend</div>
+    <div class="section-title"> {{ __('report/top_customer.top_20_customers') }}</div>
     <table>
         <thead>
             <tr>
                 <th>#</th>
-                <th>Customer</th>
-                <th>Phone</th>
-                <th>Total Orders</th>
-                <th>Total Spend</th>
+                <th>{{ __('report/top_customer.customer') }}</th>
+                <th>{{ __('report/top_customer.phone') }}</th>
+                <th>{{ __('report/top_customer.total_orders') }}</th>
+                <th>{{ __('report/top_customer.total_spend') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -36,7 +36,7 @@
                     <td class="text-success">${{ number_format($customer->sales_sum_total, 2) }}</td>
                 </tr>
             @empty
-                <tr><td colspan="5">No customer sales found for this period.</td></tr>
+                <tr><td colspan="5">{{ __('report/top_customer.no_customer_sales') }}</td></tr>
             @endforelse
         </tbody>
     </table>
