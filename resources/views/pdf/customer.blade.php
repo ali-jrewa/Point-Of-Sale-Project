@@ -76,29 +76,29 @@
      @include('pdf._toolbar')
 
     <div class="header">
-        <h2>{{ $data['title'] }}</h2>
-        <p>Generated on: {{ $data['date'] }}</p>
+        <h2>{{ __('report/customer.generated_on') }}</h2>
+        <p>Generated on: : {{ $data['date'] }}</p>
     </div>
 
     {{-- Customer Info --}}
-    <div class="section-title">Customer Information</div>
+    <div class="section-title">{{ __('report/customer.customer_information') }}</div>
     <table>
         <tr>
-            <th width="20%">Name</th>
+            <th width="20%">{{ __('report/customer.name') }}</th>
             <td>{{ $customer->first_name }} {{ $customer->last_name }}</td>
-            <th width="20%">Phone</th>
+            <th width="20%">{{ __('report/customer.phone') }}</th>
             <td>{{ $customer->phone ?? '-' }}</td>
         </tr>
         <tr>
-            <th>Email</th>
+            <th>{{ __('report/customer.email') }}</th>
             <td>{{ $customer->email ?? '-' }}</td>
-            <th>Status</th>
+            <th>{{ __('report/customer.status') }}</th>
             <td>{{ $customer->status ?? '-' }}</td>
         </tr>
         <tr>
-            <th>Credit Limit</th>
+            <th>{{ __('report/customer.credit_limit') }}</th>
             <td>${{ number_format($customer->credit_limit ?? 0, 2) }}</td>
-            <th>Credit Used</th>
+            <th>{{ __('report/customer.credit_used') }}</th>
             <td>${{ number_format($customer->credit_used ?? 0, 2) }}</td>
         </tr>
     </table>
@@ -111,24 +111,24 @@
         $grandRefunded = $customer->sales->flatMap->refunds->sum('amount');
     @endphp
 
-    <div class="section-title">Overall Summary</div>
+    <div class="section-title">{{ __('report/customer.overall_summary') }}</div>
     <table>
         <tr>
-            <th width="25%">Total Sales</th>
+            <th width="25%">{{ __('report/customer.total_sales') }}</th>
             <td>{{ $customer->sales->count() }}</td>
-            <th width="25%">Grand Total</th>
+            <th width="25%">{{ __('report/customer.grand_total') }}</th>
             <td>${{ number_format($grandTotal, 2) }}</td>
         </tr>
         <tr>
-            <th>Total Paid</th>
+            <th>{{ __('report/customer.total_paid') }}</th>
             <td class="text-success">${{ number_format($grandPaid, 2) }}</td>
-            <th>Total Due</th>
+            <th>{{ __('report/customer.total_due') }}</th>
             <td class="{{ $grandDue > 0 ? 'text-danger' : 'text-success' }}">
                 ${{ number_format($grandDue, 2) }}
             </td>
         </tr>
         <tr>
-            <th>Total Refunded</th>
+            <th>{{ __('report/customer.total_refunded') }}</th>
             <td class="text-danger">${{ number_format($grandRefunded, 2) }}</td>
             <th></th>
             <td></td>
@@ -136,39 +136,39 @@
     </table>
 
     {{-- Per Sale Detail --}}
-    <div class="section-title">Sales, Payments &amp; Refunds</div>
+    <div class="section-title">{{ __('report/customer.sales_payments_refunds') }}</div>
 
     @forelse($customer->sales as $sale)
         <div class="sale-block">
 
             <div class="sale-meta">
-                <strong>Sale Code:</strong> {{ $sale->sale_code }}
+                <strong>{{ __('report/customer.sale_code') }}:</strong> {{ $sale->sale_code }}
                 &nbsp;&nbsp;
-                <strong>Invoice:</strong> {{ $sale->invoice_number ?? '-' }}
+                <strong>{{ __('report/customer.invoice') }}:</strong> {{ $sale->invoice_number ?? '-' }}
                 &nbsp;&nbsp;
-                <strong>Date:</strong> {{ \Carbon\Carbon::parse($sale->sold_at)->format('Y-m-d') }}
+                <strong>{{ __('report/customer.date') }}:</strong> {{ \Carbon\Carbon::parse($sale->sold_at)->format('Y-m-d') }}
                 <br>
-                <strong>Sale Status:</strong> {{ ucfirst($sale->sale_status->value) }}
+                <strong>{{ __('report/customer.sale_status') }}:</strong> {{ ucfirst($sale->sale_status->value) }}
                 &nbsp;&nbsp;
-                <strong>Payment Status:</strong> {{ ucfirst($sale->payment_status->value) }}
+                <strong>{{ __('report/customer.payment_status') }}:</strong> {{ ucfirst($sale->payment_status->value) }}
             </div>
 
             {{-- Sale Items --}}
             <table class="sub-table">
                 <thead>
                     <tr>
-                        <th>Product</th>
-                        <th>Qty</th>
-                        <th>Unit Price</th>
-                        <th>Discount</th>
-                        <th>Tax</th>
-                        <th>Subtotal</th>
+                        <th>{{ __('report/customer.product') }}</th>
+                        <th>{{ __('report/customer.quantity') }}</th>
+                        <th>{{ __('report/customer.unit_price') }}</th>
+                        <th>{{ __('report/customer.discount') }}</th>
+                        <th>{{ __('report/customer.tax') }}</th>
+                        <th>{{ __('report/customer.subtotal') }}</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($sale->items as $item)
                         <tr>
-                            <td>{{ $item->product->name ?? 'N/A' }}</td>
+                            <td>{{ $item->product->name ?? __('report/customer.na') }}</td>
                             <td>{{ $item->quantity }}</td>
                             <td>${{ number_format($item->unit_price, 2) }}</td>
                             <td>${{ number_format($item->discount, 2) }}</td>
@@ -176,10 +176,10 @@
                             <td>${{ number_format($item->subtotal, 2) }}</td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="text-center">No items.</td></tr>
+                        <tr><td colspan="6" class="text-center">{{ __('report/customer.no_items') }}</td></tr>
                     @endforelse
                     <tr class="totals-row">
-                        <td colspan="5" style="text-align:right;">Total</td>
+                        <td colspan="5" style="text-align:right;">{{ __('report/customer.total') }}</td>
                         <td>${{ number_format($sale->total, 2) }}</td>
                     </tr>
                 </tbody>
@@ -187,15 +187,15 @@
 
             {{-- Payments for this sale --}}
             @if($sale->payments->isNotEmpty())
-                <div class="sub-title">Payments</div>
+                <div class="sub-title">{{ __('report/customer.payments') }}</div>
                 <table class="sub-table">
                     <thead>
                         <tr>
-                            <th>Payment Code</th>
-                            <th>Method</th>
-                            <th>Amount</th>
-                            <th>Reference</th>
-                            <th>Paid At</th>
+                            <th>{{ __('report/customer.payment_code') }}</th>
+                            <th>{{ __('report/customer.method') }}</th>
+                            <th>{{ __('report/customer.amount') }}</th>
+                            <th>{{ __('report/customer.reference') }}</th>
+                            <th>{{ __('report/customer.paid_at') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -214,16 +214,16 @@
 
             {{-- Refunds for this sale --}}
             @if($sale->refunds->isNotEmpty())
-                <div class="sub-title">Refunds</div>
+                <div class="sub-title">{{ __('report/customer.refunds') }}</div>
                 <table class="sub-table">
                     <thead>
                         <tr>
-                            <th>Refund Code</th>
-                            <th>Items Refunded</th>
-                            <th>Method</th>
-                            <th>Amount</th>
-                            <th>Reason</th>
-                            <th>Date</th>
+                            <th>{{ __('report/customer.refund_code') }}</th>
+                            <th>{{ __('report/customer.items_refunded') }}</th>
+                            <th>{{ __('report/customer.method') }}</th>
+                            <th>{{ __('report/customer.amount') }}</th>
+                            <th>{{ __('report/customer.reason') }}</th>
+                            <th>{{ __('report/customer.refunded_at') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -232,7 +232,7 @@
                                 <td>{{ $refund->refund_code }}</td>
                                 <td>
                                     @foreach($refund->items as $refundItem)
-                                        {{ $refundItem->product->name ?? 'N/A' }}
+                                        {{ $refundItem->product->name ?? __('report/customer.na') }}
                                         (x{{ $refundItem->quantity }})
                                         @if(!$loop->last)<br>@endif
                                     @endforeach
@@ -249,7 +249,7 @@
 
         </div>
     @empty
-        <p>This customer has no sales on record.</p>
+        <p>{{ __('report/customer.no_sales') }}</p>
     @endforelse
 
 </body>
