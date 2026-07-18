@@ -241,7 +241,7 @@
     $(document).ready(function() {
         $('.edit-btn').on('click', handleEdit);
         $('.delete-btn').on('click', handleDelete);
-         $('.pdf-btn').on('click', handlePdf);
+        $('.pdf-btn').on('click', handlePdf);
 
 
         function fetchSuppliers(search = '') {
@@ -269,16 +269,16 @@
                             tableBody += `
                                 <tr>
                                     <td>${supplier.first_name} ${supplier.last_name}</td>
-                                        <td>${supplier.company_name ?? {{ __('supplier.na') }} }</td>
+                                        <td>${supplier.company_name ?? "{{ __('supplier.na') }}" }</td>
                                     <td>${supplier.phone}</td>
-                                    <td>${supplier.email ?? {{ __('supplier.na') }} }</td>
-                                    <td>${supplier.address ?? {{ __('supplier.na') }} }</td>
-                                    <td>${supplier.tax_number ?? {{ __('supplier.na') }} }</td>
+                                    <td>${supplier.email ?? "{{ __('supplier.na') }}" }</td>
+                                    <td>${supplier.address ?? "{{ __('supplier.na') }}" }</td>
+                                    <td>${supplier.tax_number ?? "{{ __('supplier.na') }}" }</td>
                                     <td class="${
                                         supplier.status === 'active' ? 'text-success' :  'text-warning'
                                     }">
                                         ${
-                                            supplier.status === 'active' ? {{ __('supplier.active') }} : {{ __('supplier.inactive') }}
+                                            supplier.status === 'active' ? "{{ __('supplier.active') }}" : "{{ __('supplier.inactive') }}"
                                         }
                                     </td>
                                     <td>

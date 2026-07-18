@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Suppliers Report</title>
+   <title>{{ __('report/all_supplier.title') }}</title>
     <style>
         body { font-family: sans-serif; color: #333; font-size: 14px; margin: 20px; }
         .header { text-align: center; margin-bottom: 25px; }
@@ -19,24 +19,24 @@
 
     <div class="header">
         <h2>{{ $data['title'] }}</h2>
-        <p>Generated on: {{ $data['date'] }}</p>
+        <p>{{ __('report/all_supplier.generated_on') }}: {{ $data['date'] }}</p>
     </div>
 
     @foreach($supplierChunks as $chunkIndex => $chunk)
         <div class="page-break">
-            <h2>Supplier Directory - Page {{ $chunkIndex + 1 }}</h2>
+            <h2> {{ __('report/all_supplier.supplier_directory') }} - {{ __('report/all_supplier.page') }} {{ $chunkIndex + 1 }} </h2>
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Company</th>
-                        <th>Phone</th>
-                        <th>Email</th>
-                        <th>Address</th>
-                        <th>Tax Number</th>
-                        <th>Status</th>
-                        <th>Created At</th>
+                        <th>{{ __('report/all_supplier.id') }}</th>
+                        <th>{{ __('report/all_supplier.name') }}</th>
+                        <th>{{ __('report/all_supplier.company') }}</th>
+                        <th>{{ __('report/all_supplier.phone') }}</th>
+                        <th>{{ __('report/all_supplier.email') }}</th>
+                        <th>{{ __('report/all_supplier.address') }}</th>
+                        <th>{{ __('report/all_supplier.tax_number') }}</th>
+                        <th>{{ __('report/all_supplier.status') }}</th>
+                        <th>{{ __('report/all_supplier.created_at') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -44,12 +44,12 @@
                         <tr>
                             <td>{{ $supplier->id }}</td>
                             <td>{{ $supplier->first_name }} {{ $supplier->last_name }}</td>
-                            <td>{{ $supplier->company_name ?? '-' }}</td>
+                            <td>{{ $supplier->company_name ?? __('report/all_supplier.na') }}</td>
                             <td>{{ $supplier->phone }}</td>
-                            <td>{{ $supplier->email ?? '-' }}</td>
-                            <td>{{ $supplier->address ?? '-' }}</td>
-                            <td>{{ $supplier->tax_number ?? '-' }}</td>
-                            <td>{{ ucfirst($supplier->status->value) }}</td>
+                            <td>{{ $supplier->email ?? __('report/all_supplier.na') }} </td>
+                            <td>{{ $supplier->address ?? __('report/all_supplier.na') }} </td>
+                            <td>{{ $supplier->tax_number ?? __('report/all_supplier.na') }} </td>
+                            <td>{{ __('report/all_supplier.' . strtolower($supplier->status->value)) }}</td>
                             <td>{{ $supplier->created_at->format('Y-m-d H:i A') }}</td>
                         </tr>
                     @endforeach

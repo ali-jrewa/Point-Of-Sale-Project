@@ -2,7 +2,7 @@
 <html dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
-    <title>Customers Report</title>
+    <title>{{ __('report/all_customer.customers_report') }}</title>
     <style>
         body {
             font-family: {{ app()->getLocale() === 'ar' ? "'DejaVu Sans', sans-serif" : "sans-serif" }};
@@ -55,27 +55,28 @@
 
      @include('pdf._toolbar')
 
-    <!-- FIXED: Accessing array syntax using bracket notation -->
+
     <div class="header">
         <h2>{{ $data['title'] }}</h2>
-        <p>Generated on: {{ $data['date'] }}</p>
+        <p>{{ __('report/all_customer.generated_on') }}: {{ $data['date'] }}</p>
     </div>
 
     @foreach($customerChunks as $chunkIndex => $chunk)
         <div class="page-break">
-            <h2>Customer Directory - Page {{ $chunkIndex + 1 }}</h2>
+            <h2>
+    {{ __('report/all_customer.customer_directory') }} - {{ __('report/all_customer.page') }} {{ $chunkIndex + 1 }}</h2>
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th>Address</th>
-                        <th>Credit Limit</th>
-                        <th>Credit Used</th>
-                        <th>Status</th>
-                        <th>Created At</th>
+                        <th>{{ __('report/all_customer.id') }}</th>
+                        <th>{{ __('report/all_customer.name') }}</th>
+                        <th>{{ __('report/all_customer.email') }}</th>
+                        <th>{{ __('report/all_customer.phone') }}</th>
+                        <th>{{ __('report/all_customer.address') }}</th>
+                        <th>{{ __('report/all_customer.credit_limit') }}</th>
+                        <th>{{ __('report/all_customer.credit_used') }}</th>
+                        <th>{{ __('report/all_customer.status') }}</th>
+                        <th>{{ __('report/all_customer.created_at') }}</th>
                     </tr>
                 </thead>
                 <tbody>

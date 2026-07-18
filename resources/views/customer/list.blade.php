@@ -93,7 +93,7 @@
                                                 </tr>
                                             @empty
                                                 <tr>
-                                                    <td colspan="8" class="text-center">No customers found.</td>
+                                                    <td colspan="8" class="text-center">{{ __('customer.no_customers_found') }}</td>
                                                 </tr>
                                             @endforelse
                                         </tbody>
