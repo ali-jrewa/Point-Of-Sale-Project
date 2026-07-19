@@ -1,21 +1,30 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-   <title>{{ __('report/all_supplier.title') }}</title>
+@extends('layouts.app')
+
+@section('title')
+    {{ __('report/all_supplier.title') }}
+@endsection
+
+@section('style')
+
+    @include('pdf._style')
+
     <style>
-        body { font-family: sans-serif; color: #333; font-size: 14px; margin: 20px; }
-        .header { text-align: center; margin-bottom: 25px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; page-break-inside: auto; }
-        tr { page-break-inside: avoid; page-break-after: auto; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; font-weight: bold; }
         .page-break { page-break-after: always; }
         .page-break:last-child { page-break-after: avoid; }
     </style>
-</head>
-<body>
-     @include('pdf._toolbar')
+
+@endsection
+
+
+@section('content')
+
+
+<main class="app-main">
+    <div class="app-content">
+        <div class="container-fluid">
+            <div class="pdf-report">
+                @include('pdf._toolbar')
+
 
     <div class="header">
         <h2>{{ $data['title'] }}</h2>
@@ -58,5 +67,9 @@
         </div>
     @endforeach
 
-</body>
-</html>
+        </div>
+        </div>
+    </div>
+</main>
+
+@endsection

@@ -68,6 +68,15 @@ class User extends Authenticatable
         return $this->hasMany(Payment::class);
     }
 
+    public function hasRole(string $role): bool
+    {
+        return $this->role && $this->role->name === $role;
+    }
+
+    public function hasAnyRole(array $roles): bool
+    {
+        return $this->role && in_array($this->role->name, $roles);
+    }
 
     public function hasPermission(string $permissionName): bool
     {

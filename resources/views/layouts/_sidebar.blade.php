@@ -3,21 +3,21 @@
      @if(Auth::user()->role->name == 'admin')
     <div class="sidebar-brand">
         <a href="{{ url('/admin/dashboard') }}" class="brand-link">
-            <img src="../../dist/assets/img/AdminLTELogo.png" alt="AdminLTE Logo" class="shadow opacity-75 brand-image">
+            <img src="{{ asset('/dist/assets/img/AdminLTELogo.png') }}" alt="AdminLTE Logo" class="shadow opacity-75 brand-image">
             <span class="brand-text fw-light">{{ __('sidebar.brand_text') }}</span>
         </a>
     </div>
     @elseif ( Auth::user()->role->name == 'manager')
     <div class="sidebar-brand">
         <a href="{{ url('/manager/dashboard') }}" class="brand-link">
-            <img src="../../dist/assets/img/AdminLTELogo.png" alt="AdminLTE Logo" class="shadow opacity-75 brand-image">
+            <img src="{{ asset('/dist/assets/img/AdminLTELogo.png') }}" alt="AdminLTE Logo" class="shadow opacity-75 brand-image">
             <span class="brand-text fw-light">{{ __('sidebar.brand_text') }}</span>
         </a>
     </div>
     @elseif(Auth::user()->role->name == 'cashier')
     <div class="sidebar-brand">
         <a href="{{ url('/cashier/dashboard') }}" class="brand-link">
-            <img src="../../dist/assets/img/AdminLTELogo.png" alt="AdminLTE Logo" class="shadow opacity-75 brand-image">
+            <img src="{{ asset('/dist/assets/img/AdminLTELogo.png') }}" alt="AdminLTE Logo" class="shadow opacity-75 brand-image">
             <span class="brand-text fw-light">{{ __('sidebar.brand_text') }}</span>
         </a>
     </div>
@@ -54,14 +54,14 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="{{ route('admin.customer.index') }}" class="nav-link @if (Request::segment(2) == 'customer') active @endif">
+                    <a href="{{ route('admin.customer.index') }}" class="nav-link @if (Request::segment(2) == 'customer') active @elseif(Request::segment(3) == 'customer')  active @endif">
                         <i class="nav-icon fa fa-id-card"></i>
                         <p>{{ __('sidebar.customer') }}</p>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a href="{{ route('admin.supplier.index') }}" class="nav-link @if (Request::segment(2) == 'supplier') active @endif">
+                    <a href="{{ route('admin.supplier.index') }}" class="nav-link @if (Request::segment(2) == 'supplier') active @elseif(Request::segment(3) == 'supplier')  active @endif">
                         <i class="nav-icon fa fa-truck"></i>
                         <p>{{ __('sidebar.suppliers') }}</p>
                     </a>
@@ -106,8 +106,8 @@
 
                 <li class="nav-header">{{ __('sidebar.reports') }}</li>
 
-                <li class="nav-item" id="reports-menu">
-                    <a href="#" class="nav-link">
+                <li class="nav-item" id="reports-menu" class="@if (Request::segment(2) == 'report') active @elseif(Request::segment(3) == 'report')  active @endif">
+                    <a href="#" class="nav-link ">
                         <i class="nav-icon fa-solid fa-chart-line"></i>
                         <p>
                             {{ __('sidebar.reports') }}
@@ -220,14 +220,14 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="{{ route('manager.customer.index') }}" class="nav-link @if (Request::segment(2) == 'customer') active @endif">
+                    <a href="{{ route('manager.customer.index') }}" class="nav-link @if (Request::segment(2) == 'customer') active @elseif(Request::segment(3) == 'customer')  active @endif">
                         <i class="nav-icon fa fa-id-card"></i>
                         <p>{{ __('sidebar.customer') }}</p>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a href="{{ route('manager.supplier.index') }}" class="nav-link @if (Request::segment(2) == 'supplier') active @endif">
+                    <a href="{{ route('manager.supplier.index') }}" class="nav-link @if (Request::segment(2) == 'supplier') active @elseif(Request::segment(3) == 'supplier')  active @endif">
                         <i class="nav-icon fa fa-truck"></i>
                         <p>{{ __('sidebar.suppliers') }}</p>
                     </a>
@@ -272,7 +272,7 @@
 
                 <li class="nav-header">{{ __('sidebar.reports') }}</li>
 
-                <li class="nav-item" id="reports-menu">
+                <li class="nav-item" id="reports-menu" class="@if (Request::segment(2) == 'report') active @elseif(Request::segment(3) == 'report')  active @endif">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fa-solid fa-chart-line"></i>
                         <p>

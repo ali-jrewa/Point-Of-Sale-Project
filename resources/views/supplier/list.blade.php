@@ -51,9 +51,15 @@
                                             &nbsp;
                                             &nbsp;
                                             &nbsp;
+                                            @if(Auth::user()->hasRole('admin'))
                                             <a href="{{ route('admin.report.supplier') }}" class="btn btn-secondary btn-sm" >
                                                 {{ __('supplier.suppliers_report') }}
                                             </a>
+                                            @elseif(Auth::user()->hasRole('manager'))
+                                            <a href="{{ route('manager.report.supplier') }}" class="btn btn-secondary btn-sm" >
+                                                {{ __('supplier.suppliers_report') }}
+                                            </a>
+                                            @endif
                                         </ul>
                                     </div>
                                 </div>
@@ -332,12 +338,16 @@
         });
 
         // PDF for single supplier
+        
+
+           const reportSupplierRoute = "{{ Auth::user()->hasRole('admin')
+            ? route('admin.report.supplier.row', ['supplier' => ':id'])
+            : route('manager.report.supplier.row', ['supplier' => ':id']) }}";
         function handlePdf() {
             const supplierId = $(this).data('id');
-            const url = "{{ route('admin.report.supplier.row', ['supplier' => ':id']) }}"
-                .replace(':id', supplierId);
-            window.location.href = url;
+            window.location.href = reportSupplierRoute.replace(':id', supplierId);
         }
+
 
         // edit
         function handleEdit(){

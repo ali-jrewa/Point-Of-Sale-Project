@@ -1,11 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>{{ $data['title'] }}</title>
+@extends('layouts.app')
+
+@section('title')
+    {{ $data['title'] }}
+@endsection
+
+@section('style')
     @include('pdf._style')
-</head>
-<body>
+@endsection
+
+@section('content')
+<main class="app-main">
+    <div class="app-content">
+        <div class="container-fluid">
+            <div class="pdf-report">
     @include('pdf._toolbar')
 
     <div class="header">
@@ -64,5 +71,8 @@
         </tbody>
     </table>
 
-</body>
-</html>
+            </div>
+        </div>
+    </div>
+</main>
+@endsection

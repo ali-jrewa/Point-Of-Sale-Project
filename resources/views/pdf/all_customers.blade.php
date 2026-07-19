@@ -1,44 +1,13 @@
-<!DOCTYPE html>
-<html dir="{{ app()->getLocale() === 'ar' ? 'rtl' : 'ltr' }}">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ __('report/all_customer.customers_report') }}</title>
+@extends('layouts.app')
+
+@section('title')
+    {{ __('report/all_customer.customers_report') }}
+@endsection
+
+@section('style')
+
+    @include('pdf._style')
     <style>
-        body {
-            font-family: {{ app()->getLocale() === 'ar' ? "'DejaVu Sans', sans-serif" : "sans-serif" }};
-        }
-        @if(app()->getLocale() === 'ar')
-        table, th, td { text-align: right; }
-        @endif
-        body {
-            font-family: sans-serif;
-            color: #333;
-            font-size: 14px;
-            margin: 20px;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            page-break-inside: auto;
-        }
-        tr {
-            page-break-inside: avoid;
-            page-break-after: auto;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-        }
         /* Forces a clean break to the next page */
         .page-break {
             page-break-after: always;
@@ -50,9 +19,12 @@
 
     </style>
 
-</head>
-<body>
-
+@endsection
+@section('content')
+<main class="app-main">
+    <div class="app-content">
+        <div class="container-fluid">
+            <div class="pdf-report">
 
      @include('pdf._toolbar')
 
@@ -100,5 +72,9 @@
         </div>
     @endforeach
 
-</body>
-</html>
+            </div>
+        </div>
+    </div>
+</main>
+
+@endsection

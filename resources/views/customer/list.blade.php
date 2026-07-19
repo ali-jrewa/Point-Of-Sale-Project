@@ -51,9 +51,15 @@
                                             &nbsp;
                                             &nbsp;
                                             &nbsp;
+                                            @if(Auth::user()->hasRole('admin'))
                                             <a href="{{ route('admin.report.customer') }}" class="btn btn-secondary btn-sm" >
                                                 {{ __('customer.customer_report') }}
                                             </a>
+                                            @elseif(Auth::user()->hasRole('manager'))
+                                             <a href="{{ route('manager.report.customer') }}" class="btn btn-secondary btn-sm" >
+                                                {{ __('customer.customer_report') }}
+                                            </a>
+                                            @endif
                                         </ul>
                                     </div>
                                 </div>
@@ -448,11 +454,13 @@
         });
 
         // PDF for single customer
+
+        const reportCustomerRoute = "{{ Auth::user()->hasRole('admin')
+            ? route('admin.report.customer.row', ['customer' => ':id'])
+            : route('manager.report.customer.row', ['customer' => ':id']) }}";
         function handlePdf() {
             const customerId = $(this).data('id');
-            const url = "{{ route('admin.report.customer.row', ['customer' => ':id']) }}"
-                .replace(':id', customerId);
-            window.location.href = url;
+            window.location.href = reportCustomerRoute.replace(':id', customerId);
         }
 
         // edit
