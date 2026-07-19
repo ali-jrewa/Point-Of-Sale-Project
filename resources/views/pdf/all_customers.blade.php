@@ -53,6 +53,7 @@
 </head>
 <body>
 
+
      @include('pdf._toolbar')
 
 

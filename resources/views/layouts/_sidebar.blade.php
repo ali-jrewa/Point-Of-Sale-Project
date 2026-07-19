@@ -1,11 +1,27 @@
 <aside class="shadow app-sidebar bg-body-secondary" data-bs-theme="dark">
     <!--Sidebar Brand-->
+     @if(Auth::user()->role->name == 'admin')
     <div class="sidebar-brand">
-        <a href="./index.html" class="brand-link">
+        <a href="{{ url('/admin/dashboard') }}" class="brand-link">
             <img src="../../dist/assets/img/AdminLTELogo.png" alt="AdminLTE Logo" class="shadow opacity-75 brand-image">
             <span class="brand-text fw-light">{{ __('sidebar.brand_text') }}</span>
         </a>
     </div>
+    @elseif ( Auth::user()->role->name == 'manager')
+    <div class="sidebar-brand">
+        <a href="{{ url('/manager/dashboard') }}" class="brand-link">
+            <img src="../../dist/assets/img/AdminLTELogo.png" alt="AdminLTE Logo" class="shadow opacity-75 brand-image">
+            <span class="brand-text fw-light">{{ __('sidebar.brand_text') }}</span>
+        </a>
+    </div>
+    @elseif(Auth::user()->role->name == 'cashier')
+    <div class="sidebar-brand">
+        <a href="{{ url('/cashier/dashboard') }}" class="brand-link">
+            <img src="../../dist/assets/img/AdminLTELogo.png" alt="AdminLTE Logo" class="shadow opacity-75 brand-image">
+            <span class="brand-text fw-light">{{ __('sidebar.brand_text') }}</span>
+        </a>
+    </div>
+    @endif
 
     <!--Sidebar Wrapper-->
     <div class="sidebar-wrapper">

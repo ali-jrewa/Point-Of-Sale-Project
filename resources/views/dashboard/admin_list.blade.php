@@ -16,7 +16,7 @@
                         </div>
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-end">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item"><a href="{{ url('/admin/dashboard') }}">Home</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">
                                     Dashboard
                                 </li>
@@ -95,7 +95,7 @@
                                     More info <i class="bi bi-link-45deg"></i> </a>
                             </div> <!--end::Small Box Widget 4-->
                         </div> <!--end 6-->
-                        
+
                     </div> <!--end::Row--> <!--begin::Row-->
                     <div class="row"> <!-- Start col -->
                         <div class="col-lg-12 connectedSortable">
