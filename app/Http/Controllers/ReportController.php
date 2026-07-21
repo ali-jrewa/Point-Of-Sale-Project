@@ -395,6 +395,85 @@ class ReportController extends Controller
         return $this->renderReport($request, 'pdf.top-customers', compact('data', 'customers'), 'top_customers_report_' . $from . '_to_' . $to . '.pdf');
     }
 
+    public function products(Request $request)
+    {
+        $data = [
+            'title' => 'Products Report',
+            'date'  => now()->format('Y-m-d H:i'),
+        ];
+
+        if ($request->hasAny(['from', 'to'])) {
+            [$from, $to] = $this->resolveDateRange($request);
+
+            $products = Product::with('category')
+                ->with([
+                    'purchaseItems' => function ($q) use ($from, $to) {
+                        $q->whereHas('purchase', function ($p) use ($from, $to) {
+                            $p->whereDate('purchased_at', '>=', $from)->whereDate('purchased_at', '<=', $to);
+                        });
+                    },
+                    'purchaseItems.purchase' => function ($q) use ($from, $to) {
+                        $q->whereDate('purchased_at', '>=', $from)->whereDate('purchased_at', '<=', $to);
+                    },
+                    'saleItems' => function ($q) use ($from, $to) {
+                        $q->whereHas('sale', function ($s) use ($from, $to) {
+                            $s->whereDate('sold_at', '>=', $from)->whereDate('sold_at', '<=', $to);
+                        });
+                    },
+                    'saleItems.sale' => function ($q) use ($from, $to) {
+                        $q->whereDate('sold_at', '>=', $from)->whereDate('sold_at', '<=', $to);
+                    },
+                ])
+                ->get();
+
+            $data['from'] = $from;
+            $data['to'] = $to;
+
+            $filename = 'products_report_' . $from . '_to_' . $to . '.pdf';
+        } else {
+            $products = Product::with('category', 'purchaseItems.purchase', 'saleItems.sale')->orderBy('name')->get();
+            $filename = 'products_report.pdf';
+        }
+
+        return $this->renderReport($request, 'pdf.products', compact('data', 'products'), $filename);
+    }
+
+    public function productRow(Request $request, Product $product)
+    {
+        $data = [
+            'title' => "Product Report - {$product->name}",
+            'date'  => now()->format('Y-m-d H:i'),
+        ];
+
+        if ($request->hasAny(['from', 'to'])) {
+            [$from, $to] = $this->resolveDateRange($request);
+
+            $product->load([
+                'category',
+                'purchaseItems' => function ($q) use ($from, $to) {
+                    $q->whereHas('purchase', function ($p) use ($from, $to) {
+                        $p->whereDate('purchased_at', '>=', $from)->whereDate('purchased_at', '<=', $to);
+                    })->with('purchase');
+                },
+                'saleItems' => function ($q) use ($from, $to) {
+                    $q->whereHas('sale', function ($s) use ($from, $to) {
+                        $s->whereDate('sold_at', '>=', $from)->whereDate('sold_at', '<=', $to);
+                    })->with('sale');
+                },
+            ]);
+
+            $data['from'] = $from;
+            $data['to'] = $to;
+
+            $filename = 'product_' . $product->id . '_report_' . $from . '_to_' . $to . '.pdf';
+        } else {
+            $product->load(['category', 'purchaseItems.purchase', 'saleItems.sale']);
+            $filename = 'product_' . $product->id . '_report.pdf';
+        }
+
+        return $this->renderReport($request, 'pdf.product', compact('data', 'product'), $filename);
+    }
+
     public function due(Request $request)
     {
         $sales = Sale::with('customer')

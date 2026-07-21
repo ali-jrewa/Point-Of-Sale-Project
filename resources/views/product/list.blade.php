@@ -45,9 +45,22 @@
                                     <div class="card-tools">
                                         <ul class="pagination pagination-sm float-end">
 
-                                            <a href="{{ route('admin.product.create') }}" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addProductModal">
-                                                {{ __('product.add_product') }}
-                                            </a>
+                                            @if(auth()->user()->hasRole('admin'))
+                                                <a href="{{ route('admin.product.create') }}" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                                                    {{ __('product.add_product') }}
+                                                </a>
+                                                &nbsp;
+                                                <a href="{{ route('admin.report.products') }}" class="btn btn-secondary btn-sm">
+                                                    {{ __('product.product_report') ?? 'Product Report' }}
+                                                </a>
+                                            @else
+                                                <a href="{{ route('manager.product.create') }}" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                                                    {{ __('product.add_product') }}
+                                                </a>
+                                                <a href="{{ route('manager.report.products') }}" class="btn btn-secondary btn-sm">
+                                                    {{ __('product.product_report') ?? 'Product Report' }}
+                                                </a>
+                                            @endif
                                         </ul>
                                     </div>
                                 </div>
@@ -237,6 +250,15 @@
     archived: "{{ __('common.archived') }}"
 };
 
+        // report route template for product detail report
+        let productReportRouteTemplate = '';
+        @if(auth()->user()->hasRole('admin')){
+            productReportRouteTemplate = "{{ route('admin.report.product.row', ['product' => ':id']) }}";
+        }@else{
+            productReportRouteTemplate = "{{ route('manager.report.product.row', ['product' => ':id']) }}";
+        }
+        @endif
+
 
        fetchProducts($("#search").val());
 
@@ -300,10 +322,11 @@
                                 </td>
                                 <td>${created_at}</td>
                                 <td>${updated_at}</td>
-                                <td>
-                                    <button class="btn btn-sm edit-btn btn-warning " data-id="${product.id}">{{ __('common.edit') }}</button>
-                                    <button class="btn btn-sm delete-btn btn-danger " data-id="${product.id}">{{ __('common.delete') }}</button>
-                                </td>
+                                        <td>
+                                            <button class="btn btn-sm report-btn btn-info" data-id="${product.id}">{{ __('product.product_report') ?? 'Report' }}</button>
+                                            <button class="btn btn-sm edit-btn btn-warning " data-id="${product.id}">{{ __('common.edit') }}</button>
+                                            <button class="btn btn-sm delete-btn btn-danger " data-id="${product.id}">{{ __('common.delete') }}</button>
+                                        </td>
                             </tr>
                         `;
                     });
@@ -312,6 +335,12 @@
                     $('.edit-btn').on('click', handleEdit);
 
                     $('.delete-btn').on('click', handleDelete);
+                    $('.report-btn').on('click', function() {
+                        const id = $(this).data('id');
+                        const url = productReportRouteTemplate.replace(':id', id);
+                        // navigate to the report preview page for this product
+                        window.location.href = url;
+                    });
                 },
                 error: function(xhr, status, error) {
                     console.error('Error fetching products:', error);

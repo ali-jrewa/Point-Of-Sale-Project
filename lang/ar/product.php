@@ -6,6 +6,8 @@ return [
     'page_title' => 'المنتجات',
     'product_list' => 'قائمة المنتجات',
 
+    'product_report' => 'تقرير المنتجات',
+
     // Breadcrumb
     'product' => 'المنتجات',
 

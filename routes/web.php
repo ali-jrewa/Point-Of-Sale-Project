@@ -118,6 +118,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/stock', [ReportController::class, 'stock'])->name('stock');
             Route::get('/low-stock', [ReportController::class, 'lowStock'])->name('low-stock');
             Route::get('/top-customers', [ReportController::class, 'topCustomers'])->name('top-customers');
+            Route::get('/products', [ReportController::class, 'products'])->name('products');
+            Route::get('/product/{product}', [ReportController::class, 'productRow'])->name('product.row');
             Route::get('/due', [ReportController::class, 'due'])->name('due');
 
              //pdf for single row
@@ -205,6 +207,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/stock', [ReportController::class, 'stock'])->name('stock');
             Route::get('/low-stock', [ReportController::class, 'lowStock'])->name('low-stock');
             Route::get('/top-customers', [ReportController::class, 'topCustomers'])->name('top-customers');
+            Route::get('/products', [ReportController::class, 'products'])->name('products');
+            Route::get('/product/{product}', [ReportController::class, 'productRow'])->name('product.row');
             Route::get('/due', [ReportController::class, 'due'])->name('due');
 
              //pdf for single row

@@ -6,6 +6,9 @@ return [
     'page_title' => 'Product',
     'product_list' => 'Product List',
 
+    'product_report' => 'Product Report',
+
+
     // Breadcrumb
     'product' => 'Product',
 
