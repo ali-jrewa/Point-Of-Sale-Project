@@ -130,12 +130,19 @@
                                                     <button
                                                         class="btn btn-danger delete-btn w-100" style="text-"
                                                         data-id="{{ $purchase->id }}">{{ __('common.delete') }}</button>
-
+                                                    @if(auth()->user()->hasRole('admin'))
+                                                        <a role="button"
+                                                            href="{{ route('admin.purchase.show', $purchase->id) }}"
+                                                            class="btn btn-info w-100">
+                                                            {{ __('purchase.view_purchase') }}
+                                                        </a>
+                                                    @elseif(auth()->user()->hasRole('manager'))
                                                     <a role="button"
-                                                        href="{{ route('admin.purchase.show', $purchase->id) }}"
+                                                        href="{{ route('manager.purchase.show', $purchase->id) }}"
                                                         class="btn btn-info w-100">
                                                         {{ __('purchase.view_purchase') }}
                                                     </a>
+                                                    @endif
                                                 </td>
                                             </tr>
 
@@ -691,10 +698,31 @@ const paymentStatusTranslations = {
     // ==========================
 
     function fetchPurchases(search = '', purchaseDate = '') {
+        
+
+        let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.purchase.data') }}";
+            }@else {
+                url = "{{ route('manager.purchase.data') }}";
+            }
+            @endif
+
+            let purchaseShowUrl = "";
+
+            @if(auth()->user()->hasRole('admin'))
+
+                purchaseShowUrl = "{{ route('admin.purchase.show', ':id') }}";
+
+            @else
+
+                purchaseShowUrl = "{{ route('manager.purchase.show', ':id') }}";
+
+            @endif
 
         $.ajax({
 
-            url: "{{ route('admin.purchase.data') }}",
+            url: url ,
 
             method: "GET",
 
@@ -856,8 +884,8 @@ const paymentStatusTranslations = {
 
                                 </button>
 
-                                <a role="button" 
-                                    href="${'{{ route('admin.purchase.show', ':id') }}'.replace(':id', purchase.id)}"
+                                <a role="button"
+                                    href="${purchaseShowUrl.replace(':id', purchase.id)}"
                                     class="btn btn-info w-100">
                                     {{ __('purchase.view_purchase') }}
                                 </a>
@@ -1016,10 +1044,15 @@ const paymentStatusTranslations = {
 
         let purchaseId = $(this).data("id");
 
-
-
-        let url = "{{ route('admin.purchase.edit', ':id') }}"
+        let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.purchase.edit', ':id') }}"
                     .replace(':id',purchaseId);
+            }@else {
+                url = "{{ route('manager.purchase.edit', ':id') }}"
+                    .replace(':id',purchaseId);
+            }
+            @endif
 
 
 
@@ -1212,21 +1245,21 @@ const paymentStatusTranslations = {
 
         let id = $(this).data("id");
 
-
-
-        let url = "{{ route('admin.purchase.destroy',['purchase'=>':id']) }}"
+        let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.purchase.destroy',['purchase'=>':id']) }}"
                     .replace(':id',id);
-
-
+            }@else {
+                url = "{{ route('manager.purchase.destroy',['purchase'=>':id']) }}"
+                    .replace(':id',id);
+            }
+            @endif
 
         if(!confirm("{{ __('purchase.delete_confirmation') }}")){
 
             return;
 
         }
-
-
-
 
         $.ajax({
 
@@ -1876,14 +1909,20 @@ const paymentStatusTranslations = {
         }
 
 
-
+        let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.purchase.store') }}";
+            }@else {
+                url = "{{ route('manager.purchase.store') }}";
+            }
+            @endif
 
 
         $.ajax({
 
 
 
-            url:"{{ route('admin.purchase.store') }}",
+            url: url ,
 
 
 
@@ -1919,8 +1958,13 @@ const paymentStatusTranslations = {
                     .fadeOut();
 
 
-
-                window.location.href = "{{ route('admin.purchase.index') }}";
+                @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.purchase.index') }}";
+                }@else {
+                    url = "{{ route('manager.purchase.index') }}";
+                }
+                @endif
+                window.location.href = url ;
 
 
 
@@ -1987,17 +2031,20 @@ const paymentStatusTranslations = {
         let id = $(this)
             .attr("data-id");
 
-
-
-        let url = "{{ route('admin.purchase.update',':id') }}"
+        let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.purchase.update',':id') }}"
                     .replace(':id',id);
+            }@else {
+                url = "{{ route('manager.purchase.update',':id') }}"
+                    .replace(':id',id);
+            }
+            @endif
 
 
 
 
         $.ajax({
-
-
 
             url:url,
 
@@ -2033,8 +2080,13 @@ const paymentStatusTranslations = {
                     .fadeOut();
 
 
-
-                window.location.href = "{{ route('admin.purchase.index') }}";
+                @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.purchase.index') }}";
+                }@else {
+                    url = "{{ route('manager.purchase.index') }}";
+                }
+                @endif
+                window.location.href = url ;
 
 
 

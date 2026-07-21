@@ -345,17 +345,35 @@
 </div>
 <div class="mt-3">
 
-    <a href="{{ route('admin.purchase.index') }}"
-       class="btn btn-secondary">
+    @if(auth()->user()->hasRole('admin'))
+                <a href="{{ route('admin.purchase.index') }}"
+                    class="btn btn-secondary">
 
-        {{ __('purchase_show.back') }}
+                        {{ __('purchase_show.back') }}
 
-    </a>
+                    </a>
+            @else 
+                <a href="{{ route('manager.purchase.index') }}"
+                    class="btn btn-secondary">
 
-    <a href="{{ route('admin.purchase.index', ['edit' => $purchase->id]) }}"
-        class="btn btn-warning">
-            {{ __('purchase_show.edit_purchase') }}
-    </a>
+                        {{ __('purchase_show.back') }}
+
+                </a>
+            
+            @endif
+            
+            @if(auth()->user()->hasRole('admin'))
+                <a href="{{ route('admin.purchase.index', ['edit' => $purchase->id]) }}"
+                    class="btn btn-warning">
+                        {{ __('purchase_show.edit_purchase') }}
+                </a>
+            @else 
+                <a href="{{ route('manager.purchase.index', ['edit' => $purchase->id]) }}"
+                    class="btn btn-warning">
+                        {{ __('purchase_show.edit_purchase') }}
+                </a>
+            
+            @endif
 
 </div>
 

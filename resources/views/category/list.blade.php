@@ -48,7 +48,7 @@
                                                 <th>{{ __('category.status') }}</th>
                                                 <th>{{ __('category.created_at') }}</th>
                                                 <th>{{ __('category.updated_at') }}</th>
-                                                <th>{{ __('category.actions') }}</th>
+                                                <th>{{ __('common.actions') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -171,8 +171,18 @@
 
 
         function fetchCategories() {
+
+            let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.category.data') }}";
+            }@else {
+                url = "{{ route('manager.category.data') }}";
+            }
+            @endif
+
+            
             $.ajax({
-                url: "{{ route('admin.category.data') }}",
+                url: url,
                 method: 'GET',
                 success: function(response) {
 
@@ -214,8 +224,15 @@
 
             const categoryId = $(this).data('id');
 
-            const url = "{{ route('admin.category.edit', ['category' => ':id']) }}"
+            let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.category.edit', ['category' => ':id']) }}"
             .replace(':id', categoryId);
+            }@else {
+                url = "{{ route('manager.category.edit', ['category' => ':id']) }}"
+            .replace(':id', categoryId);
+            }
+            @endif 
 
             $.ajax({
                 method: 'GET',
@@ -247,8 +264,15 @@
 
             let id = $(this).data("id");
 
-            const url = "{{ route('admin.category.destroy', ['category' => ':id']) }}"
+            let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.category.destroy', ['category' => ':id']) }}"
                 .replace(':id', id);
+            }@else {
+                url = "{{ route('manager.category.destroy', ['category' => ':id']) }}"
+                .replace(':id', id);
+            }
+            @endif 
 
             if(!confirm("{{ __('category.delete_confirmation') }}")){
                 return;
@@ -294,10 +318,19 @@
         }
 
         $('#addCategoryForm').on('submit', function(e) {
+            
             e.preventDefault();
 
+            let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.category.store') }}";
+            }@else {
+                url = "{{ route('manager.category.store') }}";
+            }
+            @endif
+            
             $.ajax({
-                url: "{{ route('admin.category.store') }}",
+                url: url ,
                 method: 'POST',
                 data: $(this).serialize(),
                 success: function(response) {
@@ -330,8 +363,16 @@
 
             let categoryId = $(this).attr("data-id");
 
-            const url = "{{ route('admin.category.update', ['category' => ':id']) }}"
+
+            let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.category.update', ['category' => ':id']) }}"
                 .replace(':id', categoryId);
+            }@else {
+                url = "{{ route('manager.category.update', ['category' => ':id']) }}"
+                .replace(':id', categoryId);
+            }
+            @endif
 
             $.ajax({
 

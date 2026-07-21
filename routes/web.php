@@ -39,7 +39,7 @@ Route::get('/lang/{locale}', function (string $locale) {
 Route::middleware('auth')->group(function () {
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
-    Route::middleware('role:admin')
+    Route::middleware(['role:admin'])
     ->prefix('/admin')
     ->name('admin.')
     ->group(function () {

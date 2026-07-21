@@ -137,7 +137,7 @@ class SaleService
                 if( ($product->stock_quantity - $product->low_stock_threshold) < $item['quantity'])
                 {
                     throw ValidationException::withMessages([
-                        'items' => "Not enough stock for {$product->name}"]);
+                        'items' => "Not enough stock for {$product->name} {$product->stock_quantity}"]);
 
                 }
 
@@ -410,16 +410,14 @@ class SaleService
 
 
                 if(
-                    $product->stock_quantity
-                    <
-                    $item['quantity']
+                    ($product->stock_quantity - $product->low_stock_threshold) < $item['quantity']
                 )
                 {
 
                     throw ValidationException::withMessages([
 
                         'items'=>
-                        "Not enough stock for {$product->name}"
+                        "Not enough stock for {$product->name} "
 
                     ]);
 

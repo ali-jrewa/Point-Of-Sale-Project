@@ -88,7 +88,7 @@ class  ExpenseCategoryService
         ExpenseCategory $expenseCategory
     ):void
     {
-        $expenseCategory->delete();
+        $expenseCategory->forceDelete();
     }
 
     /*

@@ -266,16 +266,31 @@
 
     {{-- Actions --}}
     <div class="mt-3 mb-4">
-        <a href="{{ route('admin.sale.index') }}" class="btn btn-secondary">
-            {{ __('sale_show.back') }}
-        </a>
+        @if(auth()->user()->hasRole('admin'))
+            <a href="{{ route('admin.sale.index') }}" class="btn btn-secondary">
+                {{ __('sale_show.back') }}
+            </a>
+        @elseif(auth()->user()->hasRole('manager'))
+            <a href="{{ route('manager.sale.index') }}" class="btn btn-secondary">
+                {{ __('sale_show.back') }}
+            </a>
+        @endif
 
-        <a href="{{ route('admin.sale.index', ['edit' => $sale->id]) }}" class="btn btn-warning">
-            {{ __('sale_show.edit_sale') }}
-        </a>
+
+        @if(auth()->user()->hasRole('admin'))
+            <a href="{{ route('admin.sale.index', ['edit' => $sale->id]) }}" class="btn btn-warning">
+                {{ __('sale_show.edit_sale') }}
+            </a>
+        @elseif(auth()->user()->hasRole('manager'))
+            <a href="{{ route('manager.sale.index', ['edit' => $sale->id]) }}" class="btn btn-warning">
+                {{ __('sale_show.edit_sale') }}
+            </a>
+        @endif
+
 
         @if($sale->paid_amount > 0 && $sale->sale_status->value !== 'refunded')
-            <button type="button"
+            @if(auth()->user()->hasRole('admin'))
+                <button type="button"
                     id="refundSaleBtn"
                     class="btn btn-secondary"
                     data-sale-id="{{ $sale->id }}"
@@ -284,6 +299,28 @@
                     data-method="{{ $sale->payments->last()->method->value ?? 'cash' }}">
                 {{ __('sale_show.refund_sale') }}
             </button>
+            @elseif(auth()->user()->hasRole('manager'))
+                <button type="button"
+                    id="refundSaleBtn"
+                    class="btn btn-secondary"
+                    data-sale-id="{{ $sale->id }}"
+                    data-create-url="{{ route('manager.sale.refund.create', $sale->id) }}"
+                    data-store-url="{{ route('manager.sale.refund.store', $sale->id) }}"
+                    data-method="{{ $sale->payments->last()->method->value ?? 'cash' }}">
+                {{ __('sale_show.refund_sale') }}
+            </button>
+
+            @elseif(auth()->user()->hasRole('cashier'))
+                <button type="button"
+                    id="refundSaleBtn"
+                    class="btn btn-secondary"
+                    data-sale-id="{{ $sale->id }}"
+                    data-create-url="{{ route('cashier.sale.refund.create', $sale->id) }}"
+                    data-store-url="{{ route('cashier.sale.refund.store', $sale->id) }}"
+                    data-method="{{ $sale->payments->last()->method->value ?? 'cash' }}">
+                {{ __('sale_show.refund_sale') }}
+            </button>
+            @endif
         @endif
     </div>
 

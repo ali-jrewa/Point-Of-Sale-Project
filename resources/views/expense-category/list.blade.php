@@ -161,12 +161,20 @@
 <script type="text/javascript">
 
     $(document).ready(function() {
-        fetchExpenseCategories();
 
+        let url = '';
+        @if(auth()->user()->hasRole('admin')) {
+            url = "{{ route('admin.expense-category.data') }}";
+        }@else {
+             url = "{{ route('manager.expense-category.data') }}";
+        }
+        @endif
+
+        fetchExpenseCategories();
 
         function fetchExpenseCategories() {
             $.ajax({
-                url: "{{ route('admin.expense-category.data') }}",
+                url: url,
                 method: 'GET',
                 success: function(response) {
 
@@ -224,12 +232,22 @@
 
             const expenseCategoryId = $(this).data('id');
 
-            const url = "{{ route('admin.expense-category.edit', ['expense_category' => ':id']) }}"
+
+
+            let editUrl = "";
+
+            @if(auth()->user()->hasRole('admin')){
+            editUrl = "{{ route('admin.expense-category.edit', ['expense_category' => ':id']) }}"
             .replace(':id', expenseCategoryId);
+            }@else {
+                editUrl = "{{ route('manager.expense-category.edit', ['expense_category' => ':id']) }}"
+            .replace(':id', expenseCategoryId);
+            }
+            @endif
 
             $.ajax({
                 method: 'GET',
-                url: url,
+                url: editUrl,
                 success:function(response){
 
                 $("#edit_name").val(response.name);
@@ -257,8 +275,16 @@
 
             let id = $(this).data("id");
 
-            const url = "{{ route('admin.expense-category.destroy', ['expense_category' => ':id']) }}"
+            let deleteUrl = "";
+
+            @if(auth()->user()->hasRole('admin')){
+            deleteUrl = "{{ route('admin.expense-category.destroy', ['expense_category' => ':id']) }}"
                 .replace(':id', id);
+            }@else {
+                deleteUrl = "{{ route('manager.expense-category.destroy', ['expense_category' => ':id']) }}"
+                .replace(':id', id);
+            }
+            @endif
 
             if(!confirm("{{ __('expense_category.delete_confirmation') }}")){
                 return;
@@ -266,7 +292,7 @@
 
             $.ajax({
 
-                url: url,
+                url: deleteUrl,
 
                 method: "DELETE",
 
@@ -305,9 +331,17 @@
 
         $('#addExpenseCategoryForm').on('submit', function(e) {
             e.preventDefault();
+            let storeUrl = "";
+
+            @if(auth()->user()->hasRole('admin')){
+            storeUrl = "{{ route('admin.expense-category.store') }}";
+            }@else {
+
+                storeUrl = "{{ route('manager.expense-category.store') }}";
+            }@endif
 
             $.ajax({
-                url: "{{ route('admin.expense-category.store') }}",
+                url: storeUrl,
                 method: 'POST',
                 data: $(this).serialize(),
                 success: function(response) {
@@ -317,7 +351,19 @@
                     $('#addExpenseCategoryForm')[0].reset();
                     // Refresh the expense category list
 
-                    $('.flash-message').text(response.success).fadeIn().delay(3000).fadeOut();
+                    $('#flash')
+                        .removeClass('alert-danger alert-warning')
+                        .addClass('alert-success')
+                        .css({
+                            'background-color': '#d4edda',
+                            'color': '#155724'
+                        });
+
+                    $('.flash-message')
+                        .text(response.success)
+                        .fadeIn()
+                        .delay(3000)
+                        .fadeOut();
 
                     fetchExpenseCategories();
                 },
@@ -340,12 +386,23 @@
 
             let expenseCategoryId = $(this).attr("data-id");
 
-            const url = "{{ route('admin.expense-category.update', ['expense_category' => ':id']) }}"
+            let updateUrl = "";
+
+            @if(auth()->user()->hasRole('admin')){
+            updateUrl = "{{ route('admin.expense-category.update', ['expense_category' => ':id']) }}"
                 .replace(':id', expenseCategoryId);
+
+            }@else {
+                updateUrl = "{{ route('manager.expense-category.update', ['expense_category' => ':id']) }}"
+                .replace(':id', expenseCategoryId);
+            }
+            @endif
+
+            
 
             $.ajax({
 
-                url: url,
+                url: updateUrl,
 
                 method: "POST",
 

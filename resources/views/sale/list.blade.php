@@ -48,10 +48,22 @@
                             <h3 class="card-title">{{ __('sale.sale_list') }}</h3>
                             <div class="card-tools">
                                 <ul class="pagination pagination-sm float-end">
+                                    @if(auth()->user()->hasRole('admin'))
                                     <a href="{{ route('admin.sale.create') }}" class="btn btn-primary btn-sm"
                                         data-bs-toggle="modal" data-bs-target="#addSaleModal">
                                         {{ __('sale.add_sale') }}
                                     </a>
+                                    @elseif(auth()->user()->hasRole('manager'))
+                                        <a href="{{ route('manager.sale.create') }}" class="btn btn-primary btn-sm"
+                                            data-bs-toggle="modal" data-bs-target="#addSaleModal">
+                                            {{ __('sale.add_sale') }}
+                                        </a>
+                                    @elseif(auth()->user()->hasRole('cashier'))
+                                        <a href="{{ route('cashier.sale.create') }}" class="btn btn-primary btn-sm"
+                                            data-bs-toggle="modal" data-bs-target="#addSaleModal">
+                                            {{ __('sale.add_sale') }}
+                                        </a>
+                                    @endif
                                 </ul>
                             </div>
                         </div>
@@ -106,9 +118,18 @@
                                             </td>
                                             <td>{{ \Carbon\Carbon::parse($sale->sold_at)->format('Y-m-d') }}</td>
                                             <td>
-                                                @permission('edit-sale')<button class="btn btn-warning btn-sm edit-btn" data-id="{{ $sale->id }}">{{ __('sale.edit') }}</button>
-                                                <button class="btn btn-danger btn-sm delete-btn" data-id="{{ $sale->id }}">{{ __('sale.delete') }}</button>@endpermission
-                                                <a href="{{ route('admin.sale.show',$sale->id) }}" role="button" class="mt-2 btn btn-info btn-sm">{{ __('sale.view') }}</a>
+                                                @permission('edit-sale')
+                                                    <button class="btn btn-warning btn-sm edit-btn" data-id="{{ $sale->id }}">{{ __('sale.edit') }}</button>
+                                                    <button class="btn btn-danger btn-sm delete-btn" data-id="{{ $sale->id }}">{{ __('sale.delete') }}</button>
+                                                @endpermission
+                                                @if(auth()->user()->hasRole('admin'))
+                                                    <a href="{{ route('admin.sale.show',$sale->id) }}" role="button" class="mt-2 btn btn-info btn-sm">{{ __('sale.view') }}</a>
+                                                @elseif (auth()->user()->hasRole('manager'))
+                                                    <a href="{{ route('manager.sale.show',$sale->id) }}" role="button" class="mt-2 btn btn-info btn-sm">{{ __('sale.view') }}</a>
+                                                @elseif (auth()->user()->hasRole('cashier'))
+                                                    <a href="{{ route('cashier.sale.show',$sale->id) }}" role="button" class="mt-2 btn btn-info btn-sm">{{ __('sale.view') }}</a>
+                                                @endif
+
                                                 @if($sale->paid_amount > 0 && $sale->sale_status->value !== \App\Enums\SaleStatus::Refunded->value)
                                                     <button style="max-width:52px;max-height:30px !important;font-size:12px;padding:5px;margin-top:5px" class=" btn btn-secondary refund-btn" data-id="{{ $sale->id }}">{{ __('sale.refund') }}</button>
                                                 @endif
@@ -591,8 +612,16 @@ $(document).ready(function () {
     // ==========================
     function fetchSales(search = '', saleDate = '') {
 
+        let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.sale.data') }}";
+            }@else {
+                url = "{{ route('manager.sale.data') }}";
+            }
+            @endif
+
         $.ajax({
-            url: "{{ route('admin.sale.data') }}",
+            url: url ,
             method: "GET",
             data: { search: search, sale_date: saleDate },
             success: function (response) {
@@ -637,7 +666,13 @@ $(document).ready(function () {
                             <td >
                                 <button class="btn btn-warning btn-x-sm edit-btn" data-id="${sale.id}">{{ __('sale.edit') }}</button>
                                 <button class="btn btn-danger btn-x-sm delete-btn" data-id="${sale.id}">{{ __('sale.delete') }}</button>
-                                <a href="/admin/sale/${sale.id}" class="btn btn-info btn-x-sm">{{ __('sale.view') }}</a>
+                                @if(auth()->user()->hasRole('admin'))
+                                    <a href="/admin/sale/${sale.id}" class="btn btn-info btn-x-sm">{{ __('sale.view') }}</a>
+                                @elseif(auth()->user()->hasRole('manager')) 
+                                    <a href="/manager/sale/${sale.id}" class="btn btn-info btn-x-sm">{{ __('sale.view') }}</a>
+                                @elseif(auth()->user()->hasRole('cashier'))
+                                    <a href="/cashier/sale/${sale.id}" class="btn btn-info btn-x-sm">{{ __('sale.view') }}</a>
+                                @endif
                                 ${sale.paid_amount > 0 && sale.sale_status !== 'refunded'
                                     ? `<button class="btn btn-secondary btn-x-sm refund-btn" data-id="${sale.id}">{{ __('sale.refund') }}</button>`
                                     : ''}
@@ -668,8 +703,18 @@ $(document).ready(function () {
     // ==========================
     function loadSaleForRefund(id) {
 
+        let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.sale.refund.create', ':id') }}".replace(':id', id);
+            }@elseif (auth()->user()->hasRole('manager')) {
+                url = "{{ route('manager.sale.refund.create', ':id') }}".replace(':id', id);
+            }@elseif (auth()->user()->hasRole('cashier')) {
+                url = "{{ route('cashier.sale.refund.create', ':id') }}".replace(':id', id);
+            }
+            @endif
+
         $.ajax({
-            url: "{{ route('admin.sale.refund.create', ':id') }}".replace(':id', id),
+            url: url,
             method: "GET",
             success: function (response) {
                 populateRefundModal(response);
@@ -802,8 +847,19 @@ $(document).ready(function () {
             return;
         }
 
+         let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.sale.refund.store', ':id') }}".replace(':id', saleId);
+            }@elseif (auth()->user()->hasRole('manager')) {
+                url = "{{ route('manager.sale.refund.store', ':id') }}".replace(':id', saleId);
+            }@elseif (auth()->user()->hasRole('cashier')) {
+                url = "{{ route('cashier.sale.refund.store', ':id') }}".replace(':id', saleId);
+
+            }
+            @endif
+
         $.ajax({
-            url: "{{ route('admin.sale.refund.store', ':id') }}".replace(':id', saleId),
+            url: url ,
             method: "POST",
             data: {
                 _token: "{{ csrf_token() }}",
@@ -945,8 +1001,19 @@ $(document).ready(function () {
 
     function loadSaleForEdit(id) {
 
+        let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.sale.edit', ':id') }}".replace(':id', id);
+            }@elseif (auth()->user()->hasRole('manager')) {
+                url = "{{ route('manager.sale.edit', ':id') }}".replace(':id', id);
+            }@elseif (auth()->user()->hasRole('cashier')) {
+                url = "{{ route('cashier.sale.edit', ':id') }}".replace(':id', id);
+
+            }
+            @endif
+
         $.ajax({
-            url: "{{ route('admin.sale.edit', ':id') }}".replace(':id', id),
+            url: url ,
             method: "GET",
             success: function (sale) {
                 populateEditModal(sale);
@@ -1087,8 +1154,18 @@ $(document).ready(function () {
 
         e.preventDefault();
 
+        let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.sale.store') }}";
+            }@elseif (auth()->user()->hasRole('manager')) {
+                url = "{{ route('manager.sale.store') }}";
+            }@elseif (auth()->user()->hasRole('cashier')) {
+                 url = "{{ route('cashier.sale.store') }}";
+            }
+            @endif
+
         $.ajax({
-            url: "{{ route('admin.sale.store') }}",
+            url: url ,
             method: "POST",
             data: $(this).serialize(),
             success: function (response) {
@@ -1134,8 +1211,18 @@ $(document).ready(function () {
 
         let id = $("#edit_sale_id").val();
 
+        let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.sale.update', ':id') }}".replace(':id', id);
+            }@elseif (auth()->user()->hasRole('manager')){
+                url = "{{ route('manager.sale.update', ':id') }}".replace(':id', id);
+            }@elseif (auth()->user()->hasRole('manager')){
+                url = "{{ route('cashier.sale.update', ':id') }}".replace(':id', id);
+            }
+            @endif
+
         $.ajax({
-            url: "{{ route('admin.sale.update', ':id') }}".replace(':id', id),
+            url: url ,
             method: "POST",
             data: $(this).serialize(),
             success: function (response) {
@@ -1177,8 +1264,18 @@ $(document).ready(function () {
 
         let saleId = $("#edit_sale_id").val();
 
+        let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.payment.store', ':id') }}".replace(':id', saleId);
+            }@elseif(auth()->user()->hasRole('manager')){ 
+                url = "{{ route('manager.payment.store', ':id') }}".replace(':id', saleId);
+            }@elseif(auth()->user()->hasRole('manager')){
+                 url = "{{ route('cashier.payment.store', ':id') }}".replace(':id', saleId);
+             }
+            @endif
+
         $.ajax({
-            url: "{{ route('admin.payment.store', ':id') }}".replace(':id', saleId),
+            url: url,
             method: "POST",
             data: {
                 _token: "{{ csrf_token() }}",
@@ -1255,7 +1352,16 @@ $(document).ready(function () {
             return;
         }
 
-        let url = "{{ route('admin.sale.destroy', ['sale' => ':id']) }}".replace(':id', id);
+        let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.sale.destroy', ['sale' => ':id']) }}".replace(':id', id);
+            }@elseif (auth()->user()->hasRole('manager')){
+                url = "{{ route('manager.sale.destroy', ['sale' => ':id']) }}".replace(':id', id);
+            }@elseif (auth()->user()->hasRole('cashier')) {
+                url = "{{ route('cashier.sale.destroy', ['sale' => ':id']) }}".replace(':id', id);
+
+            }
+            @endif
 
         $.ajax({
             url: url,

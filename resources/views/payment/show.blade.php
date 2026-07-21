@@ -13,7 +13,17 @@
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
                     <li class="breadcrumb-item"><a href="#">{{ __('common.home') }}</a></li>
+                     @if(auth()->user()->hasRole('admin'))
                     <li class="breadcrumb-item"><a href="{{ route('admin.payment.index') }}"> {{ __('paymentShow.payments') }}</a></li>
+                    @endif
+                     @if(auth()->user()->hasRole('manager'))
+                        <li class="breadcrumb-item"><a href="{{ route('manager.payment.index') }}"> {{ __('paymentShow.payments') }}</a></li>
+                    @endif
+                      @if(auth()->user()->hasRole('cashier'))
+                        <li class="breadcrumb-item"><a href="{{ route('cashier.payment.index') }}"> {{ __('paymentShow.payments') }}</a></li>
+
+                      @endif
+                      
                     <li class="breadcrumb-item active"> {{ __('common.view') }}</li>
                 </ol>
             </div>
@@ -141,14 +151,38 @@
 
     {{-- Actions --}}
     <div class="mt-3 mb-4">
+        @if(auth()->user()->hasRole('admin'))
         <a href="{{ route('admin.payment.index') }}" class="btn btn-secondary">
             {{ __('paymentShow.back') }}
         </a>
 
-        @if($payment->sale)
-            <a href="{{ route('admin.sale.show', $payment->sale->id) }}" class="btn btn-info">
-                {{ __('paymentShow.view_sale') }}
+        @elseif (auth()->user()->hasRole('manager'))
+
+             <a href="{{ route('manager.payment.index') }}" class="btn btn-secondary">
+                {{ __('paymentShow.back') }}
             </a>
+
+        @elseif (auth()->user()->hasRole('cashier'))
+            
+             <a href="{{ route('cashier.payment.index') }}" class="btn btn-secondary">
+                {{ __('paymentShow.back') }}
+            </a>
+        @endif
+
+        @if($payment->sale)
+             @if (auth()->user()->hasRole('admin'))
+                <a href="{{ route('admin.sale.show', $payment->sale->id) }}" class="btn btn-info">
+                    {{ __('paymentShow.view_sale') }}
+                </a>
+            @elseif (auth()->user()->hasRole('manager'))
+                <a href="{{ route('manager.sale.show', $payment->sale->id) }}" class="btn btn-info">
+                    {{ __('paymentShow.view_sale') }}
+                </a>
+            @elseif (auth()->user()->hasRole('cashier'))
+                <a href="{{ route('cashier.sale.show', $payment->sale->id) }}" class="btn btn-info">
+                    {{ __('paymentShow.view_sale') }}
+                </a>
+                @endif
         @endif
     </div>
 

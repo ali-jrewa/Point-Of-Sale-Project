@@ -242,8 +242,16 @@
 
 
         function fetchProducts(search = '') {
+
+            let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.product.data') }}";
+            }@else {
+                url = "{{ route('manager.product.data') }}";
+            }
+            @endif
             $.ajax({
-                url: "{{ route('admin.product.data') }}",
+                url: url,
                 method: 'GET',
                  data: {
                         search: search
@@ -333,8 +341,15 @@
 
             const productId = $(this).data('id');
 
-            const url = "{{ route('admin.product.edit', ['product' => ':id']) }}"
+            let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.product.edit', ['product' => ':id']) }}"
             .replace(':id', productId);
+            }@else {
+                url = "{{ route('manager.product.edit', ['product' => ':id']) }}"
+            .replace(':id', productId);
+            }
+            @endif
 
             $.ajax({
                 method: 'GET',
@@ -376,8 +391,15 @@
 
             let id = $(this).data("id");
 
-            const url = "{{ route('admin.product.destroy', ['product' => ':id']) }}"
+            let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.product.destroy', ['product' => ':id']) }}"
                 .replace(':id', id);
+            }@else {
+                url = "{{ route('manager.product.destroy', ['product' => ':id']) }}"
+                .replace(':id', id);
+            }
+            @endif
 
             if(!confirm("{{ __('product.delete_confirmation') }}")){
                 return;
@@ -425,8 +447,16 @@
         $('#addProductForm').on('submit', function(e) {
             e.preventDefault();
 
+            let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.product.store') }}";
+            }@else {
+                url = "{{ route('manager.product.store') }}";
+            }
+            @endif
+
             $.ajax({
-                url: "{{ route('admin.product.store') }}",
+                url: url ,
                 method: 'POST',
                 data: $(this).serialize(),
                 success: function(response) {
@@ -459,8 +489,15 @@
 
             let productId = $(this).attr("data-id");
 
-            const url = "{{ route('admin.product.update', ['product' => ':id']) }}"
+            let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.product.update', ['product' => ':id']) }}"
                 .replace(':id', productId);
+            }@else {
+                url = "{{ route('manager.product.update', ['product' => ':id']) }}"
+                .replace(':id', productId);
+            }
+            @endif
 
             $.ajax({
 

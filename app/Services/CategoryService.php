@@ -34,7 +34,7 @@ class CategoryService
 
     public function delete(Category $category): void
     {
-        $category->delete();
+        $category->forceDelete();
     }
 
 }

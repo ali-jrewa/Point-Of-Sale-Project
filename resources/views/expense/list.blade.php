@@ -223,7 +223,7 @@
                             @foreach(\App\Enums\PaymentMethod::values() as $method)
 
                                 <option value="{{ $method }}">
-                                    {{ __('payment_method.' . $method) }}
+                                     {{ $method }}
                                 </option>
 
                             @endforeach
@@ -466,8 +466,16 @@
 
 
         function fetchExpenses(search = '',expenseDate = '') {
+            let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.expense.data') }}";
+            }@else {
+                url = "{{ route('manager.expense.data') }}";
+            }
+            @endif
+
             $.ajax({
-                url: "{{ route('admin.expense.data') }}",
+                url: url,
                 method: 'GET',
                 data: {
                     search: search,
@@ -579,8 +587,15 @@
 
             const expenseId = $(this).data('id');
 
-            const url = "{{ route('admin.expense.edit', ['expense' => ':id']) }}"
+            let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.expense.edit', ['expense' => ':id']) }}"
             .replace(':id', expenseId);
+            }@else {
+                url = "{{ route('manager.expense.edit', ['expense' => ':id']) }}"
+            .replace(':id', expenseId);
+            }
+            @endif
 
             $.ajax({
                 method: 'GET',
@@ -628,8 +643,16 @@
 
             let id = $(this).data("id");
 
-            const url = "{{ route('admin.expense.destroy', ['expense' => ':id']) }}"
+            let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.expense.destroy', ['expense' => ':id']) }}"
                 .replace(':id', id);
+            }@else {
+                url = "{{ route('manager.expense.destroy', ['expense' => ':id']) }}"
+                .replace(':id', id);
+            }
+            @endif
+ 
 
             if(!confirm("{{ __('expense.delete_confirmation') }}")){
                 return;
@@ -661,7 +684,8 @@
                         .delay(3000)
                         .fadeOut();
 
-                    fetchExpenses();
+                    fetchExpenses('','');
+
 
                 },
 
@@ -677,8 +701,16 @@
         $('#addExpenseForm').on('submit', function(e) {
             e.preventDefault();
 
+            let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.expense.store') }}";
+            }@else {
+                url = "{{ route('manager.expense.store') }}";
+            }
+            @endif
+
             $.ajax({
-                url: "{{ route('admin.expense.store') }}",
+                url: url,
                 method: 'POST',
                 data: $(this).serialize(),
                 success: function(response) {
@@ -711,8 +743,15 @@
 
             let expenseId = $(this).attr("data-id");
 
-            const url = "{{ route('admin.expense.update', ['expense' => ':id']) }}"
+            let url = '';
+            @if(auth()->user()->hasRole('admin')){
+                url = "{{ route('admin.expense.update', ['expense' => ':id']) }}"
                 .replace(':id', expenseId);
+            }@else {
+                url = "{{ route('manager.expense.update', ['expense' => ':id']) }}"
+                .replace(':id', expenseId);
+            }
+            @endif
 
             $.ajax({
 

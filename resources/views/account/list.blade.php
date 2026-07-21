@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('style')
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
 .account-avatar {
     width: 45px;
@@ -117,7 +118,7 @@
             <div class="modal-body">
 
                <form id="editUserForm" enctype="multipart/form-data">
-                     @csrf
+                    @csrf
                     @method('PUT')
 
                     <div class="mb-3">
@@ -175,6 +176,15 @@ function showImagePreview(src) {
 <script src="https://cdn.jsdelivr.net/npm/dayjs/dayjs.min.js"></script>
 <script type="text/javascript">
 
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
+</script>
+<script type="text/javascript">
+
     $(document).ready(function() {
         $('.edit-btn').on('click', handleEdit);
 
@@ -185,8 +195,7 @@ function showImagePreview(src) {
 
             let account = @json($account);
 
-            let url = "{{ route('admin.account.edit', ['account' => ':id']) }}"
-            .replace(':id', userId);
+            let url = '';
 
 
             if(account.role.name == 'admin'){
@@ -194,11 +203,14 @@ function showImagePreview(src) {
                 url = "{{ route('admin.account.edit', ['account' => ':id']) }}"
             .replace(':id', userId);
 
-            }else {
+            }else if(account.role.name == 'cashier'){
 
-            url = "{{ route('cashier.account.edit', ['account' => ':id']) }}"
+                url = "{{ route('cashier.account.edit', ['account' => ':id']) }}"
+                .replace(':id', userId);
+
+            }else if(account.role.name == 'manager'){
+                url = "{{ route('manager.account.edit', ['account' => ':id']) }}"
             .replace(':id', userId);
-
             }
 
             $.ajax({
@@ -237,19 +249,20 @@ function showImagePreview(src) {
 
             let userId = $(this).attr("data-id");
 
-            let url = "{{ route('admin.account.update', ['account' => ':id']) }}"
-            .replace(':id', userId);
+            let url = '';
+
+
 
             if(account.role.name == 'admin'){
 
-                url = "{{ route('admin.account.update', ['account' => ':id']) }}"
-            .replace(':id', userId);
+                url = "{{ route('admin.account.update', ['account' => ':id']) }}".replace(':id', userId);
 
-            }else {
+            }else if(account.role.name == 'manager'){
 
-            url = "{{ route('cashier.account.update', ['account' => ':id']) }}"
-            .replace(':id', userId);
+                url = "{{ route('manager.account.update', ['account' => ':id']) }}".replace(':id', userId);
 
+            }else if(account.role.name == 'cashier'){
+                let url = "{{ route('cashier.account.update', ['account' => ':id']) }}".replace(':id', userId);
             }
 
             let formData = new FormData(this);
@@ -258,7 +271,7 @@ function showImagePreview(src) {
 
                 url: url,
 
-                method: "PUT",
+                method: "POST",
 
                 data: formData,
                 processData: false,       // don't let jQuery try to serialize FormData

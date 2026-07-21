@@ -73,7 +73,7 @@ class  ExpenseService
 
     public function delete(Expense $expense):void
     {
-        $expense->delete();
+        $expense->forceDelete();
     }
 
     public function restore(int $id): void

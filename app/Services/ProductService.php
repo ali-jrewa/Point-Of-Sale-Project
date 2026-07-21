@@ -70,7 +70,7 @@ class ProductService
 
     public function delete(Product $product): void
     {
-        $product->delete();
+        $product->forceDelete();
     }
 
     protected function generateSku(): string

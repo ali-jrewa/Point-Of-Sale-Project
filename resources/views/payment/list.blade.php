@@ -86,10 +86,23 @@
                                             <td>{{ $payment->user->name ?? '-' }}</td>
                                             <td>{{ \Carbon\Carbon::parse($payment->paid_at)->format('Y-m-d H:i') }}</td>
                                             <td>
-                                                <a href="{{ route('admin.payment.show', $payment->id) }}"
-                                                    class="btn btn-info btn-sm">
-                                                    {{ __('common.view') }}
-                                                </a>
+                                                @if(auth()->user()->hasRole('admin'))
+                                                    <a href="{{ route('admin.payment.show', $payment->id) }}"
+                                                        class="btn btn-info btn-sm">
+                                                        {{ __('common.view') }}
+                                                    </a>
+                                                @elseif (auth()->user()->hasRole('manager'))
+                                                    <a href="{{ route('manager.payment.show', $payment->id) }}"
+                                                        class="btn btn-info btn-sm">
+                                                        {{ __('common.view') }}
+                                                    </a>
+                                                
+                                                @elseif (auth()->user()->hasRole('cashier'))
+                                                    <a href="{{ route('cashier.payment.show', $payment->id) }}"
+                                                            class="btn btn-info btn-sm">
+                                                            {{ __('common.view') }}
+                                                        </a>
+                                                @endif
                                             </td>
                                         </tr>
                                     @empty
