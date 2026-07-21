@@ -22,10 +22,26 @@ class ReportController extends Controller
      */
     private function resolveDateRange(Request $request): array
     {
-        $from = $request->input('from', now()->startOfMonth()->format('Y-m-d'));
-        $to = $request->input('to', now()->endOfMonth()->format('Y-m-d'));
+        $fromInput = $request->query('from');
+        $toInput = $request->query('to');
 
-        return [$from, $to];
+        try {
+            $from = $fromInput ? \Carbon\Carbon::parse($fromInput)->startOfDay() : now()->startOfMonth();
+        } catch (\Throwable $e) {
+            $from = now()->startOfMonth();
+        }
+
+        try {
+            $to = $toInput ? \Carbon\Carbon::parse($toInput)->endOfDay() : now()->endOfMonth();
+        } catch (\Throwable $e) {
+            $to = now()->endOfMonth();
+        }
+
+        if ($from->gt($to)) {
+            [$from, $to] = [$to, $from];
+        }
+
+        return [$from->format('Y-m-d'), $to->format('Y-m-d')];
     }
 
     private function renderReport(Request $request, string $view, array $viewData, string $filename)
@@ -63,9 +79,23 @@ class ReportController extends Controller
             'date'  => now()->format('Y-m-d H:i'),
         ];
 
-        $supplierChunks = Supplier::all()->chunk(20);
+        if ($request->hasAny(['from', 'to'])) {
+            [$from, $to] = $this->resolveDateRange($request);
 
-        return $this->renderReport($request, 'pdf.all_suppliers', compact('data', 'supplierChunks'), 'all_supplier_report.pdf');
+            $supplierChunks = Supplier::whereHas('purchases', function ($q) use ($from, $to) {
+                $q->whereDate('purchased_at', '>=', $from)->whereDate('purchased_at', '<=', $to);
+            })->get()->chunk(20);
+
+            $data['from'] = $from;
+            $data['to'] = $to;
+
+            $filename = 'all_supplier_report_' . $from . '_to_' . $to . '.pdf';
+        } else {
+            $supplierChunks = Supplier::all()->chunk(20);
+            $filename = 'all_supplier_report.pdf';
+        }
+
+        return $this->renderReport($request, 'pdf.all_suppliers', compact('data', 'supplierChunks'), $filename);
     }
 
     public function customer(Request $request)
@@ -75,41 +105,97 @@ class ReportController extends Controller
             'date'  => now()->format('Y-m-d H:i'),
         ];
 
-        $customerChunks = Customer::all()->chunk(20);
+        if ($request->hasAny(['from', 'to'])) {
+            [$from, $to] = $this->resolveDateRange($request);
 
-        return $this->renderReport($request, 'pdf.all_customers', compact('data', 'customerChunks'), 'all_customers_report.pdf');
+            $customerChunks = Customer::whereHas('sales', function ($q) use ($from, $to) {
+                $q->whereDate('sold_at', '>=', $from)->whereDate('sold_at', '<=', $to);
+            })->get()->chunk(20);
+
+            $data['from'] = $from;
+            $data['to'] = $to;
+
+            $filename = 'all_customers_report_' . $from . '_to_' . $to . '.pdf';
+        } else {
+            $customerChunks = Customer::all()->chunk(20);
+            $filename = 'all_customers_report.pdf';
+        }
+
+        return $this->renderReport($request, 'pdf.all_customers', compact('data', 'customerChunks'), $filename);
     }
 
     public function supplierRow(Request $request, Supplier $supplier)
     {
-        $supplier->load([
-            'purchases' => fn ($q) => $q->orderBy('purchased_at', 'desc'),
-            'purchases.items.product',
-        ]);
-
         $data = [
             'title' => "Supplier Report - {$supplier->first_name} {$supplier->last_name}",
             'date'  => now()->format('Y-m-d H:i'),
         ];
 
-        return $this->renderReport($request, 'pdf.supplier', compact('data', 'supplier'), 'supplier_' . $supplier->id . '_report.pdf');
+        if ($request->hasAny(['from', 'to'])) {
+            [$from, $to] = $this->resolveDateRange($request);
+
+            $supplier->load([
+                'purchases' => function ($q) use ($from, $to) {
+                    $q->whereDate('purchased_at', '>=', $from)
+                        ->whereDate('purchased_at', '<=', $to)
+                        ->orderBy('purchased_at', 'desc');
+                },
+                'purchases.items.product',
+            ]);
+
+            $data['from'] = $from;
+            $data['to'] = $to;
+
+            $filename = 'supplier_' . $supplier->id . '_report_' . $from . '_to_' . $to . '.pdf';
+        } else {
+            $supplier->load([
+                'purchases' => fn ($q) => $q->orderBy('purchased_at', 'desc'),
+                'purchases.items.product',
+            ]);
+
+            $filename = 'supplier_' . $supplier->id . '_report.pdf';
+        }
+
+        return $this->renderReport($request, 'pdf.supplier', compact('data', 'supplier'), $filename);
     }
 
     public function customerRow(Request $request, Customer $customer)
     {
-        $customer->load([
-            'sales' => fn ($q) => $q->orderBy('sold_at', 'desc'),
-            'sales.items.product',
-            'sales.payments',
-            'sales.refunds.items.product',
-        ]);
-
         $data = [
             'title' => "Customer Report - {$customer->first_name} {$customer->last_name}",
             'date'  => now()->format('Y-m-d H:i'),
         ];
 
-        return $this->renderReport($request, 'pdf.customer', compact('data', 'customer'), 'customer_' . $customer->id . '_report.pdf');
+        if ($request->hasAny(['from', 'to'])) {
+            [$from, $to] = $this->resolveDateRange($request);
+
+            $customer->load([
+                'sales' => function ($q) use ($from, $to) {
+                    $q->whereDate('sold_at', '>=', $from)
+                        ->whereDate('sold_at', '<=', $to)
+                        ->orderBy('sold_at', 'desc');
+                },
+                'sales.items.product',
+                'sales.payments',
+                'sales.refunds.items.product',
+            ]);
+
+            $data['from'] = $from;
+            $data['to'] = $to;
+
+            $filename = 'customer_' . $customer->id . '_report_' . $from . '_to_' . $to . '.pdf';
+        } else {
+            $customer->load([
+                'sales' => fn ($q) => $q->orderBy('sold_at', 'desc'),
+                'sales.items.product',
+                'sales.payments',
+                'sales.refunds.items.product',
+            ]);
+
+            $filename = 'customer_' . $customer->id . '_report.pdf';
+        }
+
+        return $this->renderReport($request, 'pdf.customer', compact('data', 'customer'), $filename);
     }
 
     public function sales(Request $request)
