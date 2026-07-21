@@ -28,6 +28,7 @@ return [
     'stock_report' => 'Stock Report',
     'low_stock_alert' => 'Low Stock Alert',
     'top_customers' => 'Top Customers',
+    'inputs_outputs_report' => 'Inputs & Outputs Report',
     'due_outstanding' => 'Due / Outstanding',
 
     'system' => 'System',

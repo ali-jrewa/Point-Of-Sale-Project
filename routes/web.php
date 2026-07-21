@@ -112,6 +112,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/customer', [ReportController::class, 'customer'])->name('customer');
 
             Route::get('/profit-loss', [ReportController::class, 'profitLoss'])->name('profit-loss');
+            Route::get('/inputs-outputs', [ReportController::class, 'inputsOutputs'])->name('inputs-outputs');
             Route::get('/expenses', [ReportController::class, 'expenses'])->name('expenses');
             Route::get('/payments', [ReportController::class, 'payments'])->name('payments');
             Route::get('/refunds', [ReportController::class, 'refunds'])->name('refunds');
@@ -201,6 +202,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/customer', [ReportController::class, 'customer'])->name('customer');
 
             Route::get('/profit-loss', [ReportController::class, 'profitLoss'])->name('profit-loss');
+            Route::get('/inputs-outputs', [ReportController::class, 'inputsOutputs'])->name('inputs-outputs');
             Route::get('/expenses', [ReportController::class, 'expenses'])->name('expenses');
             Route::get('/payments', [ReportController::class, 'payments'])->name('payments');
             Route::get('/refunds', [ReportController::class, 'refunds'])->name('refunds');

@@ -134,6 +134,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="{{ route('admin.report.inputs-outputs') }}" class="nav-link @if (Request::segment(3) == 'inputs-outputs') active @endif">
+                                <i class="nav-icon fa-solid fa-exchange-alt"></i>
+                                <p>{{ __('sidebar.inputs_outputs_report') }}</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{ route('admin.report.expenses') }}" class="nav-link @if (Request::segment(3) == 'expenses') active @endif">
                                 <i class="nav-icon fa fa-receipt"></i>
                                 <p>{{ __('sidebar.expense_report') }}</p>
@@ -297,6 +303,12 @@
                             <a href="{{ route('manager.report.profit-loss') }}" class="nav-link @if (Request::segment(3) == 'profit-loss') active @endif">
                                 <i class="nav-icon fa-solid fa-money-bill-trend-up"></i>
                                 <p>{{ __('sidebar.profit_loss') }}</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('manager.report.inputs-outputs') }}" class="nav-link @if (Request::segment(3) == 'inputs-outputs') active @endif">
+                                <i class="nav-icon fa-solid fa-exchange-alt"></i>
+                                <p>{{ __('sidebar.inputs_outputs_report') }}</p>
                             </a>
                         </li>
                         <li class="nav-item">

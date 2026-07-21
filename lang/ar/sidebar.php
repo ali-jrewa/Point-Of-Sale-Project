@@ -28,6 +28,7 @@ return [
     'stock_report' => 'تقرير المخزون',
     'low_stock_alert' => 'تنبيه انخفاض المخزون',
     'top_customers' => 'أفضل العملاء',
+    'inputs_outputs_report' => 'تقرير المدخلات والمخرجات',
     'due_outstanding' => 'المستحقات',
 
     'system' => 'النظام',

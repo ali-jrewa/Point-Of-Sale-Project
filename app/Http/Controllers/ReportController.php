@@ -273,6 +273,64 @@ class ReportController extends Controller
         );
     }
 
+    public function inputsOutputs(Request $request)
+    {
+        [$from, $to] = $this->resolveDateRange($request);
+
+        $purchases = Purchase::with('supplier')
+            ->whereDate('purchased_at', '>=', $from)
+            ->whereDate('purchased_at', '<=', $to)
+            ->orderBy('purchased_at')
+            ->get();
+
+        $sales = Sale::with('customer')
+            ->whereDate('sold_at', '>=', $from)
+            ->whereDate('sold_at', '<=', $to)
+            ->orderBy('sold_at')
+            ->get();
+
+        $payments = Payment::with(['sale.customer', 'user'])
+            ->whereDate('paid_at', '>=', $from)
+            ->whereDate('paid_at', '<=', $to)
+            ->orderBy('paid_at')
+            ->get();
+
+        $totalPurchases = $purchases->sum('total');
+        $totalSales = $sales->sum('total');
+        $totalPayments = $payments->sum('amount');
+        $totalExpenses = Expense::whereDate('expense_date', '>=', $from)->whereDate('expense_date', '<=', $to)->sum('amount');
+        $totalRefunds = Refund::whereDate('refunded_at', '>=', $from)->whereDate('refunded_at', '<=', $to)->sum('amount');
+
+        $netSalesRevenue = $totalSales - $totalRefunds;
+        $grossProfit = $netSalesRevenue - $totalPurchases;
+        $netProfit = $grossProfit - $totalExpenses;
+
+        $data = [
+            'title' => 'Inputs & Outputs Report',
+            'date'  => now()->format('Y-m-d H:i'),
+            'from'  => $from,
+            'to'    => $to,
+        ];
+
+        $summary = [
+            'totalPurchases' => $totalPurchases,
+            'totalSales' => $totalSales,
+            'totalPayments' => $totalPayments,
+            'totalExpenses' => $totalExpenses,
+            'totalRefunds' => $totalRefunds,
+            'netSalesRevenue' => $netSalesRevenue,
+            'grossProfit' => $grossProfit,
+            'netProfit' => $netProfit,
+        ];
+
+        return $this->renderReport(
+            $request,
+            'pdf.inputs-outputs',
+            compact('data', 'summary', 'purchases', 'sales', 'payments'),
+            'inputs_outputs_report_' . $from . '_to_' . $to . '.pdf'
+        );
+    }
+
     public function expenses(Request $request)
     {
         [$from, $to] = $this->resolveDateRange($request);
