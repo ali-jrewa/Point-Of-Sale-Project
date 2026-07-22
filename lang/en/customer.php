@@ -3,6 +3,7 @@
 return [
 
     // Page
+    'register' => 'Register Customer',
     'page_title' => 'Customer',
     'customer_list' => 'Customer List',
     'search_customer' => 'Search Customer',
@@ -35,6 +36,7 @@ return [
     'amount_to_add' => 'Amount to Add',
 
     // Messages
+    'registration_success' => 'Registration successful. A confirmation email has been sent if you provided an email address.',
     'no_customers_found' => 'No customers found.',
     'delete_confirmation' => 'Are you sure you want to delete this customer?',
     'error_add_customer' => 'Error adding customer',

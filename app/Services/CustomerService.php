@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Customer;
+use App\Enums\CustomerStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -59,6 +60,8 @@ class  CustomerService
             $data['customer_code'] = $this->generateCustomerCode();
 
             $data['created_by'] = Auth::id();
+
+            $data['status'] = $data['status'] ?? CustomerStatus::Inactive->value;
 
             return Customer::create($data);
 

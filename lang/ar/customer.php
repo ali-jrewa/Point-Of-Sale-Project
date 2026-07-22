@@ -3,6 +3,7 @@
 return [
 
     // Page
+    'register' => 'تسجيل زبون',
     'page_title' => 'العملاء',
     'customer_list' => 'قائمة العملاء',
     'search_customer' => 'البحث عن عميل',
@@ -35,6 +36,7 @@ return [
     'amount_to_add' => 'المبلغ المراد إضافته',
 
     // Messages
+    'registration_success' => 'تم التسجيل بنجاح. تم إرسال رسالة تأكيد إذا قمت بتقديم بريد إلكتروني.',
     'no_customers_found' => 'لا يوجد عملاء.',
     'delete_confirmation' => 'هل أنت متأكد من حذف هذا العميل؟',
     'error_add_customer' => 'حدث خطأ أثناء إضافة العميل',

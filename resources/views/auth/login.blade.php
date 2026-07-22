@@ -89,6 +89,7 @@
                     </div>
                 </form>
                 <p class="mb-1"> <a href="forgot-password.html">{{ __('auth.forgot_password') }}</a> </p>
+                <p class="mb-1"> <a href="{{ route('customer.register') }}">{{ __('customer.register') }}</a> </p>
             </div>
         </div>
     </div>

@@ -33,6 +33,10 @@ Route::get('/lang/{locale}', function (string $locale) {
     Route::get('/', [AuthController::class, 'login']);
     Route::get('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/login', [AuthController::class, 'login_post']);
+
+        // Public customer registration
+        Route::get('/register-customer', function () { return view('customer.register'); })->name('customer.register');
+        Route::post('/register-customer', [App\Http\Controllers\PublicCustomerController::class, 'store'])->name('customer.register.store');
 });
 
 // Authenticated routes (accessible only if logged in)
