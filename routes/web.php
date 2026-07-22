@@ -110,6 +110,7 @@ Route::middleware('auth')->group(function () {
 
             Route::get('/supplier', [ReportController::class, 'supplier'])->name('supplier');
             Route::get('/customer', [ReportController::class, 'customer'])->name('customer');
+            Route::get('/user/{user}', [ReportController::class, 'user'])->name('user');
 
             Route::get('/profit-loss', [ReportController::class, 'profitLoss'])->name('profit-loss');
             Route::get('/inputs-outputs', [ReportController::class, 'inputsOutputs'])->name('inputs-outputs');
@@ -200,6 +201,7 @@ Route::middleware('auth')->group(function () {
 
             Route::get('/supplier', [ReportController::class, 'supplier'])->name('supplier');
             Route::get('/customer', [ReportController::class, 'customer'])->name('customer');
+            Route::get('/user/{user}', [ReportController::class, 'user'])->name('user');
 
             Route::get('/profit-loss', [ReportController::class, 'profitLoss'])->name('profit-loss');
             Route::get('/inputs-outputs', [ReportController::class, 'inputsOutputs'])->name('inputs-outputs');
@@ -255,6 +257,10 @@ Route::middleware('auth')->group(function () {
         Route::get('sales/{sale}/refund', [RefundController::class, 'create'])->name('sale.refund.create');
         Route::post('sales/{sale}/refund', [RefundController::class, 'store'])->name('sale.refund.store');
         Route::delete('refunds/{refund}', [RefundController::class, 'destroy'])->name('refund.destroy');
+
+        //report
+        Route::get('/user/{user}', [ReportController::class, 'user'])->name('report.user');
+
     });
 
 

@@ -81,6 +81,7 @@
                                                     <td>
                                                         <button class="btn btn-sm edit-btn btn-warning" data-id="{{ $user->id }}">{{ __('user.edit') }}</button>
                                                         <button class="btn btn-sm delete-btn btn-danger" data-id="{{ $user->id }}">{{ __('user.delete') }}</button>
+                                                        <button class="btn btn-sm btn-info report-btn" data-id="{{ $user->id }}">{{ __('report/user.view_report') }}</button>
                                                     </td>
                                                 </tr>
                                             @empty
@@ -231,14 +232,13 @@ const lang = {
     deleteConfirmation: "{{ __('user.delete_confirmation') }}",
     errorAddUser: "{{ __('user.error_add_user') }}"
 };
-</script>
 
-<script type="text/javascript">
 
 
     $(document).ready(function() {
         $('.edit-btn').on('click', handleEdit);
         $('.delete-btn').on('click', handleDelete);
+        $('.report-btn').on('click', handleReport);
 
 
         function fetchUsers(search = '') {
@@ -283,6 +283,7 @@ const lang = {
                                     <td>
                                         <button class="btn btn-sm edit-btn btn-warning" data-id="${user.id}">{{ __('user.edit') }}</button>
                                         <button class="btn btn-sm delete-btn btn-danger" data-id="${user.id}">{{ __('user.delete') }}</button>
+                                        <button class="btn btn-sm btn-info report-btn" data-id="${user.id}">{{ __('report/user.view_report') }}</button>
                                     </td>
                                 </tr>
                             `;
@@ -295,6 +296,7 @@ const lang = {
                     // Re-bind event handlers
                     $('.edit-btn').on('click', handleEdit);
                     $('.delete-btn').on('click', handleDelete);
+                    $('.report-btn').on('click', handleReport);
 
                     // Pagination visibility is decided here, in sync with the
                     // response that actually rendered, instead of before the
@@ -361,6 +363,15 @@ const lang = {
                     console.error('Error fetching user data:', xhr.responseText);
                     }
                 });
+        }
+
+        const reportRouteTemplate = "{{ auth()->user()->hasRole('cashier') ? route('cashier.report.user', ['user' => ':id']) : (auth()->user()->hasRole('manager') ? route('manager.report.user', ['user' => ':id']) : route('admin.report.user', ['user' => ':id'])) }}";
+
+        // report
+        function handleReport() {
+            const userId = $(this).data('id');
+            const url = reportRouteTemplate.replace(':id', userId);
+            window.location.href = url;
         }
 
         //delete

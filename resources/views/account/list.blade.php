@@ -93,6 +93,9 @@
 
                                                     <td>
                                                         <button class="btn btn-sm edit-btn btn-warning" data-id="{{ $account->id }}">{{ __('common.edit_account') }}</button>
+                                                        <a href="{{ auth()->user()->hasRole('manager') ? route('manager.report.user', ['user' => $account->id]) : (auth()->user()->hasRole('cashier') ? route('cashier.report.user', ['user' => $account->id]) : route('admin.report.user', ['user' => $account->id])) }}" class="btn btn-sm btn-info">
+                                                            {{ __('report/user.view_report') }}
+                                                        </a>
                                                     </td>
                                                 </tr>
                                         </tbody>

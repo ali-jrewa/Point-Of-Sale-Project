@@ -10,6 +10,7 @@ use App\Models\Purchase;
 use App\Models\Refund;
 use App\Models\Sale;
 use App\Models\Supplier;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -196,6 +197,46 @@ class ReportController extends Controller
         }
 
         return $this->renderReport($request, 'pdf.customer', compact('data', 'customer'), $filename);
+    }
+
+    public function user(Request $request, User $user)
+    {
+        [$from, $to] = $this->resolveDateRange($request);
+
+        $sales = Sale::with('customer')
+            ->where('user_id', $user->id)
+            ->whereDate('sold_at', '>=', $from)
+            ->whereDate('sold_at', '<=', $to)
+            ->orderBy('sold_at', 'desc')
+            ->get();
+
+        $purchases = Purchase::with('supplier')
+            ->where('user_id', $user->id)
+            ->whereDate('purchased_at', '>=', $from)
+            ->whereDate('purchased_at', '<=', $to)
+            ->orderBy('purchased_at', 'desc')
+            ->get();
+
+        $refunds = Refund::with('sale.customer')
+            ->where('user_id', $user->id)
+            ->whereDate('refunded_at', '>=', $from)
+            ->whereDate('refunded_at', '<=', $to)
+            ->orderBy('refunded_at', 'desc')
+            ->get();
+
+        $data = [
+            'title' => "User Report - {$user->name}",
+            'date'  => now()->format('Y-m-d H:i'),
+            'from'  => $from,
+            'to'    => $to,
+        ];
+
+        return $this->renderReport(
+            $request,
+            'pdf.user',
+            compact('data', 'user', 'sales', 'purchases', 'refunds'),
+            'user_report_' . $user->id . '_' . $from . '_to_' . $to . '.pdf'
+        );
     }
 
     public function sales(Request $request)
